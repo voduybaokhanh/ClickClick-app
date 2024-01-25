@@ -7,24 +7,14 @@ header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers
 
 // http://192.168.1.28:8686/register.php
 include_once './connection.php';
-include_once $_SERVER['DOCUMENT_ROOT'] . '/helpers/PHPMailer-master/src/PHPMailer.php';
-include_once $_SERVER['DOCUMENT_ROOT'] . '/helpers/PHPMailer-master/src/SMTP.php';
-include_once $_SERVER['DOCUMENT_ROOT'] . '/helpers/PHPMailer-master/src/Exception.php';
-use PHPMailer\PHPMailer\PHPMailer;
-use PHPMailer\PHPMailer\Exception;
-use PHPMailer\PHPMailer\SMTP;
-
-function generateOTP()
-{
-    return rand(100000, 999999);
-}
 
 try {
     $decodedData = stripslashes(file_get_contents("php://input"));
     $data = json_decode($decodedData);
 
-    if ($data === null || !isset($data->email) || !isset($data->name) || !isset($data->password) || !isset($data->password_confirm)) {
+    if ($data === null  || !isset($data->name) || !isset($data->password) || !isset($data->password_confirm)) {
         echo json_encode(
+            // || !isset($data->email)
             array(
                 "status" => false,
                 "message" => "Dữ liệu JSON không hợp lệ"
@@ -33,10 +23,28 @@ try {
         exit;
     }
 
-    $email = $data->email;
+    // kiểm tra name đã tồn tại chưa
+    $sqlQuery = "SELECT * FROM users WHERE name = :name";
+    $stmt = $dbConn->prepare($sqlQuery);
+    $stmt->bindParam(':name', $name, PDO::PARAM_STR);
+    $stmt->execute();
+    $user = $stmt->fetch(PDO::FETCH_ASSOC);
+    if ($user) {
+        echo json_encode(
+            array(
+                "status" => false,
+                "message" => "Tên đăng nhập đã tồn tại"
+            )
+        );
+        return;
+    }
+
+    // thêm dữ liệu vào db
+    // $email = $data->email;
     $name = $data->name;
     $password = $data->password;
     $password_confirm = $data->password_confirm;
+    $otp = $data->otp;
 
     // so sánh password và confirm password
     if ($password != $password_confirm) {
@@ -49,74 +57,42 @@ try {
         return;
     }
 
-    // kiểm tra email đã tồn tại chưa 
-    $sqlQuery = "SELECT * FROM users WHERE email = :email";
+    // kiểm tra OTP và email nếu trùng tiếp tục đăng ký
+    $sqlQuery = "SELECT * FROM users WHERE otp = :otp";
+    // email = :email AND
     $stmt = $dbConn->prepare($sqlQuery);
-    $stmt->bindParam(':email', $email, PDO::PARAM_STR);
+    // $stmt->bindParam(':email', $data->email, PDO::PARAM_STR);
+    $stmt->bindParam(':otp', $data->otp, PDO::PARAM_STR);
     $stmt->execute();
     $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
     if ($user) {
-        echo json_encode(
-            array(
-                "status" => false,
-                "message" => "Email đã tồn tại"
-            )
-        );
-        return;
-    }
-
-    // thêm dữ liệu vào db
-    $sqlQuery = "INSERT INTO users(email, password, name) VALUES (:email, :password, :name)";
-    $stmt = $dbConn->prepare($sqlQuery);
-    $stmt->bindParam(':email', $email, PDO::PARAM_STR);
-    $stmt->bindParam(':password', $password, PDO::PARAM_STR);
-    $stmt->bindParam(':name', $name, PDO::PARAM_STR);
-    $stmt->execute();
-
-    // Đăng ký thành công, tạo mã OTP và lưu vào CSDL
-    $otp = generateOTP();
-    $expirationTime = time() + 300; // Mã OTP hết hạn sau 5 phút
-    // Lưu thông tin OTP vào CSDL (bạn cần thêm code cho phần này)
-
-    // Gửi email với mã OTP
-    try {
-        $mail = new PHPMailer();
-        $mail->CharSet = "utf-8";
-        $mail->SMTPAuth = true;
-        $mail->isSMTP();
-        $mail->SMTPAuth = true;
-        $mail->Username = "ThanhBinhoke";
-        $mail->Password = "dfzkzeeyxgfmabub"; // Thay bằng mật khẩu email của bạn
-        $mail->SMTPSecure = "ssl";
-        $mail->Host = "ssl://smtp.gmail.com";
-        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-        $mail->Port = "465";
-        $mail->From = "Thanhbinhoke@gmail.com";
-        $mail->FromName =  "Đỗ Thanh Bình
-        ";
-        $mail->addAddress($email, $name);
-        $mail->Subject = "Register";
-        $mail->isHTML(true);
-        $mail->Subject = 'Xác nhận đăng ký - Mã OTP';
-        $mail->Body = 'Mã OTP của bạn là: ' . $otp;
-
-        $mail->send();
+        // Nếu đã xác nhận, tiếp tục với cập nhật thông tin
+        $sqlUpdate = "UPDATE users SET password = :password, name = :name WHERE otp = :otp";
+        // email = :email AND 
+        $stmtUpdate = $dbConn->prepare($sqlUpdate);
+        $stmtUpdate->bindParam(':password', $data->password, PDO::PARAM_STR);
+        $stmtUpdate->bindParam(':name', $data->name, PDO::PARAM_STR);
+        // $stmtUpdate->bindParam(':email', $data->email, PDO::PARAM_STR);
+        $stmtUpdate->bindParam(':otp', $data->otp, PDO::PARAM_STR);
+        $stmtUpdate->execute();
 
         echo json_encode(
             array(
-                "otp" => $otp,
                 "status" => true,
-                "message" => "Đăng ký thành công. Mã OTP đã được gửi đến địa chỉ email của bạn."
+                "message" => "Đăng ký thành công"
             )
         );
-    } catch (Exception $e) {
+    } else {
+        // Nếu chưa xác nhận, thông báo lỗi
         echo json_encode(
             array(
                 "status" => false,
-                "message" => "Đăng ký thành công, nhưng không thể gửi mã OTP. Lỗi: {$mail->ErrorInfo}"
+                "message" => "Mã OTP chưa được xác nhận"
             )
         );
     }
+
 } catch (Exception $e) {
     echo json_encode(
         array(
@@ -125,3 +101,4 @@ try {
         )
     );
 }
+?>

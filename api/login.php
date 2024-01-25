@@ -14,10 +14,10 @@ try {
 // đọc dữ liệu từ json
 $data = json_decode(file_get_contents("php://input"));
 // đọc dữ liệu từ json
-$email = $data->email;
+$name = $data->name;
 $password = $data->password;
 // thêm dữ liệu vào database
-$sqlQuery = "SELECT * FROM users WHERE email = '$email'";
+$sqlQuery = "SELECT * FROM users WHERE name = '$name'";
 // thực thi câu lệnh pdo
 $stmt = $dbConn -> prepare($sqlQuery);
 $stmt->execute();
@@ -25,15 +25,12 @@ $stmt->execute();
 $user = $stmt->fetch(PDO::FETCH_ASSOC);
 // kiểm tra dữ liệu
 if($user) {
-    // kiểm tra mật khẩu
-    $check = password_verify($password,$user); // mã hóa mk
-    if($check == false){
-        echo json_encode(array(
-            "status" => false,
-            "message" => "Email và Mật khẩu không chính sác"
-        ));
-        return;
-    }
+    echo json_encode(
+        array(
+            "status" => true,
+            "user" => $user,
+        )
+    );
 }else{
     echo json_encode(array(
         "status" => false,
