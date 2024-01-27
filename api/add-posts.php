@@ -18,12 +18,9 @@ try {
         exit;
     }
     // Lấy token từ tham số URL
-    $token = isset($_GET['token']);
 
     if ($token) {
         // Lấy thông tin người dùng từ token
-        $user_data = get_data_from_token($token);
-        $id = intval($user_data["id"]);
         // Lấy dữ liệu từ yêu cầu
         $content = $data->content;
         $image = $data->image;

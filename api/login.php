@@ -19,20 +19,15 @@ try {
     $stmt->bindParam(1, $name, PDO::PARAM_STR);
     $stmt->execute();
     $user = $stmt->fetch(PDO::FETCH_ASSOC);
-    $headers = array('alg' => 'HS256', 'typ' => 'JWT');
-    $payload = array( 'id'=> $user);
 
 
     if ($name === $user["name"] && $password === $user["password"]) {
-        $token = generate_jwt($headers, $payload, $user['ID']);
         echo json_encode(
             array(
                 "status" => true,
                 "data" => array(
                     "id" => $user["ID"],
                     "name" => $user["name"],
-                    "token" => $token
-
                 )
             )
         );
