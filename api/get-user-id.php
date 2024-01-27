@@ -7,11 +7,22 @@ header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers
 
 include_once './connection.php';
 //http://192.168.1.30:8686/get-user-id.php?id=1
-$id = $_GET['id']; 
-$sqlQuery = "SELECT id, email, password, name, role , avatar,sdt FROM users WHERE id = $id";
-$stmt = $dbConn -> prepare($sqlQuery);
-$stmt -> execute();
-$user = $stmt->fetch(PDO::FETCH_ASSOC);
-echo json_encode($user);
-?>
+try {
+    //code...
 
+    $id = $_GET['id'];
+    $sqlQuery = "SELECT id FROM users WHERE id = $id";
+    $stmt = $dbConn->prepare($sqlQuery);
+    $stmt->execute();
+    $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if ($user) {
+        echo json_encode($user);
+    } else {
+        echo json_encode(array('error' => 'User not found'));
+    }
+} catch (PDOException $e) {
+    echo json_encode(array('error' => 'Database error: ' . $e->getMessage()));
+}
+
+?>

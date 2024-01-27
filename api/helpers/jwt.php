@@ -85,6 +85,7 @@ function get_bearer_token()
 function get_data_from_token($token)
 {
     $tokenParts = explode('.', $token);
+    var_dump($tokenParts);
     $payload = base64_decode($tokenParts[1]);
     $data = json_decode($payload, true);
     return $data;

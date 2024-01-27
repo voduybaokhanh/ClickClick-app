@@ -2,43 +2,55 @@
 header("Content-Type: application/json; charset=UTF-8");
 header("Access-Control-Allow-Methods: POST");
 header("Access-Control-Allow-Origin: *");
-header("Access-Control-Max-Age: 3600"); 
+header("Access-Control-Max-Age: 3600");
 header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
 
-//http://192.168.1.30:8686/login.php
-// đăng nhập tk
-// import connection.php
 include_once './connection.php';
-include_once './helpers/jwt.php';
+include_once './../api/helpers/jwt.php';
+
 try {
-// đọc dữ liệu từ json
-$data = json_decode(file_get_contents("php://input"));
-// đọc dữ liệu từ json
-$name = $data->name;
-$password = $data->password;
-// thêm dữ liệu vào database
-$sqlQuery = "SELECT * FROM users WHERE name = '$name'";
-// thực thi câu lệnh pdo
-$stmt = $dbConn -> prepare($sqlQuery);
-$stmt->execute();
-// lấy dữ liệu từ pdo
-$user = $stmt->fetch(PDO::FETCH_ASSOC);
-// kiểm tra dữ liệu
-if($user) {
+    $data = json_decode(file_get_contents("php://input"));
+    $name = $data->name;
+    $password = $data->password;
+
+    // Use a question mark as a placeholder instead of named placeholders
+    $sqlQuery = "SELECT ID, name, password FROM users WHERE name = ?";
+    $stmt = $dbConn->prepare($sqlQuery);
+    $stmt->bindParam(1, $name, PDO::PARAM_STR);
+    $stmt->execute();
+    $user = $stmt->fetch(PDO::FETCH_ASSOC);
+    $headers = array('alg' => 'HS256', 'typ' => 'JWT');
+    $payload = array( 'id'=> $user);
+
+
+    if ($name === $user["name"] && $password === $user["password"]) {
+        $token = generate_jwt($headers, $payload, $user['ID']);
+        echo json_encode(
+            array(
+                "status" => true,
+                "data" => array(
+                    "id" => $user["ID"],
+                    "name" => $user["name"],
+                    "token" => $token
+
+                )
+            )
+        );
+    } else {
+        echo json_encode(
+            array(
+                "status" => false,
+
+                "message" => "sai rồi kiểm tra lại"
+            )
+        );
+    }
+} catch (Exception $e) {
     echo json_encode(
         array(
-            "status" => true,
-            "user" => $user,
+            "status" => false,
+            "error" => "Authentication failed. Please try again."
         )
     );
-}else{
-    echo json_encode(array(
-        "status" => false,
-        "user" => null
-    ));
 }
-} catch (Exception $e) {
-    echo json_encode(array("message"=>$e->getMessage()));
-}
-
 ?>
