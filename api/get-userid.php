@@ -18,11 +18,9 @@ $id = $_GET['id'];
  $postStmt->execute();
  $user = $postStmt->fetch(PDO::FETCH_ASSOC);
 
- echo json_encode(
     array(
         "status" => true,
         "user" => $user
-    )
-);
+    );
 
 ?>
