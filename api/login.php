@@ -22,6 +22,9 @@ try {
 
 
     if ($name === $user["name"] && $password === $user["password"]) {
+        session_start();
+        $_SESSION["userid"] = $user["ID"];
+        $_SESSION["name"] = $user["name"];
         echo json_encode(
             array(
                 "status" => true,
@@ -48,4 +51,5 @@ try {
         )
     );
 }
+var_dump($_SESSION);
 ?>

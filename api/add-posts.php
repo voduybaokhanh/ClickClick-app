@@ -11,8 +11,11 @@ include_once './helpers/jwt.php';
 
 try {
     // Lấy dữ liệu từ JSON
+    session_start();
+    $userid = $_SESSION['userid'];
     $data = json_decode(file_get_contents("php://input"));
-    $id = $_GET['id'];
+    $id = $userid;
+
 
     // Check user credentials
     $sqlQuery = "SELECT ID,NAME FROM users WHERE ID LIKE :id";

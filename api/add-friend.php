@@ -1,41 +1,47 @@
 <?php
-// Kết nối đến cơ sở dữ liệu
-
 header("Content-Type: application/json; charset=UTF-8");
 header("Access-Control-Allow-Methods: POST");
 header("Access-Control-Allow-Origin: *");
 header("Access-Control-Max-Age: 3600");
 header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
 
-// Đọc dữ liệu JSON từ phần thân của request
-$data = json_decode(file_get_contents("php://input"));
+include_once './connection.php';
 
-// Xác thực người dùng và lấy userid từ token hoặc phiên đăng nhập
-$userid = 32; // Thay thế bằng quá trình xác thực người dùng thực tế
+try {
+    session_start();
 
-// Lấy FRIENDSHIPID từ dữ liệu gửi lên
-$FRIENDSHIPID = $data->FRIENDSHIPID;
-
-// Kiểm tra xem lời mời đã được gửi chưa
-$sqlCheckInvite = "SELECT * FROM friendships WHERE userid = :userid AND FRIENDSHIPID = :FRIENDSHIPID";
-$stmtCheckInvite = $dbConn->prepare($sqlCheckInvite);
-$stmtCheckInvite->bindParam(':userid', $userid, PDO::PARAM_INT);
-$stmtCheckInvite->bindParam(':FRIENDSHIPID', $FRIENDSHIPID, PDO::PARAM_INT);
-$stmtCheckInvite->execute();
-
-if ($stmtCheckInvite->rowCount() > 0) {
-    echo json_encode(array("error" => "Lời mời kết bạn đã được gửi trước đó."));
-} else {
-    // Thêm lời mời kết bạn vào cơ sở dữ liệu
-    $sqlInvite = "INSERT INTO friendships (userid, FRIENDSHIPID, status) VALUES (:userid, :FRIENDSHIPID, 'pending')";
-    $stmtInvite = $dbConn->prepare($sqlInvite);
-    $stmtInvite->bindParam(':userid', $userid, PDO::PARAM_INT);
-    $stmtInvite->bindParam(':FRIENDSHIPID', $FRIENDSHIPID, PDO::PARAM_INT);
-
-    if ($stmtInvite->execute()) {
-        echo json_encode(array("message" => "Lời mời kết bạn đã được gửi thành công."));
-    } else {
-        echo json_encode(array("error" => "Không thể gửi lời mời kết bạn."));
+    // Kiểm tra đăng nhập
+    if (!isset($_SESSION['userid'])) {
+        echo json_encode(array('status' => false, 'message' => 'Vui lòng đăng nhập.'));
+        exit;
     }
+    $userid = $_SESSION['userid'];
+    $FRIENDSHIPID = $_GET['FRIENDSHIPID'];
+    // Nhận dữ liệu từ yêu cầu
+    $data = json_decode(file_get_contents("php://input"));
+
+        // Kiểm tra xem người bạn đã tồn tại hay chưa
+        $checkQuery = "SELECT * FROM users WHERE ID = :FRIENDSHIPID";
+        $checkStmt = $dbConn->prepare($checkQuery);
+        $checkStmt->bindParam(':FRIENDSHIPID', $FRIENDSHIPID, PDO::PARAM_INT);
+        $checkStmt->execute();
+        $friend = $checkStmt->fetch(PDO::FETCH_ASSOC);
+    
+        if (!$friend) {
+            echo json_encode(array('status' => false, 'message' => 'Người bạn không tồn tại.'));
+            exit;
+        }
+
+    // Thêm yêu cầu kết bạn vào cơ sở dữ liệu
+    $insertFriendshipQuery = "INSERT INTO friendships (userid, FRIENDSHIPID, status,time) VALUES (:userid, :FRIENDSHIPID, 'pending',now())";
+    $insertFriendshipStmt = $dbConn->prepare($insertFriendshipQuery);
+    $insertFriendshipStmt->bindParam(':userid', $_SESSION['userid'], PDO::PARAM_INT);
+    $insertFriendshipStmt->bindParam(':FRIENDSHIPID', $FRIENDSHIPID, PDO::PARAM_INT);
+    $insertFriendshipStmt->bindParam(':FRIENDSHIPID', $FRIENDSHIPID, PDO::PARAM_INT);
+    $insertFriendshipStmt->execute();
+
+    echo json_encode(array('status' => true, 'message' => 'Yêu cầu kết bạn đã được gửi.'));
+} catch (Exception $e) {
+    echo json_encode(array('status' => false, 'message' => 'bạn đã gửi lời mời kết bạn cho người này!.'));
 }
 ?>
