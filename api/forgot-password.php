@@ -31,7 +31,7 @@ try {
         // send email otp
         // gửi email có link reset mật khẩu
         $link = "<a href='http://127.0.0.1:3000/reset-password?email="
-            . $email . "'>Click to reset password</a>";
+        . $email ."'>Click to reset password</a>";
         $mail = new PHPMailer();
         $mail->CharSet = "utf-8";
         $mail->isSMTP();
