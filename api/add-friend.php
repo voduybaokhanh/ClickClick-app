@@ -17,10 +17,16 @@ try {
         exit;
     }
     $userid = $_SESSION['userid'];
-    $friendshipid = $_GET['friendshipid'];
     // Nhận dữ liệu từ yêu cầu
     $data = json_decode(file_get_contents("php://input"));
+     // Kiểm tra xem có friendshipid được gửi hay không
+     if (!isset($data->friendshipid)) {
+        http_response_code(400);
+        echo json_encode(array('status' => false, 'message' => 'Thiếu tham số friendshipid'));
+        exit;
+    }
 
+    $friendshipid = $data->friendshipid; // Lấy friendshipid từ dữ liệu gửi đi
     // Kiểm tra xem người bạn đã tồn tại hay chưa
     $checkQuery = "SELECT * FROM users WHERE ID = :friendshipid";
     $checkStmt = $dbConn->prepare($checkQuery);
