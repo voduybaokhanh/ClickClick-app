@@ -9,7 +9,7 @@ header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers
 include_once './connection.php';
 $data = json_decode(file_get_contents("php://input"));
 $keyword = $_GET['keyword'];
-
+// tìm bạn theo email, tên , sdt
 try {
     // Đọc dữ liệu từ cơ sở dữ liệu
     $sqlQuery = "SELECT Email,NAME,SDT FROM users WHERE EMAIL LIKE '%$keyword%' or NAME LIKE '%$keyword%' or SDT LIKE '%$keyword%'";

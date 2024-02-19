@@ -6,7 +6,7 @@ header("Access-Control-Max-Age: 3600");
 header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
 include_once './connection.php';
 //http://127.0.0.1:8686/update-topics.php?id=8
-
+// cập nhật bài viết
 try {
     $data = json_decode(file_get_contents("php://input"));
     $CONTENT = $data->CONTENT;

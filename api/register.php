@@ -7,7 +7,7 @@ header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers
 
 // http://192.168.1.28:8686/register.php
 include_once './connection.php';
-
+// đăng ký
 try {
     $decodedData = stripslashes(file_get_contents("php://input"));
     $data = json_decode($decodedData);

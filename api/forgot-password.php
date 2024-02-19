@@ -13,7 +13,7 @@ include_once $_SERVER['DOCUMENT_ROOT'] . '/helpers/PHPMailer-master/src/Exceptio
 
 
 // http://192.168.1.33:8686/forgot-password.php
-// quên mật khẩu
+// lấy lại mật khẩu
 // import connection.php
 include_once './connection.php';
 try {
