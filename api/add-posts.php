@@ -51,9 +51,9 @@ try {
 
     // Lấy thông tin bài viết mới thêm vào
     $postId = $dbConn->lastInsertId();
-    $postQuery = "SELECT * FROM posts WHERE ID = :post_id";
+    $postQuery = "SELECT * FROM posts WHERE ID = :postid";
     $postStmt = $dbConn->prepare($postQuery);
-    $postStmt->bindParam(':post_id', $postId, PDO::PARAM_INT);
+    $postStmt->bindParam(':postid', $postId, PDO::PARAM_INT);
     $postStmt->execute();
     $post = $postStmt->fetch(PDO::FETCH_ASSOC);
 
