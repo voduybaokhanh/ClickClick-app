@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Camera API</title>
+  </head>
+  <body>
+    <h1>Camera API</h1>
+    <video id="video" width="640" height="480" autoplay></video>
+    <button id="capture">Chụp ảnh</button>
+    <canvas id="canvas" width="640" height="480"></canvas>
+
+    <script>
+      // Lấy video từ máy ảnh của người dùng
+      navigator.mediaDevices
+        .getUserMedia({ video: true })
+        .then(function (stream) {
+          var video = document.getElementById("video");
+          video.srcObject = stream;
+          video.play();
+        })
+        .catch(function (err) {
+          console.log("Không thể truy cập máy ảnh: " + err);
+        });
+
+      // Chụp ảnh khi nhấn nút "Chụp ảnh"
+      document.getElementById("capture").addEventListener("click", function () {
+        var video = document.getElementById("video");
+        var canvas = document.getElementById("canvas");
+        var context = canvas.getContext("2d");
+        context.drawImage(video, 0, 0, 640, 480);
+        var imageData = canvas.toDataURL("image/jpeg");
+
+        // Gửi dữ liệu ảnh đến API PHP
+        fetch("upload_image.php", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ image: imageData }),
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            console.log(data);
+            if (data.success) {
+              alert("Ảnh đã được chụp và lưu trữ thành công.");
+            } else {
+              alert("Đã xảy ra lỗi khi lưu ảnh.");
+            }
+          })
+          .catch((error) => {
+            console.error("Đã xảy ra lỗi:", error);
+          });
+      });
+    </script>
+  </body>
+</html>

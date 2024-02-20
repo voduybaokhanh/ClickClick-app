@@ -1,43 +1,52 @@
 <?php
-// FILEPATH: /D:/bt/GItHub/ClickClick-app/api/helpers/upload_image.php
 header("Content-Type: application/json; charset=UTF-8");
-header("Access-Control-Allow-Methods: GET");
+header("Access-Control-Allow-Methods: POST");
 header("Access-Control-Allow-Origin: *");
 header("Access-Control-Max-Age: 3600");
 header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
-//http://192.168.1.30:8686/getAllUsers.php
-//import file connection.php
+
 include_once './connection.php';
 
-// đọc dữ liệu từ database
-$sqlQuery = "SELECT * FROM USERS";
-$stmt = $dbConn->prepare($sqlQuery);
-$stmt->execute();
-// Check if the request method is POST
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Check if the file was uploaded without errors
-    if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
-        $file = $_FILES['image'];
+$response = array();
 
-        // Specify the directory where you want to save the uploaded image
-        $uploadDir = '/path/to/upload/directory/';
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    if (isset($_FILES["file"])) {
+        $targetDir = "uploads/";
+        $targetFile = $targetDir . basename($_FILES["file"]["name"]);
+        $uploadOk = 1;
+        $imageFileType = strtolower(pathinfo($targetFile, PATHINFO_EXTENSION));
 
-        // Generate a unique filename for the uploaded image
-        $filename = uniqid() . '_' . $file['name'];
+        if (file_exists($targetFile)) {
+            $response['error'] = "Sorry, file already exists.";
+            $uploadOk = 0;
+        }
 
-        // Move the uploaded file to the specified directory
-        if (move_uploaded_file($file['tmp_name'], $uploadDir . $filename)) {
-            // File uploaded successfully
-            echo 'Image uploaded successfully.';
+        if ($_FILES["file"]["size"] > 500000) {
+            $response['error'] = "Sorry, your file is too large.";
+            $uploadOk = 0;
+        }
+
+        $allowedFormats = array("jpg", "jpeg", "png", "gif");
+        if (!in_array($imageFileType, $allowedFormats)) {
+            $response['error'] = "Sorry, only JPG, JPEG, PNG & GIF files are allowed.";
+            $uploadOk = 0;
+        }
+
+        if ($uploadOk == 0) {
+            $response['error'] = "Sorry, your file was not uploaded.";
         } else {
-            // Failed to move the uploaded file
-            echo 'Failed to upload image.';
+            if (move_uploaded_file($_FILES["file"]["tmp_name"], $targetFile)) {
+                $response['success'] = "The file " . htmlspecialchars(basename($_FILES["file"]["name"])) . " has been uploaded.";
+                $response['file_url'] = "uploads/" . basename($_FILES["file"]["name"]);
+            } else {
+                $response['error'] = "Sorry, there was an error uploading your file.";
+            }
         }
     } else {
-        // No file uploaded or an error occurred during upload
-        echo 'Invalid file.';
+        $response['error'] = "No file uploaded.";
     }
 } else {
-    // Invalid request method
-    echo 'Invalid request.';
+    $response['error'] = "Invalid request method.";
 }
+
+echo json_encode($response);
