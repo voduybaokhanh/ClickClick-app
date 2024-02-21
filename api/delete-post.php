@@ -8,7 +8,7 @@ header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers
 // Import connection.php và JWT
 include_once './connection.php';
 include_once './helpers/jwt.php';
-
+// xóa bài đăng
 try {
     //đọc id từ query string
     $id = $_GET['id'];

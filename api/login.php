@@ -7,6 +7,7 @@ header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers
 
 include_once './connection.php';
 include_once './../api/helpers/jwt.php';
+// đăng nhập
 
 try {
     $data = json_decode(file_get_contents("php://input"));

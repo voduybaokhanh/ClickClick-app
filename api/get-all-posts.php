@@ -4,8 +4,9 @@ header("Access-Control-Allow-Methods: GET");
 header("Access-Control-Allow-Origin: *");
 header("Access-Control-Max-Age: 3600");
 header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
-//http://127.0.0.1:8686/get-news.php
+//http://127.0.0.1:8686/get-all-posts.php
 //import file connection.php
+// hiện tất cả bài đăng
 include_once './connection.php'; 
 // đọc dữ liệu từ database
 $sqlQuery = "SELECT * FROM posts";

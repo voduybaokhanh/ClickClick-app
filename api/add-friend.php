@@ -15,33 +15,59 @@ try {
         echo json_encode(array('status' => false, 'message' => 'Vui lòng đăng nhập.'));
         exit;
     }
+
     $userid = $_SESSION['userid'];
-    $FRIENDSHIPID = $_GET['FRIENDSHIPID'];
     // Nhận dữ liệu từ yêu cầu
     $data = json_decode(file_get_contents("php://input"));
 
-        // Kiểm tra xem người bạn đã tồn tại hay chưa
-        $checkQuery = "SELECT * FROM users WHERE ID = :FRIENDSHIPID";
-        $checkStmt = $dbConn->prepare($checkQuery);
-        $checkStmt->bindParam(':FRIENDSHIPID', $FRIENDSHIPID, PDO::PARAM_INT);
-        $checkStmt->execute();
-        $friend = $checkStmt->fetch(PDO::FETCH_ASSOC);
-    
-        if (!$friend) {
-            echo json_encode(array('status' => false, 'message' => 'Người bạn không tồn tại.'));
-            exit;
-        }
+    // Kiểm tra xem có friendshipid được gửi hay không
+    if (!isset($data->friendshipid)) {
+        http_response_code(400);
+        echo json_encode(array('status' => false, 'message' => 'Thiếu tham số friendshipid'));
+        exit;
+    }
+
+    $friendshipid = $data->friendshipid; // Lấy friendshipid từ dữ liệu gửi đi
+
+    // Kiểm tra xem người bạn đã tồn tại hay chưa
+    $checkFriendQuery = "SELECT * FROM users WHERE ID = :friendshipid";
+    $checkFriendStmt = $dbConn->prepare($checkFriendQuery);
+    $checkFriendStmt->bindParam(':friendshipid', $friendshipid, PDO::PARAM_INT);
+    $checkFriendStmt->execute();
+    $friend = $checkFriendStmt->fetch(PDO::FETCH_ASSOC);
+
+    // Kiểm tra xem người bạn có phải là chính người dùng hiện tại hay không
+    if ($friendshipid == $userid) {
+        throw new Exception('Không thể kết bạn với chính bản thân.');
+    }
+
+    if (!$friend) {
+        echo json_encode(array('status' => false, 'message' => 'Người bạn không tồn tại.'));
+        exit;
+    }
+
+    // Kiểm tra xem đã có mối quan hệ bạn bè trước đó hay chưa
+    $checkRelationQuery = "SELECT * FROM friendships WHERE (userid = :userid AND friendshipid = :friendshipid) OR (userid = :friendshipid AND friendshipid = :userid)";
+    $checkRelationStmt = $dbConn->prepare($checkRelationQuery);
+    $checkRelationStmt->bindParam(':userid', $userid, PDO::PARAM_INT);
+    $checkRelationStmt->bindParam(':friendshipid', $friendshipid, PDO::PARAM_INT);
+    $checkRelationStmt->execute();
+    $existingRelation = $checkRelationStmt->fetch(PDO::FETCH_ASSOC);
+
+    if ($existingRelation) {
+        echo json_encode(array('status' => false, 'message' => 'Mối quan hệ bạn bè đã tồn tại.'));
+        exit;
+    }
 
     // Thêm yêu cầu kết bạn vào cơ sở dữ liệu
-    $insertFriendshipQuery = "INSERT INTO friendships (userid, FRIENDSHIPID, status,time) VALUES (:userid, :FRIENDSHIPID, 'pending',now())";
+    $insertFriendshipQuery = "INSERT INTO friendships (userid, friendshipid, status, time) VALUES (:userid, :friendshipid, 'pending', NOW())";
     $insertFriendshipStmt = $dbConn->prepare($insertFriendshipQuery);
-    $insertFriendshipStmt->bindParam(':userid', $_SESSION['userid'], PDO::PARAM_INT);
-    $insertFriendshipStmt->bindParam(':FRIENDSHIPID', $FRIENDSHIPID, PDO::PARAM_INT);
-    $insertFriendshipStmt->bindParam(':FRIENDSHIPID', $FRIENDSHIPID, PDO::PARAM_INT);
+    $insertFriendshipStmt->bindParam(':userid', $userid, PDO::PARAM_INT);
+    $insertFriendshipStmt->bindParam(':friendshipid', $friendshipid, PDO::PARAM_INT);
     $insertFriendshipStmt->execute();
 
     echo json_encode(array('status' => true, 'message' => 'Yêu cầu kết bạn đã được gửi.'));
 } catch (Exception $e) {
-    echo json_encode(array('status' => false, 'message' => 'bạn đã gửi lời mời kết bạn cho người này!.'));
+    echo json_encode(array('status' => false, 'message' => $e->getMessage()));
 }
 ?>

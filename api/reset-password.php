@@ -7,6 +7,7 @@ header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers
 
 // http://172.16.117.36:8686/reset-password.php
 // đọc otp, password, password_confirm từ body
+// đặt lại mật khẩu
 try {
     include_once './connection.php';
     $data = json_decode(file_get_contents("php://input"));
