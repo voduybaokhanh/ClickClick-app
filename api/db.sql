@@ -1,34 +1,96 @@
 -- Active: 1699102041762@@127.0.0.1@3306
-
 -- tạo database
 CREATE DATABASE IF NOT EXISTS `DUAN`;
+
 USE `DUAN`;
 
--- tạo bảng
-CREATE TABLE IF NOT EXISTS `USERS` (
-  `ID` int(255) NOT NULL AUTO_INCREMENT,
-  `EMAIL` varchar(255) UNIQUE NOT NULL,
-  `PASSWORD` varchar(255) NOT NULL,
-  `NAME` varchar(255) NOT NULL,
-  `ROLE` varchar(255) NOT NULL,
-  `AVATAR` varchar(255) NOT NULL,
-  `SDT` INTEGER(11) NOT NULL,
-  PRIMARY KEY (`ID`)
-);
+-- tạo bảng USERS
+CREATE TABLE
+  IF NOT EXISTS `USERS` (
+    `ID` INT NOT NULL AUTO_INCREMENT,
+    `EMAIL` VARCHAR(255) UNIQUE NOT NULL,
+    `PASSWORD` VARCHAR(255) NOT NULL,
+    `NAME` VARCHAR(255) NOT NULL,
+    `ROLE` VARCHAR(255) NOT NULL,
+    `AVATAR` VARCHAR(255) NOT NULL,
+    `SDT` INT NOT NULL,
+    `AVAILABLE` TINYINT (1) DEFAULT 0,
+    PRIMARY KEY (`ID`)
+  );
 
--- thêm dữ liệu vào bảng User
-INSERT INTO `USERS` (`ID`, `EMAIL`, `PASSWORD`, `NAME`, `ROLE`, `AVATAR`,`SDT`) VALUES
-(1, 'admin@gmail.com', '123', 'Nguyen van a', 'admin', 'https://www.w3schools.com/howto/img_avatar.png',0778554734),
-(2, 'binh@gmail.com', '123', 'Nguyen van b', 'user', 'https://www.w3schools.com/howto/img_avatar.png',0933774840),
-(3, 'khang@gmail.com', '123', 'Nguyen van c', 'user', 'https://www.w3schools.com/howto/img_avatar.png',0907778450);
+-- bảng Notifications
+CREATE TABLE
+  IF NOT EXISTS `NOTIFICATIONS` (
+    `ID` INT NOT NULL AUTO_INCREMENT,
+    `USERID` INT NOT NULL,
+    `CONTENT` VARCHAR(255) NOT NULL,
+    `TIME` TIMESTAMP,
+    PRIMARY KEY (`ID`),
+    FOREIGN KEY (`USERID`) REFERENCES `USERS` (`ID`),
+  );
 
--- quên mật khẩu
-CREATE TABLE IF NOT EXISTS `password_resets` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `email` varchar(255) NOT NULL,
-  `token` varchar(255) NOT NULL,
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
-  `available` tinyint(1) NOT NULL DEFAULT 1,
-  PRIMARY KEY (`id`)
-) ENGINE = InnoDB DEFAULT CHARSET=utf8mb4;
+-- bảng Frendships
+CREATE TABLE
+  IF NOT EXISTS `FRIENDSHIPS` (
+    `USERID` INT NOT NULL,
+    `FRIENDSHIPID` INT NOT NULL,
+    `STATUS` VARCHAR(255) NOT NULL,
+    `TIME` TIMESTAMP,
+    PRIMARY KEY (`USERID`, `FRIENDSHIPID`),
+    FOREIGN KEY (`IDUSER`) REFERENCES `USERS` (`ID`),
+    FOREIGN KEY (`FRIENDSHIPID`) REFERENCES `USERS` (`ID`),
+  );
 
+-- bảng POSTS
+CREATE TABLE
+  IF NOT EXISTS `POSTS` (
+    `ID` INT NOT NULL AUTO_INCREMENT,
+    `USERID` INT NOT NULL,
+    `CONTENT` VARCHAR(255),
+    `LIKES` INT,
+    `AVAILABLE` TINYINT (1) DEFAULT 0,
+    `IMAGE` VARCHAR(255),
+    `TIME` TIMESTAMP,
+    PRIMARY KEY (`ID`),
+    FOREIGN KEY (`USERID`) REFERENCES `USERS` (`ID`),
+  );
+
+-- bảng chats
+CREATE TABLE
+  IF NOT EXISTS `CHATS` (
+    `ID` INT NOT NULL AUTO_INCREMENT,
+    `SENDERID` INT NOT NULL,
+    `RECEIVERID` INT NOT NULL,
+    `POSTID` INT,
+    `CONTENT` VARCHAR(255),
+    `TIME` TIMESTAMP,
+    PRIMARY KEY (`ID`),
+    FOREIGN KEY (`SENDERID`) REFERENCES `USERS` (`ID`),
+    FOREIGN KEY (`RECEIVERID`) REFERENCES `USERS` (`ID`),
+    FOREIGN KEY (`POSTID`) REFERENCES `POST` (`ID`),
+  );
+
+-- bảng LIKES
+CREATE TABLE
+  IF NOT EXISTS `LIKES` (
+    `ID` INT NOT NULL,
+    `USERID` INT NOT NULL,
+    `POSTID` INT NOT NULL,
+    `TIME` TIMESTAMP,
+    PRIMARY KEY (`ID`),
+    FOREIGN KEY (`USERID`) REFERENCES `USERS` (`ID`),
+    FOREIGN KEY (`POSTID`) REFERENCES `POSTS` (`ID`),
+  );
+
+-- bảng Reports
+CREATE TABLE
+  IF NOT EXISTS `REPORTS` (
+    `ID` INT NOT NULL AUTO_INCREMENT,
+    `USERID` INT NOT NULL,
+    `POSTID` INT NOT NULL,
+    `CONTENT` VARCHAR(255) NOT NULL,
+    `TIME` TIMESTAMP,
+    PRIMARY KEY (`ID`),
+    FOREIGN KEY (`USERID`) REFERENCES `USERS` (`ID`),
+    FOREIGN KEY (`POSTID`) REFERENCES `POSTS` (`ID`),
+  );
