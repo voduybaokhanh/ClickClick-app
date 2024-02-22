@@ -11,15 +11,15 @@ include_once './connection.php';
 try {
     session_start();
 
-    // Kiểm tra đăng nhập
-    if (!isset($_SESSION['userid'])) {
-        echo json_encode(array('status' => false, 'message' => 'Vui lòng đăng nhập.'));
-        exit;
-    }
+  
 
     // Nhận dữ liệu từ yêu cầu
     $data = json_decode(file_get_contents("php://input"));
-
+      // Kiểm tra đăng nhập
+      if (!isset($data->userid)) {
+        echo json_encode(array('status' => false, 'message' => 'Vui lòng đăng nhập.'));
+        exit;
+    }
     // Kiểm tra xem có friendshipid được gửi hay không
     if (!isset($data->friendshipid)) {
         http_response_code(400);
@@ -27,8 +27,7 @@ try {
         exit;
     }
 
-    // Lấy userID từ session
-    $userid = $_SESSION['userid'];
+
 
     // Cập nhật trạng thái yêu cầu kết bạn thành "accepted" trong cơ sở dữ liệu
     $acceptFriendshipQuery = "UPDATE friendships SET status = 'friend' WHERE friendshipid = :friendshipid AND userid = :userid";
