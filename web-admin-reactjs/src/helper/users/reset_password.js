@@ -1,57 +1,53 @@
 import React, { useState, useEffect } from "react";
-import AxiosInstance from "../helper/AxiosInstance";
-import { useParams, useSearchParams } from "react-router-dom";
-import { Toast } from "bootstrap";
-import Login from "./login";
+import AxiosInstance from "../AxiosInstance";
+import { useSearchParams } from "react-router-dom";
 
-
-const ResetPassword = (props) => {
-    //lấy 2 query param là token và email từ url
-
+const ResetPassword = () => {
+    // Lấy 2 query param là token và email từ url
     const [params, setParams] = useSearchParams();
     const [email, setEmail] = useState(params.get('email'));
+    const [token, setToken] = useState(params.get('token')); // Thêm state cho token
     const [password, setPassword] = useState('');
     const [password_confirmation, setPassword_confirmation] = useState('');
     console.log(email);
 
     const [isValid, setisValid] = useState(false);
 
-    // check token và email có hợp lệ hay không
-    useEffect(() => {
-        const checkToken = async () => {
-            try {
-                const body = {
-                    email: email
-                }
-                const response = await AxiosInstance()
-                    .post(`/check-reset-password.php`, body);
-                setisValid(response.status);
-            } catch (error) {
-                console.log(error);
-            }
-        }
-        checkToken();
-    }, [email]);
+    // Check token và email có hợp lệ hay không
+    // useEffect(() => {
+    //     const checkToken = async () => {
+    //         try {
+    //             const body = {
+    //                 email: email
+    //             }
+    //             const response = await AxiosInstance()
+    //                 .post('....../api/check-token.php', body);
+    //             setisValid(response.status);
+    //         } catch (error) {
+    //             console.log(error);
+    //         }
+    //     }
+    //     checkToken();
+    // }, [email]);
 
-    const handleResetPassword = async () =>{
+    const handleResetPassword = async () => {
         try {
-            const body ={
+            const body = {
                 email: email,
                 password: password,
                 password_confirmation: password_confirmation
             }
-            const response = await AxiosInstance().post(`/reset-password.php`,body);
+            const response = await AxiosInstance().post(`./api/reset-password.php`, body);
             console.log(response);
-            alert('đổi mật khẩu thành công');
+            alert('Đổi mật khẩu thành công');
             window.location.href = "/";
         } catch (error) {
             console.log(error);
         }
     }
 
-    // nếu token và email hợp lệ thì hiện thị form đổi mk
-
-    if (!email || !token || !isValid) {
+    // Nếu token và email hợp lệ thì hiển thị form đổi mật khẩu
+    if (!email || !token || !isValid) { // Thêm token vào điều kiện kiểm tra
         return (
             <div>
                 <h1>404</h1>
@@ -62,7 +58,7 @@ const ResetPassword = (props) => {
     return (
         <div>
             <h1>Reset Password</h1>
-            <from>
+            <form>
                 <div className="form-group">
                     <label>New Password</label>
                     <input
@@ -78,7 +74,7 @@ const ResetPassword = (props) => {
                         type="password" className="form-control" />
                 </div>
                 <button onClick={handleResetPassword} type="button" className="btn btn-primary">Submit</button>
-            </from>
+            </form>
         </div>
     )
 

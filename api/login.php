@@ -53,4 +53,3 @@ try {
     );
 }
 var_dump($_SESSION);
-?>
