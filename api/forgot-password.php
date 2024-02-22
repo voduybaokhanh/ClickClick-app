@@ -13,7 +13,7 @@ include_once $_SERVER['DOCUMENT_ROOT'] . '/helpers/PHPMailer-master/src/Exceptio
 
 
 // http://192.168.1.33:8686/forgot-password.php
-// quên mật khẩu
+// lấy lại mật khẩu
 // import connection.php
 include_once './connection.php';
 try {
@@ -31,7 +31,7 @@ try {
         // send email otp
         // gửi email có link reset mật khẩu
         $link = "<a href='http://127.0.0.1:3000/reset-password?email="
-            . $email . "'>Click to reset password</a>";
+        . $email ."'>Click to reset password</a>";
         $mail = new PHPMailer();
         $mail->CharSet = "utf-8";
         $mail->isSMTP();
