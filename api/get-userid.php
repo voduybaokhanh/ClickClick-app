@@ -11,7 +11,7 @@ include_once './connection.php';
 $data = json_decode(file_get_contents("php://input"));
 $id = $_GET['id'];
 // đọc dữ liệu từ database 
- // Lấy thông tin bài viết mới thêm vào
+
  $postQuery = "SELECT * FROM users WHERE id = :id";
  $postStmt = $dbConn->prepare($postQuery);
  $postStmt->bindParam(':id', $id, PDO::PARAM_INT);

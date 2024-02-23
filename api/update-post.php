@@ -9,13 +9,14 @@ include_once './connection.php';
 // cập nhật bài viết
 try {
     $data = json_decode(file_get_contents("php://input"));
-    $CONTENT = $data->CONTENT;
-    $id = $_GET['id'];
-    $sqlQuery = "UPDATE posts SET  CONTENT = '$CONTENT' WHERE id = $id";
+    $content = $data->content;
+    $id = $data->id;
+    $sqlQuery = "UPDATE posts SET  content = '$content' WHERE id = :id";
     $stmt = $dbConn->prepare($sqlQuery);
+    $stmt->bindParam("id" , $id);
     $stmt->execute();
     // trả về dữ liệu dạng json
     echo json_encode(array("status" => true, "message" => "cập nhật bài viết thành công!"));
 } catch (Exception $e) {
-    echo json_encode(array("status" => false, "message" => "cập nhật bài viết thất bại!"));
+    echo json_encode(array("status" => false, "message" => "cập nhật bài viết thất bại!"+ $e->getMessage()));
 }

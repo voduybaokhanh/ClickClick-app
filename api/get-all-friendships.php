@@ -8,24 +8,28 @@ header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers
 include_once './connection.php';
 
 try {
-    session_start();
+    // Nhận dữ liệu từ yêu cầu
+    $data = json_decode(file_get_contents("php://input"));
 
     // Kiểm tra đăng nhập
-    if (!isset($_SESSION['userid'])) {
-        echo json_encode(array('status' => false, 'message' => 'Vui lòng đăng nhập.'));
+    if (!isset($data->userid)) {
+        echo json_encode(array('status' => false, 'message' => 'Vui lòng cung cấp userid.'));
         exit;
     }
 
-    $userid = $_SESSION['userid'];
-    
-    // Truy vấn để lấy danh sách bạn bè có trạng thái là "friend"
-    $friendListQuery = "SELECT users.* FROM friendships INNER JOIN users ON friendships.friendshipid = users.ID WHERE friendships.userid = :userid AND friendships.status = 'pending'";
-    $friendListStmt = $dbConn->prepare($friendListQuery);
-    $friendListStmt->bindParam(':userid', $userid, PDO::PARAM_INT);
-    $friendListStmt->execute();
-    $friendshipsList = $friendListStmt->fetchAll(PDO::FETCH_ASSOC);
+    $userid = $data->userid;
 
-    echo json_encode(array('status' => true, 'friendships' => $friendshipsList));
+    // Truy vấn để lấy danh sách người đã gửi lời mời kết bạn
+    $invitationQuery = "SELECT users.* FROM friendships 
+                        INNER JOIN users ON friendships.userid = users.ID 
+                        WHERE friendships.friendshipid = :userid 
+                        AND friendships.status = 'pending'";
+    $invitationStmt = $dbConn->prepare($invitationQuery);
+    $invitationStmt->bindParam(':userid', $userid, PDO::PARAM_INT);
+    $invitationStmt->execute();
+    $invitationList = $invitationStmt->fetchAll(PDO::FETCH_ASSOC);
+
+    echo json_encode(array('status' => true, 'invitations' => $invitationList));
 } catch (Exception $e) {
     echo json_encode(array('status' => false, 'message' => $e->getMessage()));
 }
