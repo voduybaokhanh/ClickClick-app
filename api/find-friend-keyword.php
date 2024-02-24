@@ -8,11 +8,18 @@ header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers
 
 include_once './connection.php';
 $data = json_decode(file_get_contents("php://input"));
-$keyword = $_GET['keyword'];
+// Kiểm tra xem có friendshipid và userid được gửi hay không
+if (!isset($data->keyword)) {
+    http_response_code(400);
+    echo json_encode(array('status' => false, 'message' => 'Thiếu tham số keyword'));
+    exit;
+}
+
+$keyword = $data->keyword;
 // tìm bạn theo email, tên , sdt
 try {
     // Đọc dữ liệu từ cơ sở dữ liệu
-    $sqlQuery = "SELECT Email,NAME,SDT FROM users WHERE EMAIL LIKE '%$keyword%' or NAME LIKE '%$keyword%' or SDT LIKE '%$keyword%'";
+    $sqlQuery = "SELECT ID,Email,NAME,SDT FROM users WHERE EMAIL LIKE '%$keyword%' or NAME LIKE '%$keyword%' or SDT LIKE '%$keyword%'";
     $sqlQuery = $dbConn->prepare($sqlQuery);
     $sqlQuery->execute();
     $user = $sqlQuery->fetch(PDO::FETCH_ASSOC);
