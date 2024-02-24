@@ -1,49 +1,25 @@
-import React, { useState } from "react";
-import AxiosInstance from "../helper/AxiosInstance";
-import Register from "./Register";
-const Login = (props) => {
-    const {saveUser} = props;
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
+import React from "react";
+import AxiosInstance from "../../helper/Axiostance";
 
-    const login = async () => {
+const Login = (props) => {
+    const [username, setUsername] = React.useState('');
+    const [password, setPassword] = React.useState('');
+
+    const handleLogin = async () => {
         try {
-            const body = { email, password }
-            const result = await AxiosInstance().post('/login.php', body);
-            console.log(result);
-            if(result.status){
-                // lưu token vào trong storage
-                localStorage.setItem('token',result.token); 
-                saveUser(result.user);
-            }
-            else{
-                alert("đăng ký thất bại");
-            }
+            const axiosInstance = await AxiosInstance();
+
+            console.log(response);
         } catch (error) {
-            console.log(error);
+            console.error('Lỗi khi đăng nhập: ', error);
         }
-    }
+    };
 
     return (
-        <form>
-            <div className="mb-3 mt-3">
-                <label className="form-label">Email:</label>
-                <input value={email} onChange={(e) => setEmail(e.target.value)}
-                    type="email" className="form-control"
-                    placeholder="Enter email" name="email" />
-            </div>
-            <div className="mb-3">
-                <label className="form-label">Password:</label>
-                <input value={password} onChange={(e) => setPassword(e.target.value)}
-                    type="password" className="form-control"
-                    placeholder="Enter password" name="pswd" />
-            </div>
-            <button onClick={login} type="button" className="btn btn-primary">Submit</button>
-            <a href={`/register`} className="btn btn-primary">đăng ký</a>
-
-        </form>
-    )
+        <div>
+            <input type="text" value={username} onChange={e => setUsername(e.target.value)} />
+            <input type="password" value={password} onChange={e => setPassword(e.target.value)} />
+            <button onClick={handleLogin}>Đăng nhập</button>
+        </div>
+    );
 }
-
-
-export default Login;
