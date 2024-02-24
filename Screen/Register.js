@@ -1,27 +1,40 @@
-import { StyleSheet, Text, View, Image,TextInput,
+import {
+  StyleSheet,
+  Text,
+  View,
+  Image,
+  TextInput,
   TouchableOpacity,
-  ScrollView, } from 'react-native'
-import React from 'react'
+  ScrollView,
+} from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
+import React, { useState } from "react";
+
 
 const Register = () => {
+  const [name, setName] = useState(""); // State để lưu trữ giá trị của email
+  const [password, setPassword] = useState(""); 
   return (
     <LinearGradient
         locations={[0.05, 0.17, 0.8, 1]}
         colors={["#3B21B7", "#8B64DA", "#D195EE", "#CECBD3"]}
         style={styles.linearGradient} >
     <View style={styles.container}>
+
+     
     <TextInput
               placeholder="Email"
               placeholderTextColor="#FFFFFF"
               style={styles.TextInbutEmail}
-              
+              value={name}
               onChangeText={(text) => setName(text)}
             />
              <TextInput
                 placeholder="Name"
                 placeholderTextColor="#FFFFFF"
                 style={styles.TextInbutPassword}
+                value={password}
+                onChangeText={(text) => setPassword(text)}
                
               />
               
@@ -53,8 +66,8 @@ const Register = () => {
 <View style={styles.Remember}>
   
               <Image source={require("../Image/boxRemember.png")} />
-              <Text style={styles.Text1}>I Agree with <Text style={styles.Text10}>privacy</Text> and
-              <Text style={styles.Text10}> policy</Text> </Text>
+              <Text style={styles.Text1}>I Agree with <Text style={styles.Text10}>Privacy</Text> and
+              <Text style={styles.Text10}> Policy</Text> </Text>
               {/* <Text style={styles.Text2}>Forgot Password</Text> */}
             </View>  
 
@@ -80,6 +93,9 @@ const Register = () => {
 export default Register
 
 const styles = StyleSheet.create({
+
+  
+
   Sngg: {
     right: 3,
     marginBottom: 10,
