@@ -56,6 +56,7 @@ const Login = () => {
             >
               Sign in
             </Text>
+            
 
             <TextInput
               placeholder="Name"

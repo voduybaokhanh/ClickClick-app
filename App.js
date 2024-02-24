@@ -1,3 +1,16 @@
+<<<<<<< Updated upstream
+=======
+
+import { StatusBar } from 'expo-status-bar';
+import { StyleSheet, Text, View } from 'react-native';
+import Register from 'WebAdmin/Register';
+import Login from './Screen/Login'
+
+export default function App() {
+
+  return  (
+    <Login/>
+>>>>>>> Stashed changes
 import * as React from 'react';
 import { View, Text,StyleSheet } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
@@ -7,6 +20,7 @@ import Login from './Screen/user/Login';
 import Hello from './Screen/Hello';
 import Post from './Screen/Post';
 const Stack = createNativeStackNavigator();
+ ) }
 
 export default function App() {
   return (
@@ -17,7 +31,10 @@ export default function App() {
         <Stack.Screen name="Post" component={Post} />
       </Stack.Navigator>
     </NavigationContainer>
+<<<<<<< Updated upstream
 
+=======
+>>>>>>> Stashed changes
   );
 }
 
