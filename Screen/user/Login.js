@@ -15,27 +15,27 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 const Login = () => {
   const [name, setName] = useState(""); // State để lưu trữ giá trị của email
   const [password, setPassword] = useState(""); // State để lưu trữ giá trị của password
-  const actionLogin = async () => {
-    try {
-      const body = { name, password };
-      const instance = await AxiosInstance();
-      const result = await instance.post("/login.php", body);
-      const token = await AsyncStorage.getItem("token");
-      if (result.status) {
-        await AsyncStorage.setItem("token", result.user.id.toString());
-        alert("Đăng nhập thành công");
+  // const actionLogin = async () => {
+  //   try {
+  //     const body = { name, password };
+  //     const instance = await AxiosInstance();
+  //     const result = await instance.post("/login.php", body);
+  //     const token = await AsyncStorage.getItem("token");
+  //     if (result.status) {
+  //       await AsyncStorage.setItem("token", result.user.id.toString());
+  //       alert("Đăng nhập thành công");
         
 
-        // Token đã được lưu trữ thành công, thực hiện các thao tác tiếp theo nếu cần
-      } else {
-        alert("đăng nhập thất bại");
-      }
-      console.log(result.user.id);
-      console.log(token);
-    } catch (error) {
-      console.error("Lỗi khi thực hiện đăng nhập: ", error);
-    }
-  }
+  //       // Token đã được lưu trữ thành công, thực hiện các thao tác tiếp theo nếu cần
+  //     } else {
+  //       alert("đăng nhập thất bại");
+  //     }
+  //     console.log(result.user.id);
+  //     console.log(token);
+  //   } catch (error) {
+  //     console.error("Lỗi khi thực hiện đăng nhập: ", error);
+  //   }
+  // }
 
   return (
     <View style={styles.container}>

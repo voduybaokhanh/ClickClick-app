@@ -1,16 +1,3 @@
-<<<<<<< Updated upstream
-=======
-
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
-import Register from 'WebAdmin/Register';
-import Login from './Screen/Login'
-
-export default function App() {
-
-  return  (
-    <Login/>
->>>>>>> Stashed changes
 import * as React from 'react';
 import { View, Text,StyleSheet } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
@@ -20,21 +7,18 @@ import Login from './Screen/user/Login';
 import Hello from './Screen/Hello';
 import Post from './Screen/Post';
 const Stack = createNativeStackNavigator();
- ) }
+
 
 export default function App() {
   return (
       <NavigationContainer styles={styles.container}>
       <Stack.Navigator>
-        <Stack.Screen options={{headerShown: false}} name="Hello" component={Hello} />
-        <Stack.Screen options={{headerShown: false}} name="Login" component={Login} />
-        <Stack.Screen name="Post" component={Post} />
+         {/* <Stack.Screen options={{headerShown: false}} name="Hello" component={Hello} />  */}
+         <Stack.Screen options={{headerShown: false}} name="Register" component={Register} /> 
+        {/* <Stack.Screen options={{headerShown: false}} name="Login" component={Login} />
+        <Stack.Screen name="Post" component={Post} /> */}
       </Stack.Navigator>
     </NavigationContainer>
-<<<<<<< Updated upstream
-
-=======
->>>>>>> Stashed changes
   );
 }
 
