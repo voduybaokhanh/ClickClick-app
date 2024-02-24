@@ -10,23 +10,18 @@ include_once './connection.php';
 try {
     session_start();
 
-    // Kiểm tra đăng nhập
-    if (!isset($_SESSION['userid'])) {
-        echo json_encode(array('status' => false, 'message' => 'Vui lòng đăng nhập.'));
-        exit;
-    }
 
-    $userid = $_SESSION['userid'];
     // Nhận dữ liệu từ yêu cầu
     $data = json_decode(file_get_contents("php://input"));
 
-    // Kiểm tra xem có friendshipid được gửi hay không
-    if (!isset($data->friendshipid)) {
+    // Kiểm tra xem có friendshipid và userid được gửi hay không
+    if (!isset($data->friendshipid) || !isset($data->userid)) {
         http_response_code(400);
-        echo json_encode(array('status' => false, 'message' => 'Thiếu tham số friendshipid'));
+        echo json_encode(array('status' => false, 'message' => 'Thiếu tham số friendshipid hoặc userid'));
         exit;
     }
-
+ 
+    $userid = $data->userid;
     $friendshipid = $data->friendshipid; // Lấy friendshipid từ dữ liệu gửi đi
 
     // Kiểm tra xem người bạn đã tồn tại hay chưa

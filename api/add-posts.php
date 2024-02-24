@@ -11,21 +11,11 @@ include_once './helpers/jwt.php';
 // thêm bài đăng 
 try {
     // Lấy dữ liệu từ JSON
-    session_start();
-    $userid = $_SESSION['userid'];
     $data = json_decode(file_get_contents("php://input"));
-    $id = $userid;
-
-
-    // Check user credentials
-    $sqlQuery = "SELECT ID,NAME FROM users WHERE ID LIKE :id";
-    $stmt = $dbConn->prepare($sqlQuery);
-    $stmt->bindParam(':id', $id, PDO::PARAM_STR);
-    $stmt->execute();
-    $user = $stmt->fetch(PDO::FETCH_ASSOC);
+   
 
     // Kiểm tra xem người dùng có tồn tại hay không
-    if (!$user) {
+    if (!isset($data->userid)) {
         echo json_encode(array('error' => 'Người dùng không tồn tại'));
         exit;
     }
@@ -39,6 +29,13 @@ try {
     // Lấy dữ liệu từ yêu cầu
     $content = $data->content;
     $image = $data->image;
+    $userid = $data->userid;
+
+    $postQuery = "SELECT * FROM users WHERE id = :userid";
+    $postStmt = $dbConn->prepare($postQuery);
+    $postStmt->bindParam(':userid', $userid, PDO::PARAM_INT);
+    $postStmt->execute();
+    $user = $postStmt->fetch(PDO::FETCH_ASSOC);   
 
     // Chuẩn bị và thực thi truy vấn SQL
     $insertQuery = "INSERT INTO posts (userid, content, image, time,name) VALUES (:userid, :content, :image, now(),:name)";

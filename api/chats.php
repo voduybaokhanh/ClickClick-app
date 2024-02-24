@@ -8,16 +8,15 @@ header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers
 include_once './connection.php';
 
 try {
-    session_start();
+    
+    // Nhận dữ liệu từ yêu cầu
+    $data = json_decode(file_get_contents("php://input"));
 
     // Kiểm tra đăng nhập
-    if (!isset($_SESSION['userid'])) {
+    if (!isset($data->userid)) {
         echo json_encode(array('status' => false, 'message' => 'Vui lòng đăng nhập.'));
         exit;
     }
-
-    // Nhận dữ liệu từ yêu cầu
-    $data = json_decode(file_get_contents("php://input"));
 
     // Kiểm tra xem có RECEIVERID và content được gửi hay không
     if (!isset($data->RECEIVERID) || !isset($data->content)) {
@@ -26,7 +25,7 @@ try {
         exit;
     }
 
-    $SENDERID = $_SESSION['userid'];
+    $SENDERID = $data->userid;
     $RECEIVERID = $data->RECEIVERID;
     $content = $data->content;
 
