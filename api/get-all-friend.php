@@ -1,4 +1,5 @@
 <?php
+// get-friendship.php
 header("Content-Type: application/json; charset=UTF-8");
 header("Access-Control-Allow-Methods: GET");
 header("Access-Control-Allow-Origin: *");
@@ -8,24 +9,26 @@ header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers
 include_once './connection.php';
 
 try {
-    session_start();
+    // Nhận dữ liệu từ yêu cầu
+    $data = json_decode(file_get_contents("php://input"));
 
-    // Kiểm tra đăng nhập
-    if (!isset($_SESSION['userid'])) {
-        echo json_encode(array('status' => false, 'message' => 'Vui lòng đăng nhập.'));
+    // Kiểm tra xem có userid được gửi hay không
+    if (!isset($data->userid)) {
+        http_response_code(400);
+        echo json_encode(array('status' => false, 'message' => 'Thiếu tham số userid'));
         exit;
     }
 
-    $userid = $_SESSION['userid'];
-    
-    // Truy vấn để lấy danh sách bạn bè có trạng thái là "friend"
-    $friendListQuery = "SELECT users.* FROM friendships INNER JOIN users ON friendships.friendshipid = users.ID WHERE friendships.userid = :userid AND friendships.status = 'friend'";
-    $friendListStmt = $dbConn->prepare($friendListQuery);
-    $friendListStmt->bindParam(':userid', $userid, PDO::PARAM_INT);
-    $friendListStmt->execute();
-    $friendList = $friendListStmt->fetchAll(PDO::FETCH_ASSOC);
+    $userid = $data->userid;
 
-    echo json_encode(array('status' => true, 'friends' => $friendList));
+    // Truy vấn để lấy thông tin về mối quan hệ có trạng thái "friend" dựa trên userid
+    $getFriendshipsQuery = "SELECT * FROM friendships WHERE (userid = :userid OR friendshipid = :userid) AND status = 'friend'";
+    $getFriendshipsStmt = $dbConn->prepare($getFriendshipsQuery);
+    $getFriendshipsStmt->bindParam(':userid', $userid, PDO::PARAM_INT);
+    $getFriendshipsStmt->execute();
+    $friendships = $getFriendshipsStmt->fetchAll(PDO::FETCH_ASSOC);
+
+    echo json_encode(array('status' => true, 'friendships' => $friendships));
 } catch (Exception $e) {
     echo json_encode(array('status' => false, 'message' => $e->getMessage()));
 }

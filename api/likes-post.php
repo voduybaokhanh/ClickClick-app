@@ -8,16 +8,13 @@ header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers
 include_once './connection.php';
 
 try {
-    session_start();
+    $data = json_decode(file_get_contents("php://input"));
 
     // Kiểm tra đăng nhập
-    if (!isset($_SESSION['userid'])) {
+    if (!isset($data->userid)) {
         echo json_encode(array('status' => false, 'message' => 'Vui lòng đăng nhập.'));
         exit;
     }
-
-    // Nhận dữ liệu từ yêu cầu
-    $data = json_decode(file_get_contents("php://input"));
 
     // Kiểm tra xem có postid và action được gửi hay không
     if (!isset($data->postid) || !isset($data->action)) {
@@ -28,6 +25,7 @@ try {
 
     $postid = $data->postid;
     $action = $data->action; // Có thể là 'like' hoặc 'unlike'
+    $userid = $data->userid;
 
     // Kiểm tra action hợp lệ
     if ($action != 'like' && $action != 'unlike') {
@@ -36,7 +34,7 @@ try {
         exit;
     }
 
-    $userid = $_SESSION['userid'];
+   
 
     // Kiểm tra xem postid có tồn tại trong cơ sở dữ liệu hay không
     $checkPostQuery = "SELECT * FROM posts WHERE ID = :postid";

@@ -9,7 +9,7 @@ header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers
 // lấy chi tiết 1 bản tin
 include_once './connection.php';
 $data = json_decode(file_get_contents("php://input"));
-$id = $_GET['id'];
+$id = $data -> id;
 // đọc dữ liệu từ database 
  // Lấy thông tin bài viết mới thêm vào
  $postQuery = "SELECT * FROM posts WHERE id = :id";
