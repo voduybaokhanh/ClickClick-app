@@ -5,10 +5,18 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { SpaceComponent } from "../components";
 
 const Hello = () => {
+   const [isShowSplash , setIsShowSplash] = useState(true);
+   useEffect (() => {
+    const timeout=setTimeout (() => {
+      setIsShowSplash(false);
+    },1500);
+    return () => clearTimeout(timeout);
+   },
+   []);
   return (
     <View style={styles.container}>
       <LinearGradient
