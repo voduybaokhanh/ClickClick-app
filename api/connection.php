@@ -1,15 +1,12 @@
 <?php
-$databaseHost = '127.0.0.1:3306';
+$databaseHost = '127.0.0.1:3306'; 
 $databaseName = 'duandemo';
 $databaseUsername = 'root';
-$databasePassword = '90852';
+$databasePassword = 'MinhThu@2911';
 
 try {
-	$dbConn = new PDO(
-		"mysql:host={$databaseHost};dbname={$databaseName}",
-		$databaseUsername,
-		$databasePassword
-	);
+	$dbConn = new PDO("mysql:host={$databaseHost};dbname={$databaseName}", 
+						$databaseUsername, $databasePassword);
 	$dbConn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 } catch (PDOException $e) {
 	echo $e->getMessage();
