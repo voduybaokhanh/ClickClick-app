@@ -77,7 +77,7 @@ const Register = () => {
 
             <View style={styles.Sngg}>
               <Text style={styles.Text4}>Already have an account ?</Text>
-              <Text style={styles.Text2}>Register</Text>
+              <Text style={styles.Text2}>Sign In</Text>
             </View>
      
         

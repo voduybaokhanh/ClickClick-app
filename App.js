@@ -15,8 +15,8 @@ export default function App() {
       <NavigationContainer styles={styles.container}>
       <Stack.Navigator>
          {/* <Stack.Screen options={{headerShown: false}} name="Hello" component={Hello} />  */}
-         <Stack.Screen options={{headerShown: false}} name="Register" component={Register} /> 
-         {/* <Stack.Screen options={{headerShown: false}} name="Forgetpassword" component={Forgetpassword} />  */}
+         {/* <Stack.Screen options={{headerShown: false}} name="Register" component={Register} />  */}
+         <Stack.Screen options={{headerShown: false}} name="Forgetpassword" component={Forgetpassword} /> 
         {/* <Stack.Screen options={{headerShown: false}} name="Login" component={Login} />
         <Stack.Screen name="Post" component={Post} /> */}
       </Stack.Navigator>
