@@ -10,14 +10,14 @@ import Home from './Screen/BottomTab/Home';
 import BottomTab from './Screen/BottomTab/BottomTab';
 const Stack = createNativeStackNavigator();
 
-export default function App(props) {
+export default function App(navigation) {
   return (
       <NavigationContainer styles={styles.container}>
       <Stack.Navigator>
-        <Stack.Screen options={{headerShown: false}} name="BottomTab" component={BottomTab} />
-        <Stack.Screen options={{headerShown: false}} name="Home" component={Home} />
         <Stack.Screen options={{headerShown: false}} name="Hello" component={Hello} />
+        <Stack.Screen options={{headerShown: false}} name="Home" component={Home} />
         <Stack.Screen options={{headerShown: false}} name="Login" component={Login} />
+        <Stack.Screen options={{headerShown: false}} name="BottomTab" component={BottomTab} />
         <Stack.Screen options={{headerShown: false}} name="Post" component={Post} />
       </Stack.Navigator>   
     </NavigationContainer>

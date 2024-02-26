@@ -12,7 +12,7 @@ import React, { useState } from "react";
 import AxiosInstance from "./../../helper/AxiosInstance";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const Login = () => {
+const Login = ({navigation}) => {
   const [name, setName] = useState(""); // State để lưu trữ giá trị của email
   const [password, setPassword] = useState(""); // State để lưu trữ giá trị của password
   const actionLogin = async () => {
@@ -24,7 +24,7 @@ const Login = () => {
       if (result.status) {
         await AsyncStorage.setItem("token", result.user.id.toString());
         alert("Đăng nhập thành công");
-        
+        navigation.navigate('BottomTab')
 
         // Token đã được lưu trữ thành công, thực hiện các thao tác tiếp theo nếu cần
       } else {
