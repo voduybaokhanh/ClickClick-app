@@ -8,8 +8,9 @@ import Hello from './Screen/Hello';
 import Post from './Screen/BottomTab/AddPost';
 import Home from './Screen/BottomTab/Home';
 import BottomTab from './Screen/BottomTab/BottomTab';
-import Forgetpassword from './Screen/Forgetpassword';
+import Forgetpassword from './Screen/user/ForgotpasswordOTP';
 import RegisterOtp from './Screen/user/RegisterOtp';
+import Resetpassword from './Screen/user/Resetpassword';
 const Stack = createNativeStackNavigator();
 
 export default function App(navigation) {
@@ -24,6 +25,7 @@ export default function App(navigation) {
         <Stack.Screen options={{headerShown: false}} name="forgot" component={Forgetpassword} />
         <Stack.Screen options={{headerShown: false}} name="register" component={Register} />
         <Stack.Screen options={{headerShown: false}} name="registerOTP" component={RegisterOtp} />
+        <Stack.Screen options={{headerShown: false}} name="resetPass" component={Resetpassword} />
 
       </Stack.Navigator>   
     </NavigationContainer>

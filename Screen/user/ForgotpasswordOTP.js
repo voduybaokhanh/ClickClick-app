@@ -9,10 +9,10 @@ import {
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import React, { useState } from "react";
-import AxiosInstance from "./../helper/AxiosInstance";
+import AxiosInstance from "../../helper/AxiosInstance";
 
 
-const Forgetpassword = () => {
+const Forgetpassword = ({navigation}) => {
   const [email, setemail] = useState("")
 
   const actionForgot = async () => {
@@ -22,13 +22,13 @@ const Forgetpassword = () => {
       const result = await instance.post("/get-otp.php", body);
       if (result.status) {
         alert("Đã gửi mã otp");
-        navigation.navigate('Login')
+        navigation.navigate('resetPass');
         // Token đã được lưu trữ thành công, thực hiện các thao tác tiếp theo nếu cần
       } else {
         alert("gửi mã otp thất bại");
       }
     } catch (error) {
-      console.error("Lỗi khi thực hiện đăng nhập: ", error);
+      console.error("Lỗi khi thực hiện: ", error);
     }
   }
 
@@ -81,7 +81,7 @@ const styles = StyleSheet.create({
     paddingStart: 20,
     width: 330,
     left: 30,
-    height: 60,
+    height: 65,
     backgroundColor: "#635A8F",
     borderRadius: 25,
     marginTop: 10,
@@ -94,7 +94,7 @@ const styles = StyleSheet.create({
     paddingStart: 20,
     width: 330,
     right: 3,
-    height: 60,
+    height: 70,
     borderColor: "#FFFFFF",
     borderWidth: 3,
     borderRadius: 25,
