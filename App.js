@@ -17,12 +17,12 @@ export default function App(navigation) {
   return (
       <NavigationContainer styles={styles.container}>
       <Stack.Navigator>
-        <Stack.Screen options={{headerShown: false}} name="Hello" component={Hello} />
-        <Stack.Screen options={{headerShown: false}} name="Home" component={Home} />
+      <Stack.Screen options={{headerShown: false}} name="Home" component={Home} />
+      <Stack.Screen options={{headerShown: false}} name="BottomTab" component={BottomTab} />
+        <Stack.Screen options={{headerShown: false}} name="Hello" component={Hello} />     
         <Stack.Screen options={{headerShown: false}} name="Login" component={Login} />
-        <Stack.Screen options={{headerShown: false}} name="BottomTab" component={BottomTab} />
         <Stack.Screen options={{headerShown: false}} name="Post" component={Post} />
-        <Stack.Screen options={{headerShown: false}} name="forgot" component={Forgetpassword} />
+       <Stack.Screen options={{headerShown: false}} name="forgot" component={Forgetpassword} />
         <Stack.Screen options={{headerShown: false}} name="register" component={Register} />
         <Stack.Screen options={{headerShown: false}} name="registerOTP" component={RegisterOtp} />
         <Stack.Screen options={{headerShown: false}} name="resetPass" component={Resetpassword} />
