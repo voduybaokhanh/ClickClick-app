@@ -13,7 +13,7 @@ import AxiosInstance from "./../../helper/AxiosInstance";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const Login = ({navigation}) => {
-  const [name, setName] = useState(""); // State để lưu trữ giá trị của email
+  const [email, setEmail] = useState(""); // State để lưu trữ giá trị của email
   const [password, setPassword] = useState(""); // State để lưu trữ giá trị của password
 
   const actionforgotsPassword = () => {
@@ -24,7 +24,7 @@ const Login = ({navigation}) => {
   }
   const actionLogin = async () => {
     try {
-      const body = { name, password };
+      const body = { email, password };
       const instance = await AxiosInstance();
       const result = await instance.post("/login.php", body);
       const token = await AsyncStorage.getItem("token");
@@ -65,11 +65,11 @@ const Login = ({navigation}) => {
             </Text>
 
             <TextInput
-              placeholder="Name"
+              placeholder="Email"
               placeholderTextColor="#FFFFFF"
               style={styles.TextInbutEmail}
-              value={name}
-              onChangeText={(text) => setName(text)}
+              value={email}
+              onChangeText={(text) => setEmail(text)}
             />
             <View>
               <TextInput
