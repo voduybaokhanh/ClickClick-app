@@ -1,19 +1,27 @@
 import React, { useState } from "react";
-import AxiosInstance from "../helper/Axiostance";
+import AxiosInstance from "../../../web-admin/src/helper/Axiostance";
 
 const Login = (props) => {
-    const [name, setName] = useState("");
-    const [password, setPassword] = useState("");
+    const [name, setName] = useState(""); // State để lưu trữ giá trị của email
+  const [password, setPassword] = useState(""); // State để lưu trữ giá trị của password
+  const actionLogin = async () => {
+    try {
+      const body = { name, password };
+      const instance = await AxiosInstance();
+      const result = await instance.post("/login.php", body);
+      if (result.status) {
+        alert("Đăng nhập thành công");
 
-    const handleLogin = async () => {
-        try {
-            const body = { name, password };
-            const result = await AxiosInstance().post('/login.php', body);
-            console.log(result);
-        } catch (error) {
-            console.log(error);
-        }
-    };
+
+        // Token đã được lưu trữ thành công, thực hiện các thao tác tiếp theo nếu cần
+      } else {
+        alert("đăng nhập thất bại");
+      }
+      console.log(result.user.id);
+    } catch (error) {
+      console.error("Lỗi khi thực hiện đăng nhập: ", error);
+    }
+  }
 
     return (
         <div>
@@ -27,7 +35,7 @@ const Login = (props) => {
                     <label>Password</label>
                     <input type="password" className="form-control" placeholder="Enter password" value={password} onChange={(e) => setPassword(e.target.value)} />
                 </div>
-                <button onClick={handleLogin} type="button" className="btn btn-primary btn-block">Submit</button>
+                <button onClick={actionLogin} type="button" className="btn btn-primary btn-block">Submit</button>
             </form>
         </div>
     );
