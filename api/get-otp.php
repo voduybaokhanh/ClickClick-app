@@ -55,11 +55,10 @@ try {
 
         $mail->addAddress($email, "hello");
         $mail->Subject = 'Xác nhận đăng ký - Mã OTP';
+        $otp = generateOTP();
         $mail->Body = 'Mã OTP của bạn là: ' . $otp;
 
         $mail->send();
-
-        $otp = generateOTP();
         $expirationTime = time() + 300; // Mã OTP hết hạn sau 5 phút
         
         if ($user) {
