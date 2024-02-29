@@ -37,8 +37,8 @@ const Login = ({navigation}) => {
       } else {
         alert("đăng nhập thất bại");
       }
-      console.log(result.user.id);
-      console.log(token);
+      console.log('id: ' + result.user.id);
+      console.log('token: '+token);
     } catch (error) {
       console.error("Lỗi khi thực hiện đăng nhập: ", error);
     }
