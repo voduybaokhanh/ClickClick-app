@@ -175,7 +175,7 @@ const styles = StyleSheet.create({
   TextInbutPassword: {
     fontSize: 20,
     paddingStart: 20,
-    width: 330,
+    width: 320,
     right: 30,
     height: 60,
     borderColor: "#FFFFFF",
@@ -188,7 +188,7 @@ const styles = StyleSheet.create({
   TextInbutEmail: {
     fontSize: 20,
     paddingStart: 20,
-    width: 330,
+    width: 320,
     right: 30,
     height: 60,
     borderColor: "#FFFFFF",
