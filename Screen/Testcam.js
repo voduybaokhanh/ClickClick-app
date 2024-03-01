@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { View, Button, Image, Text } from "react-native";
 import { Camera } from "expo-camera";
-import * as ImagePicker from 'expo-image-picker'
+import * as ImagePicker from 'expo-image-picker';
 import AxiosInstance from "../helper/AxiosInstance";
 
 export default function Testcam() {
@@ -9,6 +9,7 @@ export default function Testcam() {
   const [cameraPermission, setCameraPermission] = useState(null);
   const [photoTaken, setPhotoTaken] = useState(false);
   const [showCamera, setShowCamera] = useState(true);
+  const cameraRef = useRef(null);
 
   useEffect(() => {
     (async () => {
@@ -33,7 +34,7 @@ export default function Testcam() {
 
   const takePicture = async () => {
     if (cameraPermission) {
-      const photo = await camera.takePictureAsync();
+      const photo = await cameraRef.current.takePictureAsync();
       setImage(photo.uri);
       setPhotoTaken(true);
       setShowCamera(false);
@@ -45,18 +46,25 @@ export default function Testcam() {
       alert("No image to upload");
       return;
     }
-
-    // const formData = new FormData();
-    // formData.append('image', { uri: image, name: 'image.jpg', type: 'image/jpeg' });
-
-     try {
-    //   const response = await AxiosInstance.post('camera.php', formData, {
-    //     headers: {
-    //       'Content-Type': 'multipart/form-data',
-    //     },
-    //   });
-    //   console.log(response.data.message);
-    //   alert(response.data.message);
+  
+    const formData = new FormData();
+    const uriParts = image.split('.');
+    const fileType = uriParts[uriParts.length - 1];
+  
+    formData.append('image', {
+      uri: image,
+      name: `photo.${fileType}`,
+      type: `image/${fileType}`,
+    });
+  
+    try {
+      const response = await AxiosInstance.post('upload_file.php', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      console.log(response.data.message);
+      alert(response.data.message);
       setPhotoTaken(false);
       setImage(null);
       setShowCamera(true);
@@ -65,7 +73,6 @@ export default function Testcam() {
       alert('Failed to upload image');
     }
   };
-
   return (
     <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
       {image && (
@@ -80,7 +87,7 @@ export default function Testcam() {
           <Camera
             style={{ flex: 1, width: "100%" }}
             type={Camera.Constants.Type.back}
-            ref={(ref) => (camera = ref)}
+            ref={cameraRef}
           >
             <View
               style={{
