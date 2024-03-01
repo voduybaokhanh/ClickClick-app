@@ -6,12 +6,14 @@ import Register from './Screen/Register';
 import Login from './Screen/user/Login';
 import Hello from './Screen/Hello';
 import Post from './Screen/Post';
+import Testcam from './Screen/Testcam';
 const Stack = createNativeStackNavigator();
 
 export default function App() {
   return (
       <NavigationContainer styles={styles.container}>
       <Stack.Navigator>
+        <Stack.Screen options={{headerShown: false}} name="camera" component={Testcam} />
         <Stack.Screen options={{headerShown: false}} name="Hello" component={Hello} />
         <Stack.Screen options={{headerShown: false}} name="Login" component={Login} />
         <Stack.Screen name="Post" component={Post} />

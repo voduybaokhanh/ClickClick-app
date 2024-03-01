@@ -2,6 +2,7 @@
   "expo": {
     "name": "ClickClick-app",
     "slug": "ClickClick-app",
+    "permissions": ["CAMERA"],
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -11,6 +12,7 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
+    
     "assetBundlePatterns": [
       "**/*"
     ],
