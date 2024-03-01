@@ -77,9 +77,9 @@ const Register = () => {
 
             <View style={styles.Sngg}>
               <Text style={styles.Text4}>Already have an account ?</Text>
-              {/* <Text style={styles.Text2}>Sign In</Text> */}
-              <TouchableOpacity onPress={() => 
-                    props.navigation.navigate('Signup')}><Text style={styles.loginLabel}>Signup</Text></TouchableOpacity> 
+              <Text style={styles.Text2}>Sign In</Text>
+              {/* <TouchableOpacity onPress={() => 
+                    props.navigation.navigate('Signup')}><Text style={styles.loginLabel}>Signup</Text></TouchableOpacity>  */}
                     
       
             </View>
