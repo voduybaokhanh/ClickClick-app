@@ -63,6 +63,31 @@ try {
         $addNotificationStmt->execute();
 
         echo json_encode(array('status' => true, 'message' => 'Thông báo đã được tạo thành công'));
+    } elseif ($data->type === "admin_delete_post") {
+        $postid = $data->postid;
+
+        // Lấy thông tin bài viết bị xóa
+        $getPostQuery = "SELECT userid FROM posts WHERE id = :postid";
+        $getPostStmt = $dbConn->prepare($getPostQuery);
+        $getPostStmt->bindParam(':postid', $postid, PDO::PARAM_INT);
+        $getPostStmt->execute();
+        $post = $getPostStmt->fetch(PDO::FETCH_ASSOC);
+
+        if (!$post) {
+            http_response_code(404);
+            echo json_encode(array('status' => false, 'message' => 'Bài viết không tồn tại'));
+            exit;
+        }
+
+        // Thêm thông báo vào bảng notifications
+        $addNotificationQuery = "INSERT INTO notifications (userid, content, time) VALUES (:userid, :content, NOW())";
+        $content = "Bài viết của bạn đã bị admin xóa trên nền tảng";
+        $addNotificationStmt = $dbConn->prepare($addNotificationQuery);
+        $addNotificationStmt->bindParam(':userid', $post['userid'], PDO::PARAM_INT);
+        $addNotificationStmt->bindParam(':content', $content, PDO::PARAM_STR);
+        $addNotificationStmt->execute();
+
+        echo json_encode(array('status' => true, 'message' => 'Thông báo đã được tạo thành công'));
     } else {
         http_response_code(400);
         echo json_encode(array('status' => false, 'message' => 'Loại thông báo không hợp lệ'));
