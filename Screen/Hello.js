@@ -8,12 +8,11 @@ import { LinearGradient } from "expo-linear-gradient";
 import React, { useEffect, useState } from "react";
 import { SpaceComponent } from "../components";
 
-const Hello = () => {
-   const [isShowSplash , setIsShowSplash] = useState(true);
+const Hello = ({navigation}) => {
    useEffect (() => {
-    const timeout=setTimeout (() => {
-      setIsShowSplash(false);
-    },1500);
+    setTimeout (() => {
+      navigation.navigate('Login')
+    },3000);
     return () => clearTimeout(timeout);
    },
    []);
