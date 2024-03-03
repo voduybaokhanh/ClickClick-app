@@ -41,32 +41,26 @@ const Profile = () => {
                 <Text style={[styles.text, { fontSize: 20 }]}>483</Text>
                 <Text style={[styles.text, styles.subText]}>Posts</Text>
               </View>
+
               <View
                 style={[
                   styles.statsBox,
                   {
                     borderColor: "#FFFFFF",
                     borderLeftWidth: 1,
-                    borderRightWidth: 1,
                   },
                 ]}
               >
-                <Text style={[styles.text, { fontSize: 20 }]}>45,844</Text>
-                <Text style={[styles.text, styles.subText]}>Followers</Text>
-              </View>
-              <View style={styles.statsBox}>
-                <Text style={[styles.text, { fontSize: 20 }]}>20</Text>
-                <Text style={[styles.text, styles.subText]}>Friend</Text>
+                <Text style={[styles.text, { fontSize: 20 }]}>20 </Text>
+                <Text style={[styles.text, styles.subText]}>Friend </Text>
               </View>
             </View>
 
             <Text style={styles.status}>‘’I can draw my life by myself’’</Text>
 
-            <View style={{ marginTop: 32 }}>
-              <ScrollView
-                horizontal={true}
-                showsHorizontalScrollIndicator={false}
-              >
+            <View style={styles.pic}>
+              <View style={{ marginTop: 32 }}>
+                <View style={styles.row}>
                 <View style={styles.mediaImageContainer}>
                   <Image
                     source={require("../Image/2.png")}
@@ -82,9 +76,11 @@ const Profile = () => {
                   ></Image>
                 </View>
 
+                
+                </View>
+                
+              </View>
               
-
-              </ScrollView>
             </View>
           </View>
         </ScrollView>
@@ -96,9 +92,20 @@ const Profile = () => {
 export default Profile;
 
 const styles = StyleSheet.create({
+  pic:{
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+
+  row:{
+    flexDirection: 'row',
+  },
+
   status: {
     color: "#FFFFFF",
     marginTop: 15,
+    fontSize: 20,
     textAlign: "center",
   },
 
@@ -160,9 +167,6 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     overflow: "hidden",
     marginHorizontal: 10,
-    padding: 10,
-    
+    padding: 5,
   },
-
- 
 });
