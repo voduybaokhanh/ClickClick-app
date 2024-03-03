@@ -11,6 +11,8 @@ import BottomTab from './Screen/BottomTab/BottomTab';
 import Forgetpassword from './Screen/user/ForgotpasswordOTP';
 import RegisterOtp from './Screen/user/RegisterOtp';
 import Resetpassword from './Screen/user/Resetpassword';
+import ForgotPassword from './Screen/user/ForgotPassword';
+import Notifications from './Screen/user/Notifications';
 const Stack = createNativeStackNavigator();
 
 export default function App(navigation) {
@@ -22,10 +24,12 @@ export default function App(navigation) {
         <Stack.Screen options={{headerShown: false}} name="Hello" component={Hello} />     
         <Stack.Screen options={{headerShown: false}} name="Login" component={Login} />
         <Stack.Screen options={{headerShown: false}} name="Post" component={Post} /> */}
-       <Stack.Screen options={{headerShown: false}} name="forgot" component={Forgetpassword} />
-        {/* <Stack.Screen options={{headerShown: false}} name="register" component={Register} />
-        <Stack.Screen options={{headerShown: false}} name="registerOTP" component={RegisterOtp} />
-        <Stack.Screen options={{headerShown: false}} name="resetPass" component={Resetpassword} /> */}
+       {/* <Stack.Screen options={{headerShown: false}} name="forgot" component={Forgetpassword} /> */}
+        {/* <Stack.Screen options={{headerShown: false}} name="register" component={Register} /> */}
+        {/* <Stack.Screen options={{headerShown: false}} name="registerOTP" component={RegisterOtp} /> */}
+        <Stack.Screen options={{headerShown: false}} name=' forgotpassword' component={ForgotPassword} />
+        {/* <Stack.Screen options={{headerShown: false}} name='notifications' component={Notifications} /> */}
+        {/* <Stack.Screen options={{headerShown: false}} name="resetPass" component={Resetpassword} /> */}
 
       </Stack.Navigator>   
     </NavigationContainer>
