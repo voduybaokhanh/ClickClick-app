@@ -20,8 +20,8 @@ export default function App() {
          {/* <Stack.Screen options={{headerShown: false}} name="Hello" component={Hello} />  */}
          {/* <Stack.Screen options={{headerShown: false}} name="Register" component={Register} />  */}
          {/* <Stack.Screen options={{headerShown: false}} name="Forgetpassword" component={Forgetpassword} />  */}
-         {/* <Stack.Screen options={{headerShown: false}} name="Profile" component={Profile} />  */}
-         <Stack.Screen options={{headerShown: false}} name="Profileuser" component={Profileuser} /> 
+         <Stack.Screen options={{headerShown: false}} name="Profile" component={Profile} /> 
+         {/* <Stack.Screen options={{headerShown: false}} name="Profileuser" component={Profileuser} />  */}
          
          
         {/* <Stack.Screen options={{headerShown: false}} name="Login" component={Login} />

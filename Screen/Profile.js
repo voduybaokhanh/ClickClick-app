@@ -18,6 +18,12 @@ const Profile = () => {
       style={styles.linearGradient}
     >
       <SafeAreaView style={styles.container}>
+      <View style={styles.iconback}>
+              <Image source={require("../Image/Vector.png")}>
+                
+              </Image>
+
+            </View>
         <ScrollView showsVerticalScrollIndicator={false}>
           <View style={{ alignSelf: "center" }}>
             <View style={styles.profileImage}>
@@ -32,7 +38,7 @@ const Profile = () => {
                 Jisoo
               </Text>
               <Text style={[styles.text, { color: "#4F39B4", fontSize: 20 }]}>
-                BlackPink
+                @BlackPink
               </Text>
             </View>
 
@@ -75,6 +81,32 @@ const Profile = () => {
                     resizeMode="cover"
                   ></Image>
                 </View>
+                
+
+                
+                </View>
+                
+              </View>
+              
+            </View>
+            <View style={styles.pic}>
+              <View style={{ marginTop: 32 }}>
+                <View style={styles.row}>
+                <View style={styles.mediaImageContainer}>
+                  <Image
+                    source={require("../Image/2.png")}
+                    style={styles.image}
+                    resizeMode="cover"
+                  ></Image>
+                </View>
+                <View style={styles.mediaImageContainer}>
+                  <Image
+                    source={require("../Image/2.png")}
+                    style={styles.image}
+                    resizeMode="cover"
+                  ></Image>
+                </View>
+                
 
                 
                 </View>
@@ -92,6 +124,17 @@ const Profile = () => {
 export default Profile;
 
 const styles = StyleSheet.create({
+  iconback: {
+    flexDirection : 'row',
+    justifyContent : 'space-between',
+    marginTop : 10,
+    marginHorizontal : 16,
+    color : '#FFFFFF'
+    
+   
+     
+   },
+
   pic:{
     flex: 1,
     justifyContent: 'center',
@@ -112,7 +155,7 @@ const styles = StyleSheet.create({
   statsContainer: {
     flexDirection: "row",
     alignSelf: "center",
-    marginTop: 32,
+    marginTop: 5,
   },
 
   statsBox: {
@@ -166,7 +209,7 @@ const styles = StyleSheet.create({
     height: 200,
     borderRadius: 12,
     overflow: "hidden",
-    marginHorizontal: 10,
-    padding: 5,
+    marginHorizontal: 1,
+    padding: 1,
   },
 });
