@@ -21,11 +21,24 @@ const data =[
   {label: 'Bạn C' , value : '4'},
   {label: 'Bạn D' , value : '5'},
 ]
+
+
 const Home = () => {
+  const [isThatim, setIsThatim] = useState(false);
+  const handleBaocao = () => {
+    // Xử lý khi icon được ấn
+    console.log('Icon đã được ấn');
+    // Thêm mã xử lý bạn muốn thực hiện khi icon được ấn
+  };
   
+  const handleThatim = () => {
+    // Xử lý khi icon được ấn
+    console.log('Icon đã được ấn');
+    setIsThatim(!isThatim);
+    // Thêm mã xử lý bạn muốn thực hiện khi icon được ấn
+  };
   return (
     <View style={styles.container}>
-      <StatusBar barStyle="light_content"/>
       <LinearGradient
         locations={[0.05, 0.17, 0.8, 1]}
         colors={["#3B21B7", "#8B64DA", "#D195EE", "#CECBD3"]}
@@ -51,6 +64,7 @@ const Home = () => {
           </View>
           <Image style={styles.iconsetting} source={require('../../Image/setting_icon.png')}/>
       </View>
+      <ScrollView style={styles.scrollView}>
       <View style={styles.itempost}>
        <View style={styles.namepost}>
         <Image style={styles.avt}
@@ -59,14 +73,62 @@ const Home = () => {
             <Text style={styles.name}>Dian Cinne</Text>
             <Text style={styles.time}>5 minute</Text>
         </View>
+        <TouchableOpacity  style={{ marginLeft:'auto'}} onPress={handleBaocao}>
         <Image style={styles.iconmore}
         source={require('../../Image/more_icon.png')}/>
+        </TouchableOpacity>
        </View>
-       <View style={{}}>
-       <Image 
+       <View style={{width:'90%', marginBottom:20}}>
+       <Image style={{width:'auto'}}
        source={require('../../Image/picture.png')}/>
+       <View style={{width:'90%',alignSelf: 'center' }}>
+          <Text style={styles.status}>This is a beautiful sky that i took last week. it’s great, right ?</Text>
+       </View>
+       </View>
+       <View style={styles.tim_mes}>
+          <TouchableOpacity onPress={handleThatim}>
+            <Image  
+             source={isThatim  ?  require('../../Image/hearted.png') : require('../../Image/heart.png') }
+             />
+          </TouchableOpacity>
+          <TextInput style={styles.mes} placeholder="Add a message" 
+             placeholderTextColor={"#635A8F"}
+            />
        </View>
       </View>
+      <View style={styles.itempost}>
+       <View style={styles.namepost}>
+        <Image style={styles.avt}
+        source={require('../../Image/avatar1.png')}/>
+        <View style={{flexDirection:"column" , marginLeft:10}}>
+            <Text style={styles.name}>Dian Cinne</Text>
+            <Text style={styles.time}>5 minute</Text>
+        </View>
+        <TouchableOpacity  style={{ marginLeft:'auto'}} onPress={handleBaocao}>
+        <Image style={styles.iconmore}
+        source={require('../../Image/more_icon.png')}/>
+        </TouchableOpacity>
+       </View>
+       <View style={{width:'90%', marginBottom:20}}>
+       <Image style={{width:'auto'}}
+       source={require('../../Image/picture.png')}/>
+       <View style={{width:'90%',alignSelf: 'center' }}>
+          <Text style={styles.status}>This is a beautiful sky that i took last week. it’s great, right ?</Text>
+       </View>
+       </View>
+       <View style={styles.tim_mes}>
+          <TouchableOpacity onPress={handleThatim}>
+            <Image  
+             source={isThatim  ?  require('../../Image/hearted.png') : require('../../Image/heart.png') }
+             />
+          </TouchableOpacity>
+          <TextInput style={styles.mes} placeholder="Add a message" 
+             placeholderTextColor={"#635A8F"}
+            />
+       </View>
+      </View>
+      
+      </ScrollView>
       </LinearGradient>
     </View>
   )
@@ -75,38 +137,68 @@ const Home = () => {
 export default Home
 
 const styles = StyleSheet.create({
+  scrollView: {
+    width: '100%',
+    flex: 1, 
+    position:'relative'
+  },
+  mes:{
+  backgroundColor:"#E5D7F7",
+  marginLeft:10,
+  height:35,
+  borderRadius:24,
+  width:'90%',
+  paddingHorizontal:10,
+  
+  },
+  tim_mes:{
+   flexDirection:'row',
+  width:'90%',
+  bottom:10
+  },
+  status:{
+    color:'white',
+    fontSize:14,
+    position: 'absolute',
+    bottom:5,
+    alignSelf: 'center'
+  },
   namepost:{
     flexDirection:"row",
      alignItems:"center",
      top:12,
-    
-     
+    width:'90%',
+    marginBottom:20
   },
   iconmore:{
-   marginLeft:150
+   marginLeft:'auto'
   },
   avt:{
-   marginLeft:16
+   
   },
   time:{
     color:'white',
   },
   name:{
     color:'white',
-    fontSize:15,
+    fontSize:16,
+    fontWeight:'bold'
   },
   itempost:{
     width:'auto',
-    height:400,
+    height:'auto',
     backgroundColor: "#BFA7FF",
     top:80,
     borderRadius:20,
+    alignItems:"center",
+    marginBottom:20,
   },
   header:{
     flexDirection:"row" , 
     alignItems:"center" , 
     justifyContent:"space-between",
     top:63,
+    position:'relative'
     
   },
   iconsetting:{
@@ -125,8 +217,9 @@ const styles = StyleSheet.create({
       paddingRight:10,
       backgroundColor:"#443A74",
       borderRadius:24,
-      fontSize:16,
-      width:160
+      fontSize:13,
+      width:160,
+      fontWeight:'bold'
       
     },
   container: {
