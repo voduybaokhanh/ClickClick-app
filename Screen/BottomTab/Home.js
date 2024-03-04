@@ -62,7 +62,9 @@ const Home = () => {
               }}
               />
           </View>
-          <Image style={styles.iconsetting} source={require('../../Image/setting_icon.png')}/>
+          <TouchableOpacity >
+        <Image style={styles.iconsetting} source={require('../../Image/setting_icon.png')}/>
+        </TouchableOpacity>
       </View>
       <ScrollView style={styles.scrollView}>
       <View style={styles.itempost}>
