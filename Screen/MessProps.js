@@ -35,7 +35,7 @@ function Mess() {
   }, [])
 
   return (
-    <SafeAreaView>
+    
       <KeyboardAvoidingView>
         <ImageBackground style={{ width: '100%', height: '100%', zIndex: -1 }} resizeMode="cover" source={require('../Image/background.png')}>
 
@@ -56,7 +56,7 @@ function Mess() {
           </View>
         </ImageBackground>
       </KeyboardAvoidingView>
-    </SafeAreaView>
+    
 
   );
 }
