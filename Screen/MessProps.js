@@ -24,7 +24,7 @@ import Icon from "react-native-vector-icons/Ionicons";
 
 function Mess() {
 
-  const [textInput, setTextInput] = useState < String > ('');
+  const [textInput, setTextInput] = useState('');
 
   const renderItem = useCallback(({ item }) => {
     return (
@@ -37,11 +37,11 @@ function Mess() {
   return (
     <SafeAreaView>
       <KeyboardAvoidingView>
-        <ImageBackground style={{ width: '100%', height: '100%', zIndex: -1 }} resizeMode="cover" source={require('./src/assets/background.png')}>
+        <ImageBackground style={{ width: '100%', height: '100%', zIndex: -1 }} resizeMode="cover" source={require('../Image/background.png')}>
 
-          <View style={{ flexDirection: 'row', alignItems: 'center', height: 80, backgroundColor: '#CBB6EE', }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', height: 100, backgroundColor: '#CBB6EE',paddingTop: 30 }}>
             <Icon name='chevron-back' color={'#635A8F'} size={35} />
-            <Image style={{ height: 60, width: 60 }} source={require('./src/assets/avatar.png')} />
+            <Image style={{ height: 60, width: 60 }} source={require('../Image/avatar.png')} />
 
             <Text style={{ fontSize: 20, fontWeight: '500', color: 'white', marginLeft: 20 }}>Edein Vindain</Text>
             <Feather style={{ position: "absolute", right: 10 }} name='more-vertical' color={"#635A8F"} size={35} />
@@ -51,7 +51,7 @@ function Mess() {
           <View style={{ flexDirection: 'row', columnGap: 10, position: 'absolute', bottom: 0, height: 60, width: '100%', backgroundColor: '#CBB6EE', justifyContent: 'center', alignItems: 'center' }}>
             <TextInput style={{ width: '80%', height: '60%', paddingHorizontal: 10, borderRadius: 20, backgroundColor: '#635A8F', padding: 0, color: 'white', fontSize: 17 }} value={textInput.toString()} onChangeText={(e) => setTextInput(e)} />
             <Pressable>
-              <Image source={require('./src/assets/send.png')} />
+              <Image source={require('../Image/send.png')} />
             </Pressable>
           </View>
         </ImageBackground>
@@ -69,7 +69,7 @@ const data = [
     id: 1,
     type: 'image',
     role: 'acceptor',
-    image: require("./src/assets/image1.png")
+    image: require("../Image/image1.png")
   },
   {
     id: 2,
@@ -88,6 +88,6 @@ const data = [
     type: 'image',
     role: 'sender',
     text: 'Hello, have a great day!',
-    image: require("./src/assets/image2.png")
+    image: require("../Image/image2.png")
   },
 ]
