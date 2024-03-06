@@ -10,7 +10,7 @@ import {
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import React, { useState } from "react";
-import AxiosInstance from "../../helper/AxiosInstance"; 
+import AxiosInstance from "../../helper/Axiostance"; 
 import { useNavigation } from '@react-navigation/native'; // Thêm dòng này
 
 const AddPost = () => {

@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import React, { useState } from "react";
-import AxiosInstance from "./../../helper/AxiosInstance";
+import AxiosInstance from "./../../helper/Axiostance";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const Login = ({navigation}) => {

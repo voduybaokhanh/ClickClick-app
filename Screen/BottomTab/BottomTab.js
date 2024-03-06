@@ -19,7 +19,8 @@ const BottomTab = () => {
     <Tab.Navigator  screenOptions={{
         tabBarStyle: {
           labelPosition: 'below-icon',
-          borderRadius: 50,
+          borderTopLeftRadius: 50,
+          borderTopRightRadius: 50,
           height:100,
           padding:20,
           backgroundColor: 'white', // Màu nền trong suốt

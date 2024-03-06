@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import React, { useState } from "react";
-import AxiosInstance from "./../../helper/AxiosInstance";
+import AxiosInstance from "./../../helper/Axiostance";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Dropdown } from "react-native-element-dropdown";
 import { StatusBar } from "expo-status-bar";
@@ -39,13 +39,16 @@ const Home = () => {
   };
   return (
     <View style={styles.container}>
+      
       <LinearGradient
         locations={[0.05, 0.17, 0.8, 1]}
         colors={["#3B21B7", "#8B64DA", "#D195EE", "#CECBD3"]}
         style={styles.linearGradient}
       >
+      <ScrollView>
+
       <View style={styles.header}>
-         <Image style={styles.iconsetting} source={require('../../Image/setting_icon.png')}/>
+         <Image style={styles.iconsetting} source={require('../../Image/chu_click.png')}/>
          <View style={{alignItems:"center"}}>
             <Dropdown
               style={styles.search}
@@ -66,7 +69,7 @@ const Home = () => {
         <Image style={styles.iconsetting} source={require('../../Image/setting_icon.png')}/>
         </TouchableOpacity>
       </View>
-      <ScrollView style={styles.scrollView}>
+     
       <View style={styles.itempost}>
        <View style={styles.namepost}>
         <Image style={styles.avt}
@@ -129,9 +132,9 @@ const Home = () => {
             />
        </View>
       </View>
-      
       </ScrollView>
-      </LinearGradient>
+    </LinearGradient>
+     
     </View>
   )
 }
