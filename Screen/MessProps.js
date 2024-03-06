@@ -22,19 +22,11 @@ import {
 import Feather from "react-native-vector-icons/Feather";
 import Icon from "react-native-vector-icons/Ionicons";
 
+function Mess() {
 
-interface MessProps {
-  id: number;
-  type: 'image' | 'text';
-  role: 'sender' | 'acceptor';
-  text?: string;
-  image?: any;
-}
-function App(): React.JSX.Element {
+  const [textInput, setTextInput] = useState < String > ('');
 
-  const [textInput, setTextInput] = useState<String>('');
-
-  const renderItem = useCallback(({ item }: { item: MessProps }) => {
+  const renderItem = useCallback(({ item }) => {
     return (
       <View style={{ flexDirection: item.role == 'sender' ? 'row-reverse' : 'row', marginTop: 10 }}>
         {item.type == 'image' ? <Image style={{ borderRadius: 10 }} source={item.image} /> : <Text style={[{ height: 50, backgroundColor: '#635A8F', textAlign: 'center', fontSize: 20, padding: 10, color: 'white' }, item.role == 'acceptor' ? { borderTopLeftRadius: 15, borderTopRightRadius: 15, borderBottomRightRadius: 15 } : { borderTopLeftRadius: 15, borderTopRightRadius: 15, borderBottomLeftRadius: 15 }]}>{item.text}</Text>}
@@ -55,7 +47,7 @@ function App(): React.JSX.Element {
             <Feather style={{ position: "absolute", right: 10 }} name='more-vertical' color={"#635A8F"} size={35} />
           </View>
           <Text style={{ textAlign: 'center', color: '#ffffff' }}>3:23pm</Text>
-          <FlatList style={{ marginTop: 20, paddingHorizontal: 10, marginBottom: 65 }} data={data} renderItem={renderItem} keyExtractor={(item: MessProps) => item.id.toString()} />
+          <FlatList style={{ marginTop: 20, paddingHorizontal: 10, marginBottom: 65 }} data={data} renderItem={renderItem} keyExtractor={(item) => item.id.toString()} />
           <View style={{ flexDirection: 'row', columnGap: 10, position: 'absolute', bottom: 0, height: 60, width: '100%', backgroundColor: '#CBB6EE', justifyContent: 'center', alignItems: 'center' }}>
             <TextInput style={{ width: '80%', height: '60%', paddingHorizontal: 10, borderRadius: 20, backgroundColor: '#635A8F', padding: 0, color: 'white', fontSize: 17 }} value={textInput.toString()} onChangeText={(e) => setTextInput(e)} />
             <Pressable>
@@ -70,9 +62,9 @@ function App(): React.JSX.Element {
 }
 
 
-export default App;
+export default Mess;
 
-const data: MessProps[] = [
+const data = [
   {
     id: 1,
     type: 'image',
