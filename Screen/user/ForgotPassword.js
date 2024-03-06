@@ -11,27 +11,26 @@ import { LinearGradient } from "expo-linear-gradient";
 import React, { useState } from "react";
 import AxiosInstance from "./../../helper/Axiostance";
 
-
 const ForgotPassword = ({ navigation }) => {
   const [name, setName] = useState(""); // State để lưu trữ giá trị của email
   const [password, setPassword] = useState("");
   const [password_confirm, setpassword_confirm] = useState("");
-  const [otp, setOtp] = useState(''); // Tạo state để lưu trữ giá trị otp
+  const [otp, setOtp] = useState(""); // Tạo state để lưu trữ giá trị otp
 
-const handleOtpChange = (newOtp) => {
+  const handleOtpChange = (newOtp) => {
     setOtp(newOtp);
-};
+  };
 
   const OTPInput = ({ numInputs, value, onOtpChange }) => {
     const handleChange = (index, value) => {
-        const newOTP = [...otp];
-        newOTP[index] = value;
-        setOtp(newOTP);
-        onOtpChange(newOTP.join('')); // Truyền giá trị OTP lên component cha
+      const newOTP = [...otp];
+      newOTP[index] = value;
+      setOtp(newOTP);
+      onOtpChange(newOTP.join("")); // Truyền giá trị OTP lên component cha
     };
-  
+
     const inputs = Array(numInputs).fill();
-  
+
     return (
       <View style={styles.otpContainer}>
         {inputs.map((_, index) => (
@@ -60,7 +59,6 @@ const handleOtpChange = (newOtp) => {
       if (result.status) {
         alert("Đăng ký thành công");
         navigation.navigate("Login");
-        
 
         // Token đã được lưu trữ thành công, thực hiện các thao tác tiếp theo nếu cần
       } else {
@@ -79,67 +77,63 @@ const handleOtpChange = (newOtp) => {
       <View style={styles.containers}>
         <Text style={styles.Text15}> Forgot password?</Text>
         <Text style={styles.Text16}>
-        Enter your email and we’ll send you the instructions on how to reset your password.
+          Enter your email and we’ll send you the instructions on how to reset
+          your password.
         </Text>
 
-      <View style={styles.container}>
-     
-        <TextInput
-          placeholder="Password"
-          placeholderTextColor="#FFFFFF"
-          style={styles.TextInbutPassword}
-          value={password}
-          onChangeText={(text) => setPassword(text)}
-        />
-        {/* <Image style={styles.eye} source={require("../../Image/eye.png")} /> */}
+        <View style={styles.container}>
+          <TextInput
+            placeholder="Password"
+            placeholderTextColor="#FFFFFF"
+            style={styles.TextInbutPassword}
+            value={password}
+            onChangeText={(text) => setPassword(text)}
+          />
+          {/* <Image style={styles.eye} source={require("../../Image/eye.png")} /> */}
 
-        <TextInput
-          placeholder="Confirm PassWord"
-          placeholderTextColor="#FFFFFF"
-          style={styles.TextInbutPassword}
-          value={password_confirm}
-          onChangeText={(text) => setpassword_confirm(text)}
-        />
-        <Text style={styles.Text11}>Enter code OTP</Text>
-        <OTPInput
-        style={styles.inputOTP}
-        numInputs={5} 
-        value={otp} 
-        onOtpChange={handleOtpChange} 
-        
-        />
-        {/* <Image style={styles.eye2} source={require("../../Image/eye.png")} /> */}
-        
+          <TextInput
+            placeholder="Confirm PassWord"
+            placeholderTextColor="#FFFFFF"
+            style={styles.TextInbutPassword}
+            value={password_confirm}
+            onChangeText={(text) => setpassword_confirm(text)}
+          />
+          <Text style={styles.Text11}>Enter code OTP</Text>
+          <OTPInput
+            style={styles.inputOTP}
+            numInputs={5}
+            value={otp}
+            onOtpChange={handleOtpChange}
+          />
+          {/* <Image style={styles.eye2} source={require("../../Image/eye.png")} /> */}
 
-        <TouchableOpacity onPress={actionoRegister} style={styles.buttonSignin}>
-          <Text style={styles.Text3}>Recover PassWord</Text>
-        </TouchableOpacity>
-
-       
+          <TouchableOpacity
+            onPress={actionoRegister}
+            style={styles.buttonSignin}
+          >
+            <Text style={styles.Text3}>Recover PassWord</Text>
+          </TouchableOpacity>
+        </View>
       </View>
-      </View>
-    
     </LinearGradient>
-  
   );
 };
 
 export default ForgotPassword;
 
 const styles = StyleSheet.create({
-  inputOTP:{
-   margin: 15,
+  inputOTP: {
+    margin: 15,
   },
- 
-  Text16:{
+
+  Text16: {
     width: 380,
     padding: 15,
     fontSize: 13,
 
     color: "#FFFFFF",
   },
-  Text15:{
-
+  Text15: {
     left: 5,
     fontSize: 30,
     fontWeight: "bold",
@@ -147,20 +141,17 @@ const styles = StyleSheet.create({
     padding: 5,
     marginTop: 150,
   },
-  containers:{
-    top:40,
-    right: 10
+  containers: {
+    top: 40,
+    right: 10,
   },
-  Text11:{
+  Text11: {
     fontSize: 17,
     fontWeight: "bold",
     color: "#FFFFFF",
     margin: 10,
-    left:10,
+    left: 10,
   },
-
-
-
 
   Text4: {
     fontSize: 20,
@@ -175,10 +166,8 @@ const styles = StyleSheet.create({
     flex: 1,
     width: "100%",
   },
- 
 
   TextInbutPassword: {
-   
     fontSize: 20,
     paddingStart: 25,
     width: 360,
@@ -203,7 +192,6 @@ const styles = StyleSheet.create({
     top: 450,
     right: 20,
   },
-
 
   Text1: {
     fontSize: 17,
@@ -240,9 +228,9 @@ const styles = StyleSheet.create({
     marginTop: 6,
   },
   otpContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    width: '60%',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    width: "60%",
   },
   input: {
     height: 50,
@@ -256,8 +244,8 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     marginBottom: 20,
   },
-  container:{
+  container: {
     right: 10,
     bottom: 40,
-  }
+  },
 });

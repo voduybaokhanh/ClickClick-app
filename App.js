@@ -19,7 +19,7 @@ export default function App(navigation) {
   return (
     <NavigationContainer styles={styles.container}>
       <Stack.Navigator>
-        <Stack.Screen
+        {/* <Stack.Screen
           options={{ headerShown: false }}
           name="Home"
           component={Home}
@@ -33,8 +33,8 @@ export default function App(navigation) {
           options={{ headerShown: false }}
           name="Hello"
           component={Hello}
-        />
-        <Stack.Screen
+        /> */}
+        {/* <Stack.Screen
           options={{ headerShown: false }}
           name="Login"
           component={Login}
@@ -43,8 +43,8 @@ export default function App(navigation) {
           options={{ headerShown: false }}
           name="Post"
           component={Post}
-        />
-        <Stack.Screen
+        /> */}
+        {/* <Stack.Screen
           options={{ headerShown: false }}
           name="forgot"
           component={Forgetpassword}
@@ -58,22 +58,22 @@ export default function App(navigation) {
           options={{ headerShown: false }}
           name="registerOTP"
           component={RegisterOtp}
-        />
-        <Stack.Screen
+        /> */}
+        {/* <Stack.Screen
           options={{ headerShown: false }}
           name=" forgotpassword"
           component={ForgotPassword}
-        />
+        /> */}
         <Stack.Screen
           options={{ headerShown: false }}
           name="notifications"
           component={Notifications}
         />
-        <Stack.Screen
+        {/* <Stack.Screen
           options={{ headerShown: false }}
           name="resetPass"
           component={Resetpassword}
-        />
+        /> */}
       </Stack.Navigator>
     </NavigationContainer>
   );
