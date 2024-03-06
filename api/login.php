@@ -11,24 +11,24 @@ include_once './../api/helpers/jwt.php';
 
 try {
     $data = json_decode(file_get_contents("php://input"));
-    $name = $data->name;
+    $email = $data->email;
     $password = $data->password;
 
-    // Use a question mark as a placeholder instead of named placeholders
-    $sqlQuery = "SELECT ID, name, password FROM users WHERE name = ?";
+    // Use a question mark as a placeholder instead of emaild placeholders
+    $sqlQuery = "SELECT ID, email, password FROM users WHERE email = ?";
     $stmt = $dbConn->prepare($sqlQuery);
-    $stmt->bindParam(1, $name, PDO::PARAM_STR);
+    $stmt->bindParam(1, $email, PDO::PARAM_STR);
     $stmt->execute();
     $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
 
-    if ($name === $user["name"] && $password === $user["password"]) {
+    if ($email === $user["email"] && $password === $user["password"]) {
         echo json_encode(
             array(      
                     "status" => true,
                     "user" => array(
                         "id" => $user["ID"],
-                        "name"=> $user["name"],
+                        "email"=> $user["email"],
                     )
                 )
                     );

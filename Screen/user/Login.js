@@ -9,11 +9,11 @@ import {
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import React, { useState } from "react";
-import AxiosInstance from "../../helper/Axiostance";
+import AxiosInstance from "./../../helper/Axiostance";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const Login = ({navigation}) => {
-  const [name, setName] = useState(""); // State để lưu trữ giá trị của email
+  const [email, setEmail] = useState(""); // State để lưu trữ giá trị của email
   const [password, setPassword] = useState(""); // State để lưu trữ giá trị của password
 
   const actionforgotsPassword = () => {
@@ -24,7 +24,7 @@ const Login = ({navigation}) => {
   }
   const actionLogin = async () => {
     try {
-      const body = { name, password };
+      const body = { email, password };
       const instance = await AxiosInstance();
       const result = await instance.post("/login.php", body);
       const token = await AsyncStorage.getItem("token");
@@ -37,8 +37,8 @@ const Login = ({navigation}) => {
       } else {
         alert("đăng nhập thất bại");
       }
-      console.log(result.user.id);
-      console.log(token);
+      console.log('id: ' + result.user.id);
+      console.log('token: '+token);
     } catch (error) {
       console.error("Lỗi khi thực hiện đăng nhập: ", error);
     }
@@ -65,11 +65,11 @@ const Login = ({navigation}) => {
             </Text>
 
             <TextInput
-              placeholder="Name"
+              placeholder="Email"
               placeholderTextColor="#FFFFFF"
               style={styles.TextInbutEmail}
-              value={name}
-              onChangeText={(text) => setName(text)}
+              value={email}
+              onChangeText={(text) => setEmail(text)}
             />
             <View>
               <TextInput
@@ -175,7 +175,7 @@ const styles = StyleSheet.create({
   TextInbutPassword: {
     fontSize: 20,
     paddingStart: 20,
-    width: 330,
+    width: 320,
     right: 30,
     height: 60,
     borderColor: "#FFFFFF",
@@ -188,7 +188,7 @@ const styles = StyleSheet.create({
   TextInbutEmail: {
     fontSize: 20,
     paddingStart: 20,
-    width: 330,
+    width: 320,
     right: 30,
     height: 60,
     borderColor: "#FFFFFF",
