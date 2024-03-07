@@ -28,13 +28,13 @@ try {
     $userid = $data->userid;
 
     // Kiểm tra action hợp lệ
-    if ($action != 'like' && $action != 'unlike') {
+    if ($action != 1 && $action != 0) {
         http_response_code(400);
         echo json_encode(array('status' => false, 'message' => 'Hành động không hợp lệ.'));
         exit;
     }
 
-   
+
 
     // Kiểm tra xem postid có tồn tại trong cơ sở dữ liệu hay không
     $checkPostQuery = "SELECT * FROM posts WHERE ID = :postid";
@@ -66,7 +66,7 @@ try {
     // Lấy số lượng likes từ kết quả truy vấn
     $likes = $postLikes['likes'];
 
-    if ($action == 'like') {
+    if ($action == '1') {
         if ($existingLike) {
             echo json_encode(array('status' => false, 'message' => 'Bạn đã like bài đăng này trước đó.'));
             exit;
@@ -86,7 +86,7 @@ try {
         $updateLikesCountStmt = $dbConn->prepare($updateLikesCountQuery);
         $updateLikesCountStmt->bindParam(':postid', $postid, PDO::PARAM_INT);
         $updateLikesCountStmt->execute();
-    } elseif ($action == 'unlike') {
+    } elseif ($action == '0') {
         if (!$existingLike) {
             echo json_encode(array('status' => false, 'message' => 'Bạn chưa like bài đăng này.'));
             exit;
@@ -109,4 +109,3 @@ try {
 } catch (Exception $e) {
     echo json_encode(array('status' => false, 'message' => $e->getMessage()));
 }
-?>
