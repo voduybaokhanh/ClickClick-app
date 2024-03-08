@@ -12,7 +12,6 @@ include_once './helpers/jwt.php';
 try {
     // Lấy dữ liệu từ JSON
     $data = json_decode(file_get_contents("php://input"));
-   
 
     // Kiểm tra xem người dùng có tồn tại hay không
     if (!isset($data->userid)) {
@@ -31,16 +30,22 @@ try {
     $image = $data->image;
     $userid = $data->userid;
 
-    $postQuery = "SELECT * FROM users WHERE id = :userid";
-    $postStmt = $dbConn->prepare($postQuery);
-    $postStmt->bindParam(':userid', $userid, PDO::PARAM_INT);
-    $postStmt->execute();
-    $user = $postStmt->fetch(PDO::FETCH_ASSOC);   
+    // Kiểm tra xem người dùng có tồn tại hay không
+    $checkUserQuery = "SELECT * FROM users WHERE id = :userid";
+    $checkUserStmt = $dbConn->prepare($checkUserQuery);
+    $checkUserStmt->bindParam(':userid', $userid, PDO::PARAM_INT);
+    $checkUserStmt->execute();
+    $user = $checkUserStmt->fetch(PDO::FETCH_ASSOC);
+
+    if (!$user) {
+        echo json_encode(array('error' => 'Người dùng không tồn tại'));
+        exit;
+    }
 
     // Chuẩn bị và thực thi truy vấn SQL
-    $insertQuery = "INSERT INTO posts (userid, content, image, time,name) VALUES (:userid, :content, :image, now(),:name)";
+    $insertQuery = "INSERT INTO posts (userid, content, image, time, name) VALUES (:userid, :content, :image, now(), :name)";
     $insertStmt = $dbConn->prepare($insertQuery);
-    $insertStmt->bindParam(':userid', $user['ID'], PDO::PARAM_INT);
+    $insertStmt->bindParam(':userid', $userid, PDO::PARAM_INT);
     $insertStmt->bindParam(':content', $content, PDO::PARAM_STR);
     $insertStmt->bindParam(':image', $image, PDO::PARAM_STR);
     $insertStmt->bindParam(':name', $user['NAME'], PDO::PARAM_STR);
@@ -54,14 +59,15 @@ try {
     $postStmt->execute();
     $post = $postStmt->fetch(PDO::FETCH_ASSOC);
 
+    // Thêm thông báo vào cơ sở dữ liệu
+    $notificationContent = "{$user['NAME']} đã thêm bài viết mới.";
+    $addNotificationQuery = "INSERT INTO notifications (userid, content, time) VALUES (:userid, :content, now())";
+    $addNotificationStmt = $dbConn->prepare($addNotificationQuery);
+    $addNotificationStmt->bindParam(':userid', $userid, PDO::PARAM_INT);
+    $addNotificationStmt->bindParam(':content', $notificationContent, PDO::PARAM_STR);
+    $addNotificationStmt->execute();
 
-    // Kiểm tra và trả về kết quả
-    echo json_encode(
-        array(
-            "status" => true,
-            "post" => $post
-        )
-    );
+    echo json_encode(array('status' => true, 'message' => "{$user['NAME']} đã thêm bài viết mới", 'post' => $post));
 
 } catch (Exception $e) {
     echo json_encode(array('error' => $e->getMessage()));

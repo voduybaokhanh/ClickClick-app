@@ -8,7 +8,7 @@ header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers
 include_once './connection.php';
 
 try {
-    
+
     // Nhận dữ liệu từ yêu cầu
     $data = json_decode(file_get_contents("php://input"));
 
@@ -74,19 +74,38 @@ try {
     $insertMessageStmt->bindParam(':postid', $postid, PDO::PARAM_INT);
     $insertMessageStmt->execute();
 
-
     // Lấy thông tin bài đăng
     $postQuery = "SELECT content, image, name, time FROM posts WHERE ID = :postid";
     $postStmt = $dbConn->prepare($postQuery);
     $postStmt->bindParam(':postid', $postid, PDO::PARAM_INT);
     $postStmt->execute();
     $post = $postStmt->fetch(PDO::FETCH_ASSOC);
-    
+
     if ($post === false) {
         $post = null;
     }
 
-    echo json_encode(array('status' => true, 'message' => 'Tin nhắn đã được gửi.', 'post' => $post));
+    // Truy vấn để lấy thông tin người dùng từ userid
+    $getUserNameQuery = "SELECT NAME FROM users WHERE ID = :userid";
+    $getUserNameStmt = $dbConn->prepare($getUserNameQuery);
+    $getUserNameStmt->bindParam(':userid', $SENDERID, PDO::PARAM_INT); // Sử dụng $SENDERID thay vì $userid
+    $getUserNameStmt->execute();
+    $userName = $getUserNameStmt->fetch(PDO::FETCH_COLUMN);
+
+    if ($userName) {
+        // Thêm thông báo vào cơ sở dữ liệu
+        $notificationContent = "$userName đã gửi tin nhắn cho bạn.";
+        $addNotificationQuery = "INSERT INTO notifications (userid, content, time) VALUES (:userid, :content, now())";
+        $addNotificationStmt = $dbConn->prepare($addNotificationQuery);
+        $addNotificationStmt->bindParam(':userid', $RECEIVERID, PDO::PARAM_INT); // Thông báo gửi cho người nhận
+        $addNotificationStmt->bindParam(':content', $notificationContent, PDO::PARAM_STR);
+        $addNotificationStmt->execute();
+
+        echo json_encode(array('status' => true, 'message' => $userName . ' đã gửi tin nhắn cho bạn.', 'post' => $post));
+    } else {
+        // Xử lý khi không tìm thấy thông tin người dùng
+        echo json_encode(array('status' => false, 'message' => 'Lỗi'));
+    }
 
 } catch (Exception $e) {
     echo json_encode(array('status' => false, 'message' => $e->getMessage()));
