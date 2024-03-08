@@ -20,7 +20,7 @@ try {
         echo json_encode(array('status' => false, 'message' => 'Thiếu tham số friendshipid hoặc userid'));
         exit;
     }
- 
+
     $userid = $data->userid;
     $friendshipid = $data->friendshipid; // Lấy friendshipid từ dữ liệu gửi đi
 
@@ -54,6 +54,8 @@ try {
         exit;
     }
 
+
+
     // Thêm yêu cầu kết bạn vào cơ sở dữ liệu
     $insertFriendshipQuery = "INSERT INTO friendships (userid, friendshipid, status, time) VALUES (:userid, :friendshipid, 'pending', NOW())";
     $insertFriendshipStmt = $dbConn->prepare($insertFriendshipQuery);
@@ -61,7 +63,29 @@ try {
     $insertFriendshipStmt->bindParam(':friendshipid', $friendshipid, PDO::PARAM_INT);
     $insertFriendshipStmt->execute();
 
-    echo json_encode(array('status' => true, 'message' => 'Yêu cầu kết bạn đã được gửi.'));
+
+    // Truy vấn để lấy thông tin người dùng từ userid
+    $getUserNameQuery = "SELECT NAME FROM users WHERE ID = :userid";
+    $getUserNameStmt = $dbConn->prepare($getUserNameQuery);
+    $getUserNameStmt->bindParam(':userid', $userid, PDO::PARAM_INT); 
+    $getUserNameStmt->execute();
+    $userName = $getUserNameStmt->fetch(PDO::FETCH_COLUMN);
+
+    if ($userName) {
+        // Thêm thông báo vào cơ sở dữ liệu
+        $notificationContent = "$userName đã gửi lời mời kết bạn.";
+        $addNotificationQuery = "INSERT INTO notifications (userid, content, time,RECEIVERID) VALUES (:userid, :content, now(),:RECEIVERID)";
+        $addNotificationStmt = $dbConn->prepare($addNotificationQuery);
+        $addNotificationStmt->bindParam(':userid', $userid, PDO::PARAM_INT); // Sử dụng $userid thay vì $getUserNameStmt
+        $addNotificationStmt->bindParam(':content', $notificationContent, PDO::PARAM_STR);
+        $addNotificationStmt->bindParam(':RECEIVERID', $friendshipid, PDO::PARAM_INT); // Thông báo gửi cho người nhận
+        $addNotificationStmt->execute();
+
+        echo json_encode(array('status' => true, 'message' => $userName . ' đã gửi lời mời kết bạn.'));
+    } else {
+        // Xử lý khi không tìm thấy thông tin người dùng
+        echo json_encode(array('status' => false, 'message' => 'Lỗi'));
+    }
 } catch (Exception $e) {
     echo json_encode(array('status' => false, 'message' => $e->getMessage()));
 }
