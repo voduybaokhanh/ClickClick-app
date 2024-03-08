@@ -86,6 +86,14 @@ try {
         $updateLikesCountStmt->bindParam(':postid', $postid, PDO::PARAM_INT);
         $updateLikesCountStmt->execute();
 
+        // Truy vấn để lấy userid từ postid
+        $getUserIdFromPostIdQuery = "SELECT userid FROM posts WHERE ID = :postid";
+        $getUserIdFromPostIdStmt = $dbConn->prepare($getUserIdFromPostIdQuery);
+        $getUserIdFromPostIdStmt->bindParam(':postid', $postid, PDO::PARAM_INT);
+        $getUserIdFromPostIdStmt->execute();
+        $postUserId = $getUserIdFromPostIdStmt->fetch(PDO::FETCH_COLUMN);
+        $RECEIVERID = $postUserId;
+
         //lấy tên người dùng từ userid
         // Truy vấn để lấy thông tin người dùng từ userid
         $getUserNameQuery = "SELECT NAME FROM users WHERE ID = :userid";
@@ -93,19 +101,20 @@ try {
         $getUserNameStmt->bindParam(':userid', $userid, PDO::PARAM_INT); // Đổi 'userid' thành cột chứa ID của người tạo bài đăng
         $getUserNameStmt->execute();
         $userName = $getUserNameStmt->fetch(PDO::FETCH_COLUMN);
-        
+
         if ($userName) {
             // Sử dụng $userName trong nội dung thông báo
             // Thêm "Thông báo" mới vào cơ sở dữ liệu
             $notificationContent = "$userName đã thích bài đăng của bạn.";
-            $addNotificationQuery = "INSERT INTO notifications (userid, content, time) VALUES (:userid, :content, now())";
+            $addNotificationQuery = "INSERT INTO notifications (userid, content, time,RECEIVERID) VALUES (:userid, :content, now(),:RECEIVERID)";
             $addNotificationStmt = $dbConn->prepare($addNotificationQuery);
             $addNotificationStmt->bindParam(':userid', $userid, PDO::PARAM_INT);
             $addNotificationStmt->bindParam(':content', $notificationContent, PDO::PARAM_STR);
+            $addNotificationStmt->bindParam(':RECEIVERID', $RECEIVERID, PDO::PARAM_INT);
             $addNotificationStmt->execute();
-            
+
             echo json_encode(array('status' => true, 'message' => $userName . ' đã like bài đăng của bạn.'));
-            
+
         } else {
             // Xử lý khi không tìm thấy thông tin người dùng
             echo json_encode(array('status' => true, 'message' => 'Người dùng đã like bài đăng thành công.'));
