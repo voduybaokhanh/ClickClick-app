@@ -84,6 +84,7 @@ try {
     if ($post === false) {
         $post = null;
     }
+    
 
     // Truy vấn để lấy thông tin người dùng từ userid
     $getUserNameQuery = "SELECT NAME FROM users WHERE ID = :userid";
@@ -95,10 +96,11 @@ try {
     if ($userName) {
         // Thêm thông báo vào cơ sở dữ liệu
         $notificationContent = "$userName đã gửi tin nhắn cho bạn.";
-        $addNotificationQuery = "INSERT INTO notifications (userid, content, time) VALUES (:userid, :content, now())";
+        $addNotificationQuery = "INSERT INTO notifications (userid, content, time,RECEIVERID) VALUES (:userid, :content, now(),:RECEIVERID)";
         $addNotificationStmt = $dbConn->prepare($addNotificationQuery);
-        $addNotificationStmt->bindParam(':userid', $RECEIVERID, PDO::PARAM_INT); // Thông báo gửi cho người nhận
+        $addNotificationStmt->bindParam(':userid', $SENDERID, PDO::PARAM_INT); // Thông báo gửi cho người nhận
         $addNotificationStmt->bindParam(':content', $notificationContent, PDO::PARAM_STR);
+        $addNotificationStmt->bindParam(':RECEIVERID', $RECEIVERID, PDO::PARAM_INT); // Thông báo gửi cho người nhận
         $addNotificationStmt->execute();
 
         echo json_encode(array('status' => true, 'message' => $userName . ' đã gửi tin nhắn cho bạn.', 'post' => $post));

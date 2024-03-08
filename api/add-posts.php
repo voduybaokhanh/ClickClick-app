@@ -59,15 +59,7 @@ try {
     $postStmt->execute();
     $post = $postStmt->fetch(PDO::FETCH_ASSOC);
 
-    // Thêm thông báo vào cơ sở dữ liệu
-    $notificationContent = "{$user['NAME']} đã thêm bài viết mới.";
-    $addNotificationQuery = "INSERT INTO notifications (userid, content, time) VALUES (:userid, :content, now())";
-    $addNotificationStmt = $dbConn->prepare($addNotificationQuery);
-    $addNotificationStmt->bindParam(':userid', $userid, PDO::PARAM_INT);
-    $addNotificationStmt->bindParam(':content', $notificationContent, PDO::PARAM_STR);
-    $addNotificationStmt->execute();
-
-    echo json_encode(array('status' => true, 'message' => "{$user['NAME']} đã thêm bài viết mới", 'post' => $post));
+    echo json_encode(array('status' => true, 'post' => $post));
 
 } catch (Exception $e) {
     echo json_encode(array('error' => $e->getMessage()));
