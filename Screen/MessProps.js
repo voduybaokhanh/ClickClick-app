@@ -1,16 +1,10 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- */
-
 import React, { useCallback, useState } from 'react';
 import {
   FlatList,
   Image,
   ImageBackground,
   KeyboardAvoidingView,
+  Platform,
   Pressable,
   SafeAreaView,
   StyleSheet,
@@ -23,7 +17,6 @@ import Feather from "react-native-vector-icons/Feather";
 import Icon from "react-native-vector-icons/Ionicons";
 
 function Mess() {
-
   const [textInput, setTextInput] = useState('');
 
   const renderItem = useCallback(({ item }) => {
@@ -36,13 +29,12 @@ function Mess() {
 
   return (
     
-      <KeyboardAvoidingView>
+      <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{ flex: 1 }}>
         <ImageBackground style={{ width: '100%', height: '100%', zIndex: -1 }} resizeMode="cover" source={require('../Image/background.png')}>
 
-          <View style={{ flexDirection: 'row', alignItems: 'center', height: 100, backgroundColor: '#CBB6EE',paddingTop: 30 }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', height: 100, backgroundColor: '#CBB6EE', paddingTop: 30 }}>
             <Icon name='chevron-back' color={'#635A8F'} size={35} />
             <Image style={{ height: 60, width: 60 }} source={require('../Image/avatar.png')} />
-
             <Text style={{ fontSize: 20, fontWeight: '500', color: 'white', marginLeft: 20 }}>Edein Vindain</Text>
             <Feather style={{ position: "absolute", right: 10 }} name='more-vertical' color={"#635A8F"} size={35} />
           </View>
@@ -56,11 +48,9 @@ function Mess() {
           </View>
         </ImageBackground>
       </KeyboardAvoidingView>
-    
-
+   
   );
 }
-
 
 export default Mess;
 
@@ -75,7 +65,7 @@ const data = [
     id: 2,
     type: 'text',
     role: 'acceptor',
-    text: 'Hello, have a great day!',
+text: 'Hello, have a great day!',
   },
   {
     id: 3,
@@ -90,4 +80,4 @@ const data = [
     text: 'Hello, have a great day!',
     image: require("../Image/image2.png")
   },
-]
+];
