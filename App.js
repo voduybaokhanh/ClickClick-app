@@ -11,6 +11,7 @@ import BottomTab from './Screen/BottomTab/BottomTab';
 import Forgetpassword from './Screen/user/ForgotpasswordOTP';
 import RegisterOtp from './Screen/user/RegisterOtp';
 import Resetpassword from './Screen/user/Resetpassword';
+import MessProps from './Screen/MessProps';
 const Stack = createNativeStackNavigator();
 
 export default function App(navigation) {
@@ -18,6 +19,8 @@ export default function App(navigation) {
       <NavigationContainer styles={styles.container}>
       <Stack.Navigator>
       <Stack.Screen options={{headerShown: false}} name="BottomTab" component={BottomTab} />
+      <Stack.Screen options={{headerShown: false}} name="MessProps" component={MessProps} />
+      
       <Stack.Screen options={{headerShown: false}} name="Hello" component={Hello} />  
       <Stack.Screen options={{headerShown: false}} name="Login" component={Login} />  
       <Stack.Screen options={{headerShown: false}} name="Post" component={Post} />
