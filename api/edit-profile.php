@@ -11,15 +11,15 @@ try {
     $decodedData = stripslashes(file_get_contents("php://input"));
     $data = json_decode($decodedData);
 
-    if ($data === null || !isset($data->id) || !isset($data->name) || !isset($data->avatar) || !isset($data->sdt) || !isset($data->text)) {
-        echo json_encode(
-            array(
-                "status" => false,
-                "message" => "Thiếu dữ liệu bắt buộc"
-            )
-        );
-        exit;
-    }
+    // if ($data === null || !isset($data->id) || !isset($data->name) || !isset($data->avatar) || !isset($data->sdt) || !isset($data->text)) {
+    //     echo json_encode(
+    //         array(
+    //             "status" => false,
+    //             "message" => "Thiếu dữ liệu bắt buộc"
+    //         )
+    //     );
+    //     exit;
+    // }
 
     $id = $data->id;
 
@@ -39,38 +39,38 @@ try {
         );
         exit;
     }
-      // Kiểm tra xem tên và số điện thoại đã tồn tại trong cơ sở dữ liệu chưa
-      $sqlCheck = "SELECT * FROM users WHERE name = :name";
-      $stmt = $dbConn->prepare($sqlCheck);
-      $stmt->bindParam(':name', $name, PDO::PARAM_STR);
-      $stmt->execute();
-      $existingUser = $stmt->fetch(PDO::FETCH_ASSOC);
-  
-      if ($existingUser && $existingUser['id'] != $id) {
-          echo json_encode(
-              array(
-                  "status" => false,
-                  "message" => "Tên đã tồn tại"
-              )
-          );
-          exit;
-      }
-          // Kiểm tra xem tên và số điện thoại đã tồn tại trong cơ sở dữ liệu chưa
-          $sqlCheck = "SELECT * FROM users WHERE sdt = :sdt";
-          $stmt = $dbConn->prepare($sqlCheck);
-          $stmt->bindParam(':sdt', $sdt, PDO::PARAM_STR);
-          $stmt->execute();
-          $existingUser = $stmt->fetch(PDO::FETCH_ASSOC);
-      
-          if ($existingUser && $existingUser['id'] != $id) {
-              echo json_encode(
-                  array(
-                      "status" => false,
-                      "message" => "số điện thoại đã tồn tại"
-                  )
-              );
-              exit;
-          }
+    // Kiểm tra xem tên và số điện thoại đã tồn tại trong cơ sở dữ liệu chưa
+    $sqlCheck = "SELECT * FROM users WHERE name = :name";
+    $stmt = $dbConn->prepare($sqlCheck);
+    $stmt->bindParam(':name', $name, PDO::PARAM_STR);
+    $stmt->execute();
+    $existingUser = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if ($existingUser && $existingUser['id'] != $id) {
+        echo json_encode(
+            array(
+                "status" => false,
+                "message" => "Tên đã tồn tại"
+            )
+        );
+        exit;
+    }
+    // Kiểm tra xem tên và số điện thoại đã tồn tại trong cơ sở dữ liệu chưa
+    $sqlCheck = "SELECT * FROM users WHERE sdt = :sdt";
+    $stmt = $dbConn->prepare($sqlCheck);
+    $stmt->bindParam(':sdt', $sdt, PDO::PARAM_STR);
+    $stmt->execute();
+    $existingUser = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if ($existingUser && $existingUser['id'] != $id) {
+        echo json_encode(
+            array(
+                "status" => false,
+                "message" => "số điện thoại đã tồn tại"
+            )
+        );
+        exit;
+    }
 
     // Cập nhật hồ sơ người dùng
     $sqlUpdate = "UPDATE users SET name = :name, avatar = :avatar, sdt = :sdt, text = :text WHERE id = :id";
@@ -88,7 +88,6 @@ try {
             "message" => "Hồ sơ đã được cập nhật thành công"
         )
     );
-
 } catch (Exception $e) {
     echo json_encode(
         array(
@@ -97,4 +96,3 @@ try {
         )
     );
 }
-?>
