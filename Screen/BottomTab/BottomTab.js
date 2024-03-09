@@ -21,7 +21,7 @@ const BottomTab = () => {
           labelPosition: 'below-icon',
           borderTopLeftRadius: 50,
           borderTopRightRadius: 50,
-          height:100,
+          height:80,
           padding:20,
           backgroundColor: 'white', // Màu nền trong suốt
           borderTopWidth: 0, // Loại bỏ đường viền phía trên
@@ -38,9 +38,11 @@ const BottomTab = () => {
           fontSize: 14, // Kích thước của chữ trên các tab
           marginTop: -5,// Khoảng cách giữa chữ và biểu tượng
         },
-        activeTintColor:'red', // Màu của tab được chọn
-        inactiveTintColor: 'gray', // Màu của các tab không được chọn
-      }}>
+         // Màu của tab được chọn
+        inactiveTintColor: 'gray',
+         // Màu của các tab không được chọn
+        tabBarActiveTintColor:'#8B64DA'
+            }}>
       <Tab.Screen
         name="Home"
         component={Home}
