@@ -15,6 +15,8 @@ import Notifications from "./Screen/user/Notifications";
 import ForgotPassword from "./Screen/user/ForgotPassword";
 import Messenger from "./Screen/BottomTab/Messenger";
 import Messenger2 from "./Screen/user/Messenger2";
+import MessageDetailScreen from "./Screen/user/MessageDetailScreen";
+import MessageListScreen from "./Screen/user/MessageListScreen";
 const Stack = createNativeStackNavigator();
 
 export default function App(navigation) {
@@ -22,6 +24,17 @@ export default function App(navigation) {
     <NavigationContainer styles={styles.container}>
       <Stack.Navigator>
         <Stack.Screen
+          options={{ headerShown: false }}
+          name="messDetail"
+          component={MessageDetailScreen}
+        />
+        <Stack.Screen
+          options={{ headerShown: false }}
+          name="messList"
+          component={MessageListScreen}
+        />
+
+        {/* <Stack.Screen
           options={{ headerShown: false }}
           name="BottomTab"
           component={BottomTab}
@@ -65,17 +78,17 @@ export default function App(navigation) {
           options={{ headerShown: false }}
           name="resetPass"
           component={Resetpassword}
-        />
-        <Stack.Screen
+        /> */}
+        {/* <Stack.Screen
           options={{ headerShown: false }}
           name="notifications"
           component={Notifications}
-        />
-        <Stack.Screen
+        /> */}
+        {/* <Stack.Screen
           options={{ headerShown: false }}
           name="messenger2"
           component={Messenger2}
-        />
+        /> */}
       </Stack.Navigator>
     </NavigationContainer>
   );

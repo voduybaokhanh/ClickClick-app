@@ -1,33 +1,46 @@
 import React from "react";
-import { View, FlatList, Text } from "react-native";
-import { LinearGradient } from "expo-linear-gradient";
+import { View, Text, FlatList, StyleSheet } from "react-native";
+
+const notification = [
+  { id: "1", name: "Nguyễn Văn A" },
+  { id: "2", name: "Trần Thị B" },
+  { id: "3", name: "Lê Văn C" },
+];
 
 const Notifications = () => {
-  // Tạo một mảng gồm 20 phần tử từ 0 đến 19
-  const data = Array.from(Array(5).keys());
-
-  // Hàm render mỗi dòng của danh sách
-  const renderItem = ({ item }) => (
-    <LinearGradient
-      locations={[0.05, 0.17, 0.8, 1]}
-      colors={["#3B21B7", "#8B64DA", "#D195EE", "#CECBD3"]}
-      style={{ padding: 10, borderBottomWidth: 1, borderBottomColor: "#ccc" }}
-    >
-      <View>
-        <Text>New </Text>
-      </View>
-
-      <Text style={{ color: "white" }}>{`Item ${item}`}</Text>
-    </LinearGradient>
-  );
-
   return (
-    <FlatList
-      data={data}
-      renderItem={renderItem}
-      keyExtractor={(item) => item.toString()}
-    />
+    <View style={styles.container}>
+      <Text style={styles.title}> Messenger </Text>
+
+      <FlatList
+        data={notification}
+        renderItem={({ item }) => (
+          <Text style={styles.member}>{item.name}</Text>
+        )}
+        keyExtractor={(item) => item.id}
+      />
+    </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    marginTop: 40,
+    flex: 1,
+    backgroundColor: "#fff",
+    alignItems: "center",
+    justifyContent: "center",
+    padding: 20,
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: "bold",
+    marginBottom: 10,
+  },
+  member: {
+    fontSize: 18,
+    marginBottom: 5,
+  },
+});
 
 export default Notifications;
