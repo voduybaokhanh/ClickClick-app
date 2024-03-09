@@ -38,7 +38,7 @@ const BottomTab = () => {
           fontSize: 14, // Kích thước của chữ trên các tab
           marginTop: -5,// Khoảng cách giữa chữ và biểu tượng
         },
-        activeTintColor: '#635A8F', // Màu của tab được chọn
+        activeTintColor:'red', // Màu của tab được chọn
         inactiveTintColor: 'gray', // Màu của các tab không được chọn
       }}>
       <Tab.Screen
@@ -57,7 +57,7 @@ const BottomTab = () => {
         options={{
             headerShown: false,
           tabBarIcon: ({ color, size }) => (
-            <Image source={CustomMessengerIcon}  />
+            <Image source={ CustomMessengerIcon}  />
           ),
         }}
       />
