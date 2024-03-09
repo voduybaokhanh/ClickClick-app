@@ -27,12 +27,12 @@ try {
     $addReportStmt->bindParam(':postid', $postid, PDO::PARAM_INT);
     $addReportStmt->execute();
 
-    // Ẩn bài viết cho người dùng đó
-    $hidePostQuery = "UPDATE posts SET available = 0 WHERE id = :postid AND userid != :userid";
-    $hidePostStmt = $dbConn->prepare($hidePostQuery);
-    $hidePostStmt->bindParam(':postid', $postid, PDO::PARAM_INT);
-    $hidePostStmt->bindParam(':userid', $userid, PDO::PARAM_INT);
-    $hidePostStmt->execute();
+    // // Ẩn bài viết cho người dùng đó
+    // $hidePostQuery = "UPDATE posts SET available = 0 WHERE id = :postid AND userid != :userid";
+    // $hidePostStmt = $dbConn->prepare($hidePostQuery);
+    // $hidePostStmt->bindParam(':postid', $postid, PDO::PARAM_INT);
+    // $hidePostStmt->bindParam(':userid', $userid, PDO::PARAM_INT);
+    // $hidePostStmt->execute();
 
     echo json_encode(array('status' => true, 'message' => 'Báo cáo thành công'));
 } catch (Exception $e) {
