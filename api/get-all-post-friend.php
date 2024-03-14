@@ -21,12 +21,17 @@ try {
     $userid = $data->userid;
 
     // Truy vấn để lấy tất cả bài viết có mối quan hệ là "friend" với userid
-    $postQuery = "SELECT posts.* FROM posts INNER JOIN friendships ON (posts.userid = friendships.friendshipid OR posts.userid = friendships.userid) WHERE (friendships.userid = :userid OR friendships.friendshipid = :userid) AND friendships.status = 'friend' ORDER BY posts.time DESC";
+    $postQuery = "SELECT posts.AVATAR, posts.TIME, posts.NAME, posts.CONTENT, posts.LIKES 
+                  FROM posts 
+                  INNER JOIN friendships 
+                  ON (posts.userid = friendships.friendshipid OR posts.userid = friendships.userid) 
+                  WHERE (friendships.userid = :userid OR friendships.friendshipid = :userid) 
+                  AND friendships.status = 'friend' 
+                  ORDER BY posts.time DESC";
     $postStmt = $dbConn->prepare($postQuery);
     $postStmt->bindParam(':userid', $userid, PDO::PARAM_INT);
     $postStmt->execute();
     $posts = $postStmt->fetchAll(PDO::FETCH_ASSOC);
-
 
     echo json_encode(array('status' => true, 'posts' => $posts));
 } catch (Exception $e) {
