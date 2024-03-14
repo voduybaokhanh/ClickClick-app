@@ -19,8 +19,9 @@ const BottomTab = () => {
     <Tab.Navigator  screenOptions={{
         tabBarStyle: {
           labelPosition: 'below-icon',
-          borderRadius: 50,
-          height:120,
+          borderTopLeftRadius: 50,
+          borderTopRightRadius: 50,
+          height:80,
           padding:20,
           backgroundColor: 'white', // Màu nền trong suốt
           borderTopWidth: 0, // Loại bỏ đường viền phía trên
@@ -37,9 +38,11 @@ const BottomTab = () => {
           fontSize: 14, // Kích thước của chữ trên các tab
           marginTop: -5,// Khoảng cách giữa chữ và biểu tượng
         },
-        activeTintColor: 'blue', // Màu của tab được chọn
-        inactiveTintColor: 'gray', // Màu của các tab không được chọn
-      }}>
+         // Màu của tab được chọn
+        inactiveTintColor: 'gray',
+         // Màu của các tab không được chọn
+        tabBarActiveTintColor:'#8B64DA'
+            }}>
       <Tab.Screen
         name="Home"
         component={Home}
@@ -56,7 +59,7 @@ const BottomTab = () => {
         options={{
             headerShown: false,
           tabBarIcon: ({ color, size }) => (
-            <Image source={CustomMessengerIcon}  />
+            <Image source={ CustomMessengerIcon}  />
           ),
         }}
       />
