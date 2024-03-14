@@ -1,15 +1,14 @@
 <?php
-// get-friendship.php
 header("Content-Type: application/json; charset=UTF-8");
-header("Access-Control-Allow-Methods: GET");
+header("Access-Control-Allow-Methods: POST");
 header("Access-Control-Allow-Origin: *");
 header("Access-Control-Max-Age: 3600");
 header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
 
 include_once './connection.php';
+include_once './../api/helpers/jwt.php';
 
 try {
-    // Nhận dữ liệu từ yêu cầu
     $data = json_decode(file_get_contents("php://input"));
 
     // Kiểm tra xem có userid được gửi hay không
@@ -18,17 +17,17 @@ try {
         echo json_encode(array('status' => false, 'message' => 'Thiếu tham số userid'));
         exit;
     }
-
     $userid = $data->userid;
 
-    // Truy vấn để lấy thông tin về mối quan hệ có trạng thái "friend" dựa trên userid
-    $getFriendshipsQuery = "SELECT * FROM friendships WHERE userid = :userid AND status = 'friend'";
-    $getFriendshipsStmt = $dbConn->prepare($getFriendshipsQuery);
-    $getFriendshipsStmt->bindParam(':userid', $userid, PDO::PARAM_INT);
-    $getFriendshipsStmt->execute();
-    $friendships = $getFriendshipsStmt->fetchAll(PDO::FETCH_ASSOC);
+    // Truy vấn thông báo dựa trên RECEIVERID
+    $getNotificationsQuery = "SELECT * FROM notifications WHERE RECEIVERID = :userid";
+    $getNotificationsStmt = $dbConn->prepare($getNotificationsQuery);
+    $getNotificationsStmt->bindParam(':userid', $userid, PDO::PARAM_INT);
+    $getNotificationsStmt->execute();
+    $notifications = $getNotificationsStmt->fetchAll(PDO::FETCH_ASSOC);
 
-    echo json_encode(array('status' => true, 'friendships' => $friendships));
+    // Trả về kết quả
+    echo json_encode(array('status' => true, 'notifications' => $notifications));
 } catch (Exception $e) {
     echo json_encode(array('status' => false, 'message' => $e->getMessage()));
 }

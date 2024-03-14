@@ -1,5 +1,4 @@
 <?php
-// get-friendship.php
 header("Content-Type: application/json; charset=UTF-8");
 header("Access-Control-Allow-Methods: GET");
 header("Access-Control-Allow-Origin: *");
@@ -21,14 +20,15 @@ try {
 
     $userid = $data->userid;
 
-    // Truy vấn để lấy thông tin về mối quan hệ có trạng thái "friend" dựa trên userid
-    $getFriendshipsQuery = "SELECT * FROM friendships WHERE userid = :userid AND status = 'friend'";
-    $getFriendshipsStmt = $dbConn->prepare($getFriendshipsQuery);
-    $getFriendshipsStmt->bindParam(':userid', $userid, PDO::PARAM_INT);
-    $getFriendshipsStmt->execute();
-    $friendships = $getFriendshipsStmt->fetchAll(PDO::FETCH_ASSOC);
+    // Truy vấn để lấy tất cả bài viết có mối quan hệ là "friend" với userid
+    $postQuery = "SELECT posts.* FROM posts INNER JOIN friendships ON (posts.userid = friendships.friendshipid OR posts.userid = friendships.userid) WHERE (friendships.userid = :userid OR friendships.friendshipid = :userid) AND friendships.status = 'friend' ORDER BY posts.time DESC";
+    $postStmt = $dbConn->prepare($postQuery);
+    $postStmt->bindParam(':userid', $userid, PDO::PARAM_INT);
+    $postStmt->execute();
+    $posts = $postStmt->fetchAll(PDO::FETCH_ASSOC);
 
-    echo json_encode(array('status' => true, 'friendships' => $friendships));
+
+    echo json_encode(array('status' => true, 'posts' => $posts));
 } catch (Exception $e) {
     echo json_encode(array('status' => false, 'message' => $e->getMessage()));
 }
