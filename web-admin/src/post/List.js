@@ -10,7 +10,7 @@ const List = (props) => {
         const fetchData = async () => {
             try {
                 const axiosInstance = await AxiosInstance();
-                const result = await axiosInstance.get('/get-all-posts.php');
+                const result = await axiosInstance.get('/get_all_report.php');
                 setPosts(result); // Đảm bảo rằng bạn đã nhận được một mảng posts từ kết quả trả về
             } catch (error) {
                 console.error('Error fetching data:', error);
@@ -62,8 +62,12 @@ const List = (props) => {
                     {posts.map((item, index) => (
                         <tr key={index}>
                             <td>{index + 1}</td>
-                            <td>{item.title}</td>
+                            <td>{item.userid}</td>
+                            <td>{item.postid}</td>
                             <td>{item.content}</td>
+                            <td>{item.available}</td>
+                            <td>{item.image}</td>
+                            <td>{item.time}</td>
                             <td>
                                 <a href={`/edit/${item.id}`} className="btn btn-primary">Sửa</a>
                                 <button className="btn btn-danger" onClick={() => handleDelete(item.id)}>Xóa</button>

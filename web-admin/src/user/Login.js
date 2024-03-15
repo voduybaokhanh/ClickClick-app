@@ -11,12 +11,20 @@ const Login = (props) => {
       const instance = await AxiosInstance();
       const result = await instance.post("/login.php", body);
       if (result.status) {
-        alert("Đăng nhập thành công");
+        // Kiểm tra vai trò của người dùng sau khi đăng nhập thành công
+        if (result.role === "admin") {
+          // Nếu là admin, lưu thông tin người dùng vào state và chuyển hướng tới trang admin
+          saveUser(result);
+          alert("Đăng nhập thành công");
+          // Chuyển hướng tới trang admin
+          // window.location.href = "/admin";
+        } else {
+          // Nếu không phải admin, thông báo lỗi và không lưu thông tin người dùng
+          alert("Bạn không có quyền truy cập vào trang này");
+        }
       } else {
-        alert("đăng nhập thất bại");
+        alert("Đăng nhập thất bại");
       }
-      console.log(result);
-      saveUser(result);
     } catch (error) {
       console.error("Lỗi khi thực hiện đăng nhập: ", error);
     }
