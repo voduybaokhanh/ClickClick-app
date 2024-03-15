@@ -43,12 +43,13 @@ try {
     }
 
     // Chuẩn bị và thực thi truy vấn SQL
-    $insertQuery = "INSERT INTO posts (userid, content, image, time, name) VALUES (:userid, :content, :image, now(), :name)";
+    $insertQuery = "INSERT INTO posts (userid, content, image, time, name,avatar) VALUES (:userid, :content, :image, now(), :name,:avatar)";
     $insertStmt = $dbConn->prepare($insertQuery);
     $insertStmt->bindParam(':userid', $userid, PDO::PARAM_INT);
     $insertStmt->bindParam(':content', $content, PDO::PARAM_STR);
     $insertStmt->bindParam(':image', $image, PDO::PARAM_STR);
     $insertStmt->bindParam(':name', $user['NAME'], PDO::PARAM_STR);
+    $insertStmt->bindParam(':avatar', $user['AVATAR'], PDO::PARAM_STR);
     $insertStmt->execute();
 
     // Lấy thông tin bài viết mới thêm vào

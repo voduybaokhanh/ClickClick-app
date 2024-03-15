@@ -1,6 +1,6 @@
 <?php
 header("Content-Type: application/json; charset=UTF-8");
-header("Access-Control-Allow-Methods: POST");
+header("Access-Control-Allow-Methods: GET");
 header("Access-Control-Allow-Origin: *");
 header("Access-Control-Max-Age: 3600");
 header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
@@ -21,12 +21,7 @@ try {
     $userid = $data->userid;
 
     // Truy vấn để lấy tất cả bài viết có mối quan hệ là "friend" với userid
-    $postQuery = "SELECT posts.AVATAR, posts.TIME, posts.NAME,posts.IMAGE, posts.CONTENT, posts.LIKES 
-                  FROM posts 
-                  INNER JOIN friendships 
-                  ON (posts.userid = friendships.friendshipid OR posts.userid = friendships.userid) 
-                  WHERE (friendships.userid = :userid OR friendships.friendshipid = :userid) 
-                  AND friendships.status = 'friend' 
+    $postQuery = "SELECT AVATAR,TIME,NAME,CONTENT,LIKES FROM posts WHERE userid = :userid
                   ORDER BY posts.time DESC";
     $postStmt = $dbConn->prepare($postQuery);
     $postStmt->bindParam(':userid', $userid, PDO::PARAM_INT);

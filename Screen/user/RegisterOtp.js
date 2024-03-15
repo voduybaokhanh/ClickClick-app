@@ -6,15 +6,16 @@ import {
     TextInput,
     TouchableOpacity,
     ScrollView,
+    Button
   } from "react-native";
   import { LinearGradient } from "expo-linear-gradient";
   import React, { useState } from "react";
-  import AxiosInstance from "../../helper/AxiosInstance";
+  import AxiosInstance from "../../helper/Axiostance";
   
   
   const RegisterOtp = ({navigation}) => {
     const [email, setemail] = useState("")
-  
+    
     const actionForgot = async () => {
       try {
         const body = { email };
@@ -41,6 +42,11 @@ import {
         style={styles.linearGradient}
       >
         <View style={styles.container}>
+        <TouchableOpacity onPress={() => navigation.goBack()} >
+          <Image style={styles.image}
+              source={require("../../Image/arrow-left.png")}
+             />
+        </TouchableOpacity>
           <Text style={styles.Text10}> SENT OTP </Text>
           <Text style={styles.Text1}>
           Enter your email and we'll send you an OTP to create an account.
@@ -68,6 +74,9 @@ import {
   export default RegisterOtp;
   
   const styles = StyleSheet.create({
+    image:{
+      marginLeft:10,
+    },
     Text3: {
       fontSize: 25,
       fontWeight: "bold",

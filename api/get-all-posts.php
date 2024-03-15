@@ -9,7 +9,7 @@ header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers
 // hiện tất cả bài đăng
 include_once './connection.php'; 
 // đọc dữ liệu từ database
-$sqlQuery = "SELECT * FROM posts";
+$sqlQuery = "SELECT AVATAR,TIME,NAME,CONTENT,LIKES FROM posts";
 $stmt = $dbConn->prepare($sqlQuery);
 $stmt -> execute();
 // lấy tất cả dữ liệu từ câu lệnh pdo
