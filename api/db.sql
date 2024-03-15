@@ -1,4 +1,4 @@
--- Active: 1704532009105@@127.0.0.1@3306@duandemo2
+-- Active: 1704532009105@@127.0.0.1@3306@duandemo2@duandemo
 CREATE DATABASE DUANDEMO;
 
 USE `DUANDEMO`;
@@ -15,8 +15,8 @@ CREATE TABLE
     `SDT` INT,
     `AVAILABLE` TINYINT (1) DEFAULT 0,
     `OTP` VARCHAR(10),
-    `otp-expiratiom` INT,
-    `TEXT` VARCHA (255),
+    `otp_expiration` INT,
+    `TEXT` VARCHAR(255),
     PRIMARY KEY (`ID`)
   );
 
@@ -55,6 +55,7 @@ CREATE TABLE
     `IMAGE` VARCHAR(255),
     `TIME` TIMESTAMP,
     `NAME` VARCHAR(255),
+    `AVATAR` VARCHAR(255),
     PRIMARY KEY (`ID`),
     FOREIGN KEY (`USERID`) REFERENCES `USERS` (`ID`)
   );
