@@ -22,7 +22,7 @@ const data = [
   { label: "Bạn D", value: "5" },
 ];
 
-const Home = () => {
+const TestPost = () => {
   const [posts, setPosts] = useState([]);
   useEffect(() => {
     fetchPosts();
@@ -110,8 +110,8 @@ const Home = () => {
                 {/* require('../../Image/avatar1.png' */}
                 {/* uri: item.AVATAR */}
                 <View style={{ flexDirection: "column", marginLeft: 10 }}>
-                  <Text style={styles.name}>{item.NAME}</Text>
-                  <Text style={styles.time}>{item.TIME}</Text>
+                  <Text style={styles.name}>tên: {item.NAME}</Text>
+                  <Text style={styles.time}>thời gian: {item.TIME}</Text>
                 </View>
                 <TouchableOpacity
                   style={{ marginLeft: "auto" }}
@@ -133,7 +133,6 @@ const Home = () => {
                   <Text style={styles.status}>{item.CONTENT}</Text>
                 </View>
               </View>
-
               <View style={styles.tim_mes}>
                 <TouchableOpacity onPress={handleThatim}>
                   <Image
@@ -144,13 +143,13 @@ const Home = () => {
                     }
                   />
                 </TouchableOpacity>
-                <Text style={styles.postText}>{item.LIKES}</Text>
                 <TextInput
                   style={styles.mes}
                   placeholder="Add a message"
                   placeholderTextColor={"#635A8F"}
                 />
               </View>
+              <Text style={styles.postText}>số lượt like: {item.LIKES}</Text>
             </View>
           )}
           keyExtractor={(item, index) => index.toString()}
@@ -181,8 +180,6 @@ const styles = StyleSheet.create({
   },
   postText: {
     fontSize: 16,
-    marginLeft:5,
-    top:8,
   },
   linearGradient: {
     paddingLeft: 15,
@@ -195,7 +192,7 @@ const styles = StyleSheet.create({
     marginLeft: 10,
     height: 35,
     borderRadius: 24,
-    width: "80%",
+    width: "90%",
     paddingHorizontal: 10,
   },
   tim_mes: {
@@ -205,7 +202,7 @@ const styles = StyleSheet.create({
   },
   status: {
     color: "white",
-    fontSize: 15,
+    fontSize: 14,
     position: "absolute",
     bottom: 5,
     alignSelf: "center",
@@ -273,4 +270,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Home;
+export default TestPost;
