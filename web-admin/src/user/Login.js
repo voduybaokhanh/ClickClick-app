@@ -11,24 +11,16 @@ const Login = (props) => {
       const instance = await AxiosInstance();
       const result = await instance.post("/login.php", body);
       if (result.status) {
-        // Kiểm tra vai trò của người dùng sau khi đăng nhập thành công
-        if (result.role === "admin") {
-          // Nếu là admin, lưu thông tin người dùng vào state và chuyển hướng tới trang admin
-          saveUser(result);
-          alert("Đăng nhập thành công");
-          // Chuyển hướng tới trang admin
-          // window.location.href = "/admin";
-        } else {
-          // Nếu không phải admin, thông báo lỗi và không lưu thông tin người dùng
-          alert("Bạn không có quyền truy cập vào trang này");
-        }
+        // Lưu thông tin người dùng vào localStorage
+        saveUser(result.data); // Assumed that user data is returned from the API as result.data
+        alert("Đăng nhập thành công");
       } else {
         alert("Đăng nhập thất bại");
       }
     } catch (error) {
       console.error("Lỗi khi thực hiện đăng nhập: ", error);
     }
-  }
+  };
 
   return (
     <div>

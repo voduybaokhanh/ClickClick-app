@@ -20,13 +20,6 @@ try {
     $userid = $data->userid;
     $postid = $data->postid;
 
-    // Thêm bản ghi vào bảng reports
-    $addReportQuery = "INSERT INTO reports (userid, postid, time, available) VALUES (:userid, :postid, NOW(), 1)";
-    $addReportStmt = $dbConn->prepare($addReportQuery);
-    $addReportStmt->bindParam(':userid', $userid, PDO::PARAM_INT);
-    $addReportStmt->bindParam(':postid', $postid, PDO::PARAM_INT);
-    $addReportStmt->execute();
-
     // Cập nhật cột AVAILABLE trong bảng POSTS
     $updateAvailableQuery = "UPDATE posts SET available = 1 WHERE id = :postid";
     $updateAvailableStmt = $dbConn->prepare($updateAvailableQuery);

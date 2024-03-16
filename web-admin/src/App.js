@@ -60,9 +60,6 @@ function App() {
           </Route>
         </Routes>
       </Router>
-
-      {/* Thêm nút Register */}
-      <Link to="/register">Register</Link>
     </div >
   );
 }
