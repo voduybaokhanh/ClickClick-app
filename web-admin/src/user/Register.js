@@ -22,7 +22,7 @@ const Register = () => {
 
             // Gọi API để thực hiện đăng ký
             const instance = await AxiosInstance();
-            const response = await instance.post("/register.php", body);
+            const response = await instance.post("/register_admin.php", body);
 
             // Kiểm tra kết quả từ server
             if (response.status === true) {
