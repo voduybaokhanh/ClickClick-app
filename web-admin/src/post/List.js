@@ -2,18 +2,22 @@ import React, { useState, useEffect } from "react";
 import AxiosInstance from "../helper/Axiostance";
 import swal from 'sweetalert';
 
-const List = (props) => {
-    const { user, saveUser } = props;
+const List = ({ saveUser }) => {
     const [posts, setPosts] = useState([]);
 
     useEffect(() => {
         const fetchData = async () => {
             try {
                 const axiosInstance = await AxiosInstance();
-                const result = await axiosInstance.get('/get_all_report.php');
-                setPosts(result); // Đảm bảo rằng bạn đã nhận được một mảng posts từ kết quả trả về
+                const response = await axiosInstance.get('/get-all-report.php');
+                if (response.status) {
+                    setPosts(response.posts);
+                } else {
+                    throw new Error(response.message);
+                }
             } catch (error) {
                 console.error('Error fetching data:', error);
+                swal("Oops!", "Something went wrong while fetching data", "error");
             }
         }
         fetchData();
@@ -26,20 +30,21 @@ const List = (props) => {
             icon: "warning",
             buttons: true,
             dangerMode: true,
-        }).then(async (will) => {
-            if (will) {
+        }).then(async (willDelete) => {
+            if (willDelete) {
                 try {
                     const axiosInstance = await AxiosInstance();
-                    const result = await axiosInstance.delete(`/delete-posts.php?id=${id}`);
-                    console.log(result);
-                    if (result.status) {
+                    const response = await axiosInstance.delete(`/delete-posts.php?id=${id}`);
+                    if (response.status) {
                         swal('Xóa thành công');
-                        // Sau khi xóa thành công, cập nhật lại danh sách bài viết bằng cách gọi fetchData
+                        // Update the state after successful deletion
+                        setPosts(posts.filter(post => post.ID !== id)); // Lưu ý: ID được viết hoa vì đây là key trong dữ liệu JSON
                     } else {
                         swal('Xóa thất bại');
                     }
                 } catch (error) {
                     console.error('Error deleting post:', error);
+                    swal('Lỗi khi xóa dữ liệu');
                 }
             }
         });
@@ -47,37 +52,37 @@ const List = (props) => {
 
     return (
         <div>
-            <h1>List</h1>
+            <h1>Danh sách bài viết bị báo cáo</h1>
             <button className="btn btn-primary" onClick={() => saveUser(null)}>Đăng xuất</button>
             <table className="table">
                 <thead>
                     <tr>
-                        <th>#</th>
-                        <th>Title</th>
-                        <th>Content</th>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Nội dung</th>
+                        <th>Ảnh</th>
+                        <th>Thời gian</th>
                         <th>Thao tác</th>
                     </tr>
                 </thead>
                 <tbody>
                     {posts.map((item, index) => (
-                        <tr key={index}>
-                            <td>{index + 1}</td>
-                            <td>{item.userid}</td>
-                            <td>{item.postid}</td>
-                            <td>{item.content}</td>
-                            <td>{item.available}</td>
-                            <td>{item.image}</td>
-                            <td>{item.time}</td>
+                        <tr key={item.ID}> {/* Lưu ý: ID được viết hoa vì đây là key trong dữ liệu JSON */}
+                            <td>{item.ID}</td>
+                            <td>{item.NAME}</td>
+                            <td>{item.CONTENT}</td>
+                            <td>{item.IMAGE}</td>
+                            <td>{item.TIME}</td>
                             <td>
-                                <a href={`/edit/${item.id}`} className="btn btn-primary">Sửa</a>
-                                <button className="btn btn-danger" onClick={() => handleDelete(item.id)}>Xóa</button>
+                                <a href={`/edit/${item.ID}`} className="btn btn-primary">Sửa</a>
+                                <button className="btn btn-danger" onClick={() => handleDelete(item.ID)}>Xóa</button>
                             </td>
                         </tr>
                     ))}
                 </tbody>
             </table>
         </div>
-    )
+    );
 }
 
 export default List;

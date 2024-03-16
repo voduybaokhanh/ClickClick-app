@@ -20,7 +20,8 @@ try {
     // Trả về dữ liệu dưới dạng JSON
     echo json_encode(array(
         "status" => true,
-        "reported_posts" => $reportedPosts
+        "msg" => "Success",
+        "posts" => $reportedPosts
     ));
 } catch (PDOException $e) {
     // Xử lý lỗi nếu có
