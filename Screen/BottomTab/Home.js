@@ -14,45 +14,59 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Dropdown } from "react-native-element-dropdown";
 import { StatusBar } from "expo-status-bar";
 
-const data = [
-  { label: "Mọi người", value: "1" },
-  { label: "Bạn A", value: "2" },
-  { label: "Bạn B", value: "3" },
-  { label: "Bạn C", value: "4" },
-  { label: "Bạn D", value: "5" },
-];
-
 const Home = () => {
   const [posts, setPosts] = useState([]);
+  const [datafriend, setdatafriend] = useState([ { label: "Mọi người", value: "1" },]);
+ 
   useEffect(() => {
     fetchPosts();
+    selectFriend();
   }, []);
 
-  const fetchPosts = async () => {
+  const selectFriend = async () => {
     try {
+      const token = await AsyncStorage.getItem("token");
+      if (!token) {
+        console.log("Token (userid) not found in AsyncStorage");
+        return;
+      }
       const instance = await AxiosInstance();
-      const userid = 32; // Đặt giá trị userid tại đây
-      const body = { userid };
-      const response = await instance.post("/get-all-post-friend.php", body);
-      setPosts(response.posts);
-      console.log(response.posts);
+      const body = { userid: parseInt(token) }; // Assuming userid is an integer
+      const responseFriend = await instance.post("/get-all-friend.php", body);
+  
+      // Chuyển đổi dữ liệu thành mảng các đối tượng có thuộc tính label và value
+      const formattedData = responseFriend.friendships.map((friendship, index) => ({
+        label: responseFriend.friendName[index], // Trả về label từng đối tượng trong mảng friendName
+        value: friendship.FRIENDSHIPID.toString(), // Convert USERID to string
+      }));
+  
+      // Gán giá trị cho datafriend
+      setdatafriend(formattedData);
+      console.log(formattedData);
     } catch (error) {
       console.error("Error fetching posts:", error);
     }
+  };
+  
+  
 
-    const [isThatim, setIsThatim] = useState(false);
-    const handleBaocao = () => {
-      // Xử lý khi icon được ấn
-      console.log("Icon đã được ấn");
-      // Thêm mã xử lý bạn muốn thực hiện khi icon được ấn
-    };
+  const fetchPosts = async () => {
+    try {
+      // Retrieve token (userid) from AsyncStorage
+      const token = await AsyncStorage.getItem("token");
+      if (!token) {
+        console.log("Token (userid) not found in AsyncStorage");
+        return;
+      }
 
-    const handleThatim = () => {
-      // Xử lý khi icon được ấn
-      console.log("Icon đã được ấn");
-      setIsThatim(!isThatim);
-      // Thêm mã xử lý bạn muốn thực hiện khi icon được ấn
-    };
+      const instance = await AxiosInstance();
+      const body = { userid: parseInt(token) }; // Assuming userid is an integer
+      const response = await instance.post("/get-all-post-friend.php", body);
+      setPosts(response.posts);
+      // console.log(response.posts);
+    } catch (error) {
+      console.error("Error fetching posts:", error);
+    }
   };
   const [isThatim, setIsThatim] = useState(false);
   const handleBaocao = () => {
@@ -67,6 +81,7 @@ const Home = () => {
     setIsThatim(!isThatim);
     // Thêm mã xử lý bạn muốn thực hiện khi icon được ấn
   };
+  
   return (
     <View style={styles.container}>
       <LinearGradient
@@ -86,7 +101,7 @@ const Home = () => {
               placeholderStyle={styles.placeholderStyle}
               iconstyle={styles.iconStyle}
               selectedTextStyle={styles.placeholderStyle}
-              data={data}
+              data={datafriend} // Đúng
               labelField="label"
               valueField="value"
               onChange={(item) => {
@@ -181,8 +196,8 @@ const styles = StyleSheet.create({
   },
   postText: {
     fontSize: 16,
-    marginLeft:5,
-    top:8,
+    marginLeft: 5,
+    top: 8,
   },
   linearGradient: {
     paddingLeft: 15,
