@@ -1,4 +1,3 @@
-import logo from './logo.svg';
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { BrowserRouter as Router, Route, Routes, Navigate, Outlet } from 'react-router-dom'
@@ -52,7 +51,6 @@ function App() {
         <Routes>
           <Route element={<PublicRoute />}>
             <Route path="/login" element={<Login saveUser={saveUserToLocalStorgae} />} />
-            {/* Thêm đường dẫn đến trang Register */}
             <Route path="/register" element={<Register />} />
           </Route>
           <Route element={<ProtectedRoute />}>

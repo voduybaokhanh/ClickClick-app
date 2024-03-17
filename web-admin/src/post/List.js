@@ -38,7 +38,7 @@ const List = ({ saveUser }) => {
                     if (response.status) {
                         swal('Xóa thành công');
                         // Update the state after successful deletion
-                        setPosts(posts.filter(post => post.ID !== id)); // Lưu ý: ID được viết hoa vì đây là key trong dữ liệu JSON
+                        setPosts(posts.filter(post => post.id !== id)); // Lưu ý: ID được viết hoa vì đây là key trong dữ liệu JSON
                     } else {
                         swal('Xóa thất bại');
                     }

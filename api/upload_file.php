@@ -20,7 +20,7 @@ try {
         array(
             "error" => true,
             "message" => "Upload successful",
-            "path" => "http://192.168.1.19:8686/uploads/" . $fileName
+            "path" => "http://192.168.1.7:8686/uploads/" . $fileName
         )
     );
 } catch (Exception $e) {
