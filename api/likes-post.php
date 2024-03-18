@@ -134,7 +134,7 @@ try {
         $deleteLikeStmt->bindParam(':postid', $postid, PDO::PARAM_INT);
         $deleteLikeStmt->execute();
 
-        echo json_encode(array('status' => true, 'message' => 'Unlike bài đăng thành công.'));
+        echo json_encode(array('status' => false, 'message' => 'Unlike bài đăng thành công.'));
 
         $updateLikesCountQuery = "UPDATE posts SET likes = likes - 1 WHERE ID = :postid";
         $updateLikesCountStmt = $dbConn->prepare($updateLikesCountQuery);

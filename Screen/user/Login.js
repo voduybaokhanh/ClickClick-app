@@ -75,6 +75,7 @@ const Login = ({navigation}) => {
               <TextInput
                 placeholder="Password"
                 placeholderTextColor="#FFFFFF"
+                secureTextEntry={true}
                 style={styles.TextInbutPassword}
                 value={password}
                 onChangeText={(text) => setPassword(text)}

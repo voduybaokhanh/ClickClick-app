@@ -14,59 +14,45 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Dropdown } from "react-native-element-dropdown";
 import { StatusBar } from "expo-status-bar";
 
-const Home = () => {
+const data = [
+  { label: "Mọi người", value: "1" },
+  { label: "Bạn A", value: "2" },
+  { label: "Bạn B", value: "3" },
+  { label: "Bạn C", value: "4" },
+  { label: "Bạn D", value: "5" },
+];
+
+const TestPost = () => {
   const [posts, setPosts] = useState([]);
-  const [datafriend, setdatafriend] = useState([ { label: "Mọi người", value: "1" },]);
- 
   useEffect(() => {
     fetchPosts();
-    selectFriend();
   }, []);
-
-  const selectFriend = async () => {
-    try {
-      const token = await AsyncStorage.getItem("token");
-      if (!token) {
-        console.log("Token (userid) not found in AsyncStorage");
-        return;
-      }
-      const instance = await AxiosInstance();
-      const body = { userid: parseInt(token) }; // Assuming userid is an integer
-      const responseFriend = await instance.post("/get-all-friend.php", body);
-  
-      // Chuyển đổi dữ liệu thành mảng các đối tượng có thuộc tính label và value
-      const formattedData = responseFriend.friendships.map((friendship, index) => ({
-        label: responseFriend.friendName[index], // Trả về label từng đối tượng trong mảng friendName
-        value: friendship.FRIENDSHIPID.toString(), // Convert USERID to string
-      }));
-  
-      // Gán giá trị cho datafriend
-      setdatafriend(formattedData);
-      console.log(formattedData);
-    } catch (error) {
-      console.error("Error fetching posts:", error);
-    }
-  };
-  
-  
 
   const fetchPosts = async () => {
     try {
-      // Retrieve token (userid) from AsyncStorage
-      const token = await AsyncStorage.getItem("token");
-      if (!token) {
-        console.log("Token (userid) not found in AsyncStorage");
-        return;
-      }
-
       const instance = await AxiosInstance();
-      const body = { userid: parseInt(token) }; // Assuming userid is an integer
+      const userid = 32; // Đặt giá trị userid tại đây
+      const body = { userid };
       const response = await instance.post("/get-all-post-friend.php", body);
       setPosts(response.posts);
-      // console.log(response.posts);
+      console.log(response.posts);
     } catch (error) {
       console.error("Error fetching posts:", error);
     }
+
+    const [isThatim, setIsThatim] = useState(false);
+    const handleBaocao = () => {
+      // Xử lý khi icon được ấn
+      console.log("Icon đã được ấn");
+      // Thêm mã xử lý bạn muốn thực hiện khi icon được ấn
+    };
+
+    const handleThatim = () => {
+      // Xử lý khi icon được ấn
+      console.log("Icon đã được ấn");
+      setIsThatim(!isThatim);
+      // Thêm mã xử lý bạn muốn thực hiện khi icon được ấn
+    };
   };
   const [isThatim, setIsThatim] = useState(false);
   const handleBaocao = () => {
@@ -81,7 +67,6 @@ const Home = () => {
     setIsThatim(!isThatim);
     // Thêm mã xử lý bạn muốn thực hiện khi icon được ấn
   };
-  
   return (
     <View style={styles.container}>
       <LinearGradient
@@ -101,7 +86,7 @@ const Home = () => {
               placeholderStyle={styles.placeholderStyle}
               iconstyle={styles.iconStyle}
               selectedTextStyle={styles.placeholderStyle}
-              data={datafriend} // Đúng
+              data={data}
               labelField="label"
               valueField="value"
               onChange={(item) => {
@@ -125,8 +110,8 @@ const Home = () => {
                 {/* require('../../Image/avatar1.png' */}
                 {/* uri: item.AVATAR */}
                 <View style={{ flexDirection: "column", marginLeft: 10 }}>
-                  <Text style={styles.name}>{item.NAME}</Text>
-                  <Text style={styles.time}>{item.TIME}</Text>
+                  <Text style={styles.name}>tên: {item.NAME}</Text>
+                  <Text style={styles.time}>thời gian: {item.TIME}</Text>
                 </View>
                 <TouchableOpacity
                   style={{ marginLeft: "auto" }}
@@ -148,7 +133,6 @@ const Home = () => {
                   <Text style={styles.status}>{item.CONTENT}</Text>
                 </View>
               </View>
-
               <View style={styles.tim_mes}>
                 <TouchableOpacity onPress={handleThatim}>
                   <Image
@@ -159,13 +143,13 @@ const Home = () => {
                     }
                   />
                 </TouchableOpacity>
-                <Text style={styles.postText}>{item.LIKES}</Text>
                 <TextInput
                   style={styles.mes}
                   placeholder="Add a message"
                   placeholderTextColor={"#635A8F"}
                 />
               </View>
+              <Text style={styles.postText}>số lượt like: {item.LIKES}</Text>
             </View>
           )}
           keyExtractor={(item, index) => index.toString()}
@@ -196,8 +180,6 @@ const styles = StyleSheet.create({
   },
   postText: {
     fontSize: 16,
-    marginLeft: 5,
-    top: 8,
   },
   linearGradient: {
     paddingLeft: 15,
@@ -210,7 +192,7 @@ const styles = StyleSheet.create({
     marginLeft: 10,
     height: 35,
     borderRadius: 24,
-    width: "80%",
+    width: "90%",
     paddingHorizontal: 10,
   },
   tim_mes: {
@@ -220,7 +202,7 @@ const styles = StyleSheet.create({
   },
   status: {
     color: "white",
-    fontSize: 15,
+    fontSize: 14,
     position: "absolute",
     bottom: 5,
     alignSelf: "center",
@@ -288,4 +270,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Home;
+export default TestPost;
