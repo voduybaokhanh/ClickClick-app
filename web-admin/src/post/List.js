@@ -34,11 +34,11 @@ const List = ({ saveUser }) => {
             if (willDelete) {
                 try {
                     const axiosInstance = await AxiosInstance();
-                    const response = await axiosInstance.delete(`/delete-posts.php?id=${id}`);
+                    const response = await axiosInstance.delete(`/delete-post.php?id=${id}`);
                     if (response.status) {
                         swal('Xóa thành công');
                         // Update the state after successful deletion
-                        setPosts(posts.filter(post => post.id !== id)); // Lưu ý: ID được viết hoa vì đây là key trong dữ liệu JSON
+                        setPosts(posts.filter(post => post.id !== id)); 
                     } else {
                         swal('Xóa thất bại');
                     }
@@ -48,6 +48,23 @@ const List = ({ saveUser }) => {
                 }
             }
         });
+    }
+    const handleCancelReport = async (id) => {
+        try {
+            const axiosInstance = await AxiosInstance();
+            const response = await axiosInstance.post(`/cancel.php?id=${id}`);
+            if (response.status) {
+                swal('Hủy báo cáo thành công');
+                // Refresh list after successful cancellation
+                const updatedPosts = posts.filter(post => post.id !== id);
+                setPosts(updatedPosts);
+            } else {
+                swal('Hủy báo cáo thất bại');
+            }
+        } catch (error) {
+            console.error('Error canceling report:', error);
+            swal('Lỗi khi hủy báo cáo');
+        }
     }
 
     return (
@@ -74,7 +91,7 @@ const List = ({ saveUser }) => {
                             <td>{item.IMAGE}</td>
                             <td>{item.TIME}</td>
                             <td>
-                                <a href={`/edit/${item.ID}`} className="btn btn-primary">Sửa</a>
+                                <button className="btn btn-primary" onClick={() => handleCancelReport(item.ID)}>Cancle</button>
                                 <button className="btn btn-danger" onClick={() => handleDelete(item.ID)}>Xóa</button>
                             </td>
                         </tr>
