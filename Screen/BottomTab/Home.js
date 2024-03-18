@@ -94,13 +94,14 @@ const Home = () => {
       const instance = await AxiosInstance();
       const body = { userid: parseInt(userId) };
       const response = await instance.post("/get-all-post-userid.php", body);
-
+  
       setPosts(response.posts);
+      // Sử dụng postId thay vì postid
     } catch (error) {
       console.error("Error fetching posts:", error);
     }
   };
-
+  
   const handleBaocao = () => {
     // Xử lý khi icon được ấn
     console.log("Icon đã được ấn");

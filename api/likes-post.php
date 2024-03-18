@@ -67,10 +67,7 @@ try {
     $likes = $postLikes['likes'];
 
     if ($action == '1') {
-        if ($existingLike) {
-            echo json_encode(array('status' => false, 'message' => 'Bạn đã like bài đăng này trước đó.'));
-            exit;
-        }
+       
 
         // Thêm "like" mới vào cơ sở dữ liệu
         $addLikeQuery = "INSERT INTO likes (userid, postid,time) VALUES (:userid, :postid,now())";
@@ -122,10 +119,7 @@ try {
 
 
     } elseif ($action == '0') {
-        if (!$existingLike) {
-            echo json_encode(array('status' => false, 'message' => 'Bạn chưa like bài đăng này.'));
-            exit;
-        }
+       
 
         // Xóa "like" từ cơ sở dữ liệu
         $deleteLikeQuery = "DELETE FROM likes WHERE userid = :userid AND postid = :postid";
