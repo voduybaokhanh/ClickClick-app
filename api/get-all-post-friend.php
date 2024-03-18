@@ -12,7 +12,7 @@ try {
     $data = json_decode(file_get_contents("php://input"));
 
     // Kiểm tra xem có userid được gửi hay không
-    if (!isset($data->userid)) {
+    if (!isset ($data->userid)) {
         http_response_code(400);
         echo json_encode(array('status' => false, 'message' => 'Thiếu tham số userid'));
         exit;
@@ -21,13 +21,14 @@ try {
     $userid = $data->userid;
 
     // Truy vấn để lấy tất cả bài viết có mối quan hệ là "friend" với userid
-    $postQuery = "SELECT posts.AVATAR, posts.TIME, posts.NAME,posts.IMAGE, posts.CONTENT, posts.LIKES 
-                  FROM posts 
-                  INNER JOIN friendships 
-                  ON (posts.userid = friendships.friendshipid OR posts.userid = friendships.userid) 
-                  WHERE (friendships.userid = :userid OR friendships.friendshipid = :userid) 
-                  AND friendships.status = 'friend' 
-                  ORDER BY posts.time DESC";
+    $postQuery = "SELECT posts.AVATAR, posts.TIME, posts.NAME, posts.IMAGE, posts.CONTENT, posts.LIKES 
+    FROM posts 
+    INNER JOIN friendships 
+    ON (posts.userid = friendships.friendshipid OR posts.userid = friendships.userid) 
+    WHERE (friendships.userid = :userid OR friendships.friendshipid = :userid) 
+    AND friendships.status = 'friend' 
+    AND posts.available = 1 
+    ORDER BY posts.time DESC";
     $postStmt = $dbConn->prepare($postQuery);
     $postStmt->bindParam(':userid', $userid, PDO::PARAM_INT);
     $postStmt->execute();
