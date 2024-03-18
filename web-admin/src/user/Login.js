@@ -12,7 +12,7 @@ const Login = (props) => {
       const result = await instance.post("/login.php", body);
       if (result.status) {
         // Lưu thông tin người dùng vào localStorage
-        saveUser(result.data); // Assumed that user data is returned from the API as result.data
+        saveUser(result.user); // Assumed that user data is returned from the API as result.data
         alert("Đăng nhập thành công");
       } else {
         alert("Đăng nhập thất bại");
