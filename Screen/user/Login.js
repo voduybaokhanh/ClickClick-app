@@ -81,7 +81,7 @@ const Login = ({navigation}) => {
               />
               <Image
                 style={styles.eye}
-                source={require("../../Image/eye.png")}
+                // source={require("../../Image/eye.png")}
               />
             </View>
             <View style={styles.Remember}>

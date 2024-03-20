@@ -11,7 +11,6 @@ import BottomTab from './Screen/BottomTab/BottomTab';
 import Forgetpassword from './Screen/user/ForgotpasswordOTP';
 import RegisterOtp from './Screen/user/RegisterOtp';
 import Resetpassword from './Screen/user/Resetpassword';
-import AxiosInstance from './helper/Axiostance';
 const Stack = createNativeStackNavigator();
 
 export default function App(navigation) {

@@ -92,7 +92,7 @@ const handleOtpChange = (newOtp) => {
           value={password}
           onChangeText={(text) => setPassword(text)}
         />
-        <Image style={styles.eye} source={require("../../Image/eye.png")} />
+        {/* <Image style={styles.eye} source={require("../../Image/eye.png")} /> */}
 
         <TextInput
           placeholder="Confirm PassWord"
@@ -103,7 +103,7 @@ const handleOtpChange = (newOtp) => {
         />
         <Text style={styles.Text11}>Enter code OTP</Text>
         <OTPInput numInputs={6} value={otp} onOtpChange={handleOtpChange} />
-        <Image style={styles.eye2} source={require("../../Image/eye.png")} />
+        {/* <Image style={styles.eye2} source={require("../../Image/eye.png")} /> */}
         <View style={styles.Remember}>
           <Image source={require("../../Image/boxRemember.png")} />
           <Text style={styles.Text1}>
