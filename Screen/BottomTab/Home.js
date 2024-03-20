@@ -281,8 +281,8 @@ const Home = () => {
               </View>
               <View style={{ width: "90%", marginBottom: 20 }}>
                 <Image
-                  style={{ width: "auto" }}
-                  source={require("../../Image/picture.png")}
+                  style={{ width: 300, height:250 }}
+                  source={{uri:'https://picsum.photos/300/250'}}
                 />
                 <View style={{ width: "90%", alignSelf: "center" }}>
                   <Text style={styles.status}>{item.CONTENT}</Text>
