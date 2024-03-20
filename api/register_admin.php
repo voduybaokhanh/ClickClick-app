@@ -25,17 +25,17 @@ try {
     // Kiểm tra email đã tồn tại chưa
     $sqlQuery = "SELECT * FROM users WHERE email = :email";
     $stmt = $dbConn->prepare($sqlQuery);
-    $stmt->bindParam(':email', $email, PDO::PARAM_STR);
+    $stmt->bindParam(':email', $data->email, PDO::PARAM_STR);
     $stmt->execute();
     $user = $stmt->fetch(PDO::FETCH_ASSOC);
     if ($user) {
         echo json_encode(
             array(
                 "status" => false,
-                "message" => "Tên đăng nhập đã tồn tại"
+                "message" => "Email đã tồn tại"
             )
         );
-        return;
+        exit;
     }
 
     // So sánh password và confirm password
@@ -46,31 +46,15 @@ try {
                 "message" => "Mật khẩu không khớp"
             )
         );
-        return;
+        exit;
     }
 
     // Thêm dữ liệu vào DB
-    $email = $data->email;
-    $password = $data->password;
-    $role = $data->role; // Lấy vai trò từ dữ liệu đầu vào
-
-    // Kiểm tra xem vai trò được chọn có hợp lệ không
-    if ($role !== "admin" && $role !== "user") {
-        echo json_encode(
-            array(
-                "status" => false,
-                "message" => "Vai trò không hợp lệ"
-            )
-        );
-        return;
-    }
-
-    // Tiến hành thêm người dùng vào DB với vai trò đã chọn
     $sqlQuery = "INSERT INTO users (email, password, role) VALUES (:email, :password, :role)";
     $stmt = $dbConn->prepare($sqlQuery);
-    $stmt->bindParam(':email', $email, PDO::PARAM_STR);
-    $stmt->bindParam(':password', $password, PDO::PARAM_STR);
-    $stmt->bindParam(':role', $role, PDO::PARAM_STR);
+    $stmt->bindParam(':email', $data->email, PDO::PARAM_STR);
+    $stmt->bindParam(':password', $data->password, PDO::PARAM_STR);
+    $stmt->bindParam(':role', $data->role, PDO::PARAM_STR);
     $stmt->execute();
 
     echo json_encode(

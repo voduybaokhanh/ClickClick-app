@@ -22,13 +22,29 @@ try {
     // Lấy id từ dữ liệu đầu vào
     $postId = $data->postid;
 
-    // Chuẩn bị và thực thi truy vấn SQL để xóa bài đăng
-    $sqlQuery = "DELETE FROM posts WHERE id = :postid AND available = 1";
-    $stmt = $dbConn->prepare($sqlQuery);
-    $stmt->bindParam(':postid', $postId, PDO::PARAM_INT);
-    $stmt->execute();
 
-    if ($stmt->rowCount() > 0) {
+    // Kiểm tra bài viết trong bảng chats
+    $sqlCheckChats = "SELECT * FROM chats WHERE postid = :postid";
+    $stmtCheckChats = $dbConn->prepare($sqlCheckChats);
+    $stmtCheckChats->bindParam(':postid', $postId, PDO::PARAM_INT);
+    $stmtCheckChats->execute();
+
+
+    // Nếu có tin nhắn liên quan trong bảng chats, xóa chúng
+    if ($stmtCheckChats->rowCount() > 0) {
+        $sqlDeleteChats = "DELETE FROM chats WHERE postid = :postid";
+        $stmtDeleteChats = $dbConn->prepare($sqlDeleteChats);
+        $stmtDeleteChats->bindParam(':postid', $postId, PDO::PARAM_INT);
+        $stmtDeleteChats->execute();
+    }
+
+    // Tiến hành xóa bài viết từ bảng posts
+    $sqlDeletePost = "DELETE FROM posts WHERE id = :postid AND available = 1";
+    $stmtDeletePost = $dbConn->prepare($sqlDeletePost);
+    $stmtDeletePost->bindParam(':postid', $postId, PDO::PARAM_INT);
+    $stmtDeletePost->execute();
+
+    if ($stmtDeletePost->rowCount() > 0) {
         echo json_encode(array(
             "status" => true,
             "message" => "Bài viết đã được xóa thành công."

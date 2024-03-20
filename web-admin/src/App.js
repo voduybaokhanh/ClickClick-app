@@ -5,6 +5,7 @@ import Login from './user/Login';
 import Register from './user/Register';
 import List from './post/List';
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 function App() {
 
 
