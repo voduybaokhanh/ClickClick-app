@@ -5384,6 +5384,11 @@
   dependencies:
     "lodash" "^4.17.21"
 
+"react-native-image-picker@^7.1.1":
+  "integrity" "sha512-8zQS8RJkGq+jV6bzmIQ560QL2tccXUwouDWktJt7typfNu/QpuDm9pnESeLkdA5MHGTMm8YR09tcV1qtBD+0fg=="
+  "resolved" "https://registry.npmjs.org/react-native-image-picker/-/react-native-image-picker-7.1.1.tgz"
+  "version" "7.1.1"
+
 "react-native-linear-gradient@^2.8.3":
   "integrity" "sha512-KflAXZcEg54PXkLyflaSZQ3PJp4uC4whM7nT/Uot9m0e/qxFV3p6uor1983D1YOBJbJN7rrWdqIjq0T42jOJyA=="
   "resolved" "https://registry.npmjs.org/react-native-linear-gradient/-/react-native-linear-gradient-2.8.3.tgz"
