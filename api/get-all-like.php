@@ -21,14 +21,13 @@ try {
     $userid = $data->userid;
 
     // Truy vấn để lấy tất cả bài viết có mối quan hệ là "friend" với userid
-    $postQuery = "SELECT ID, AVATAR,TIME,NAME,CONTENT,LIKES FROM posts WHERE userid = :userid
-                  ORDER BY posts.time DESC";
+    $postQuery = "SELECT userid,postid FROM likes WHERE userid = :userid";
     $postStmt = $dbConn->prepare($postQuery);
     $postStmt->bindParam(':userid', $userid, PDO::PARAM_INT);
     $postStmt->execute();
-    $posts = $postStmt->fetchAll(PDO::FETCH_ASSOC);
+    $likes = $postStmt->fetchAll(PDO::FETCH_ASSOC);
 
-    echo json_encode(array('status' => true, 'posts' => $posts));
+    echo json_encode(array('status' => true, 'likes' => $likes));
 } catch (Exception $e) {
     echo json_encode(array('status' => false, 'message' => $e->getMessage()));
 }

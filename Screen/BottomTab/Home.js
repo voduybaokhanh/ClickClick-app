@@ -16,12 +16,72 @@ import { StatusBar } from "expo-status-bar";
 
 const Home = () => {
   const [posts, setPosts] = useState([]);
-  const [datafriend, setdatafriend] = useState([ { label: "Mọi người", value: "1" },]);
- 
+  const [reload, setReload] = useState(false);
+  const [isLikedMap, setIsLikedMap] = useState({});
+  const [datafriend, setdatafriend] = useState([
+    { label: "Mọi người", value: "1" },
+  ]);
+
+  // Thêm state để lưu trạng thái của người dùng (tất cả hoặc bạn bè)
+  const [selectedFriend, setSelectedFriend] = useState("all");
+
+  const getUserID = async () => {
+    try {
+      const token = await AsyncStorage.getItem("token");
+      return token;
+    } catch (error) {
+      console.error("Error retrieving userid from AsyncStorage:", error);
+    }
+  };
+
+  const restoreLikedPosts = async () => {
+    try {
+      const token = await AsyncStorage.getItem("token");
+      if (!token) {
+        console.log("Token (userid) not found in AsyncStorage");
+        return;
+      }
+
+      const instance = await AxiosInstance();
+      const body = { userid: parseInt(token) };
+      const response = await instance.post("/get-all-like.php", body);
+
+      if (response.status) {
+        const likedPostsFromAPI = response.likes.map((like) =>
+          like.postid.toString()
+        );
+        const newIsLikedMap = {};
+        likedPostsFromAPI.forEach((postid) => {
+          newIsLikedMap[postid] = true;
+        });
+        setIsLikedMap(newIsLikedMap);
+      } else {
+        console.error(
+          "Error: Response from API does not contain expected data format."
+        );
+      }
+    } catch (error) {
+      console.error("Error restoring liked posts from API:", error);
+    }
+  };
+
   useEffect(() => {
     fetchPosts();
     selectFriend();
+    restoreLikedPosts(); // Khôi phục trạng thái isLiked từ AsyncStorage khi trang được load lại
+  }, [reload, selectedFriend]);
+
+  useEffect(() => {
+    restoreLikedPosts();
   }, []);
+  // Hàm lưu danh sách các bài viết đã thích vào AsyncStorage
+  const saveLikedPosts = async (likedPosts) => {
+    try {
+      await AsyncStorage.setItem("likedPosts", JSON.stringify(likedPosts));
+    } catch (error) {
+      console.error("Error saving liked posts to AsyncStorage:", error);
+    }
+  };
 
   const selectFriend = async () => {
     try {
@@ -31,28 +91,33 @@ const Home = () => {
         return;
       }
       const instance = await AxiosInstance();
-      const body = { userid: parseInt(token) }; // Assuming userid is an integer
+      const body = { userid: parseInt(token) };
       const responseFriend = await instance.post("/get-all-friend.php", body);
-  
+
       // Chuyển đổi dữ liệu thành mảng các đối tượng có thuộc tính label và value
-      const formattedData = responseFriend.friendships.map((friendship, index) => ({
-        label: responseFriend.friendName[index], // Trả về label từng đối tượng trong mảng friendName
-        value: friendship.FRIENDSHIPID.toString(), // Convert USERID to string
-      }));
-  
+      const formattedData = responseFriend.friendships.map(
+        (friendship, index) => ({
+          label: responseFriend.friendName[index],
+          value: friendship.FRIENDSHIPID.toString(),
+        })
+      );
+
+      // Thêm người dùng hiện tại vào mảng datafriend
+      const currentUser = { label: "Tôi", value: token };
+      const updatedDataFriend = [currentUser, ...formattedData];
+
+      // Thêm mục "Mọi người" vào đầu danh sách bạn bè
+      updatedDataFriend.unshift({ label: "Mọi người", value: "all" });
+
       // Gán giá trị cho datafriend
-      setdatafriend(formattedData);
-      console.log(formattedData);
+      setdatafriend(updatedDataFriend);
     } catch (error) {
       console.error("Error fetching posts:", error);
     }
   };
-  
-  
 
   const fetchPosts = async () => {
     try {
-      // Retrieve token (userid) from AsyncStorage
       const token = await AsyncStorage.getItem("token");
       if (!token) {
         console.log("Token (userid) not found in AsyncStorage");
@@ -60,28 +125,103 @@ const Home = () => {
       }
 
       const instance = await AxiosInstance();
-      const body = { userid: parseInt(token) }; // Assuming userid is an integer
+      const body = { userid: parseInt(token) };
       const response = await instance.post("/get-all-post-friend.php", body);
-      setPosts(response.posts);
-      // console.log(response.posts);
+
+      // Thêm thuộc tính isLiked và postid vào từng bài viết trong mảng post
+      const postsWithpostid = response.posts.map((post) => ({
+        ...post,
+        postid: post.ID,
+      }));
+
+      // Lưu trạng thái action vào state posts
+      setPosts(postsWithpostid);
     } catch (error) {
       console.error("Error fetching posts:", error);
     }
   };
-  const [isThatim, setIsThatim] = useState(false);
+
+  const fetchPostsFriend = async (userId) => {
+    try {
+      const token = await AsyncStorage.getItem("token");
+      if (!token) {
+        console.log("Token (userid) not found in AsyncStorage");
+        return;
+      }
+      const instance = await AxiosInstance();
+      const body = { userid: parseInt(userId) };
+      const response = await instance.post("/get-all-post-userid.php", body);
+
+      // Thêm thuộc tính postid vào từng bài viết trong mảng post
+      const postsWithpostid = response.posts.map((post) => ({
+        ...post,
+        postid: post.ID,
+      }));
+      // Lưu trạng thái action vào state posts
+      setPosts(postsWithpostid);
+    } catch (error) {
+      console.error("Error fetching posts:", error);
+    }
+  };
+
   const handleBaocao = () => {
     // Xử lý khi icon được ấn
     console.log("Icon đã được ấn");
     // Thêm mã xử lý bạn muốn thực hiện khi icon được ấn
   };
 
-  const handleThatim = () => {
-    // Xử lý khi icon được ấn
-    console.log("Icon đã được ấn");
-    setIsThatim(!isThatim);
-    // Thêm mã xử lý bạn muốn thực hiện khi icon được ấn
+  // Trong phần xử lý phản hồi từ API:
+  const handleThatim = async (postid, userId) => {
+    try {
+      const token = await AsyncStorage.getItem("token");
+      if (!token) {
+        console.log("Token (userid) not found in AsyncStorage");
+        return;
+      }
+      const instance = await AxiosInstance();
+      const action = 1; // Action khi người dùng thích bài viết
+      const body = {
+        userid: parseInt(token),
+        action: action,
+        postid: postid,
+      };
+
+      const response = await instance.post("/likes-post.php", body);
+      // Cập nhật trạng thái isLikedMap
+      const newIsLikedMap = { ...isLikedMap };
+      newIsLikedMap[postid] = response.action === 1;
+      setIsLikedMap(newIsLikedMap);
+
+      // Lấy danh sách các bài viết đã thích từ AsyncStorage
+      const storedLikedPosts = await AsyncStorage.getItem("likedPosts");
+      let likedPosts = storedLikedPosts ? JSON.parse(storedLikedPosts) : {};
+      // Cập nhật danh sách bài viết đã thích tương ứng với userId
+      likedPosts[userId] = likedPosts[userId] || [];
+      if (response.action === 1) {
+        likedPosts[userId].push(postid);
+      } else {
+        likedPosts[userId] = likedPosts[userId].filter((id) => id !== postid);
+      }
+      // Lưu danh sách bài viết đã thích vào AsyncStorage
+      await AsyncStorage.setItem("likedPosts", JSON.stringify(likedPosts));
+
+      // Cập nhật trạng thái dữ liệu của bài viết trong posts
+      const updatedPosts = posts.map((post) => {
+        if (post.postid === postid) {
+          return {
+            ...post,
+            isLiked: response.action === 1,
+            LIKES: response.LIKES, // Cập nhật số lượt thích mới
+          };
+        }
+        return post;
+      });
+      setPosts(updatedPosts);
+    } catch (error) {
+      console.error("Error liking post:", error);
+    }
   };
-  
+
   return (
     <View style={styles.container}>
       <LinearGradient
@@ -97,16 +237,19 @@ const Home = () => {
           <View style={{ alignItems: "center" }}>
             <Dropdown
               style={styles.search}
-              placeholder="Mọi người "
+              placeholder="Mọi người"
               placeholderStyle={styles.placeholderStyle}
               iconstyle={styles.iconStyle}
               selectedTextStyle={styles.placeholderStyle}
-              data={datafriend} // Đúng
+              data={datafriend}
               labelField="label"
               valueField="value"
-              onChange={(item) => {
-                setValue(item.value);
-                setIsfocus(false);
+              onChange={async (item) => {
+                if (item.value === "all") {
+                  await fetchPosts(); // Gọi hàm fetchPosts khi chọn mục "Mọi người"
+                } else {
+                  await fetchPostsFriend(item.value); // Truyền giá trị được chọn vào hàm fetchPostsFriend
+                }
               }}
             />
           </View>
@@ -122,8 +265,6 @@ const Home = () => {
                   source={require("../../Image/avatar1.png")}
                   style={styles.avt}
                 />
-                {/* require('../../Image/avatar1.png' */}
-                {/* uri: item.AVATAR */}
                 <View style={{ flexDirection: "column", marginLeft: 10 }}>
                   <Text style={styles.name}>{item.NAME}</Text>
                   <Text style={styles.time}>{item.TIME}</Text>
@@ -143,28 +284,33 @@ const Home = () => {
                   style={{ width: "auto" }}
                   source={require("../../Image/picture.png")}
                 />
-                {/* uri: item.IMAGE */}
                 <View style={{ width: "90%", alignSelf: "center" }}>
                   <Text style={styles.status}>{item.CONTENT}</Text>
                 </View>
-              </View>
-
-              <View style={styles.tim_mes}>
-                <TouchableOpacity onPress={handleThatim}>
-                  <Image
-                    source={
-                      isThatim
-                        ? require("../../Image/hearted.png")
-                        : require("../../Image/heart.png")
-                    }
+                <View style={styles.tim_mes}>
+                  <TouchableOpacity
+                    onPress={() => handleThatim(item.postid, item.USERID)}
+                  >
+                    <Image
+                      style={{
+                        width: 40,
+                        height: 45,
+                        alignItems: "center",
+                      }}
+                      source={
+                        isLikedMap[item.postid]
+                          ? require("../../Image/hearted.png") // Nếu đã like, hiển thị icon hearted
+                          : require("../../Image/heart.png") // Ngược lại, hiển thị icon heart
+                      }
+                    />
+                  </TouchableOpacity>
+                  <Text style={styles.postText}>{item.LIKES}</Text>
+                  <TextInput
+                    style={styles.mes}
+                    placeholder="Add a message"
+                    placeholderTextColor={"#635A8F"}
                   />
-                </TouchableOpacity>
-                <Text style={styles.postText}>{item.LIKES}</Text>
-                <TextInput
-                  style={styles.mes}
-                  placeholder="Add a message"
-                  placeholderTextColor={"#635A8F"}
-                />
+                </View>
               </View>
             </View>
           )}
@@ -195,9 +341,9 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   postText: {
-    fontSize: 16,
+    fontSize: 20,
     marginLeft: 5,
-    top: 8,
+    top: 13,
   },
   linearGradient: {
     paddingLeft: 15,
@@ -208,15 +354,17 @@ const styles = StyleSheet.create({
   mes: {
     backgroundColor: "#E5D7F7",
     marginLeft: 10,
-    height: 35,
+    height: 45,
     borderRadius: 24,
-    width: "80%",
+    width: "85%",
     paddingHorizontal: 10,
+    top: 5,
   },
   tim_mes: {
     flexDirection: "row",
     width: "90%",
     bottom: 10,
+    marginTop: 20,
   },
   status: {
     color: "white",

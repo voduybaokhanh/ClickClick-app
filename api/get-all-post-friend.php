@@ -21,7 +21,7 @@ try {
     $userid = $data->userid;
 
     // Truy vấn để lấy tất cả bài viết có mối quan hệ là "friend" với userid
-    $postQuery = "SELECT posts.AVATAR, posts.TIME, posts.NAME, posts.IMAGE, posts.CONTENT, posts.LIKES 
+    $postQuery = "SELECT DISTINCT posts.ID, posts.AVATAR, posts.TIME, posts.NAME, posts.IMAGE, posts.CONTENT, posts.LIKES 
     FROM posts 
     INNER JOIN friendships 
     ON (posts.userid = friendships.friendshipid OR posts.userid = friendships.userid) 
