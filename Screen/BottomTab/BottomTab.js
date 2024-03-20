@@ -66,7 +66,7 @@ const BottomTab = () => {
       />
       <Tab.Screen
         name=" "
-        component={AddPost}
+        component={TestPost}
         options={{
             headerShown: false,
           tabBarIcon: ({ color, size }) => (

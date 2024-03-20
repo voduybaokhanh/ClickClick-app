@@ -10,7 +10,7 @@
     try {
         $currentDirectory = getcwd();
         $uploadDirectory = "/uploads/";
-        $fileName = $_FILES['image']['name'];
+        $fileName = $_FILES['image'];
         $fileTmpName  = $_FILES['image']['tmp_name'];
         $uploadPath = $currentDirectory . $uploadDirectory . basename($fileName);
         // upload file
@@ -21,7 +21,7 @@
                 "error" => true,
                 "message" => "Upload successful",
                 // "path" => "http://172.16.71.27:8686/uploads/".$fileName
-                "path" => "http://192.168.1.2:8686/uploads/".$fileName
+                "image" => "http://192.168.1.7:8686/uploads/".$fileName
             )
         );
     } catch (Exception $e) {
@@ -29,7 +29,7 @@
             array(
                 "error" => false,
                 "message" => "Upload failed",
-                "path" => null
+                "image" => null
             )
         );
     }
