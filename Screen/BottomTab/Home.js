@@ -187,7 +187,6 @@ const Home = () => {
       };
 
       const response = await instance.post("/likes-post.php", body);
-      console.log(response);
       // Cập nhật trạng thái isLikedMap
       const newIsLikedMap = { ...isLikedMap };
       newIsLikedMap[postid] = response.action === 1;
