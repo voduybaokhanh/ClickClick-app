@@ -1,19 +1,21 @@
-import { StyleSheet, View, Image, ActivityIndicator } from "react-native";
+import {
+  StyleSheet,
+  View,
+  Image,
+  ActivityIndicator,
+} from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { SpaceComponent } from "../components";
-import { useNavigation } from "@react-navigation/native";
 
-const Hello = () => {
-  const navigation = useNavigation();
-  // Hiển thị thông báo sau 3 giây
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      navigation.navigate("Login");
-    }, 3000);
-
-    return () => clearTimeout(timer);
-  }, [navigation]);
+const Hello = ({navigation}) => {
+   useEffect (() => {
+    setTimeout (() => {
+      navigation.navigate('Login')
+    },3000);
+    return () => clearTimeout(timeout);
+   },
+   []);
   return (
     <View style={styles.container}>
       <LinearGradient
@@ -21,17 +23,19 @@ const Hello = () => {
         colors={["#3B21B7", "#8B64DA", "#D195EE", "#CECBD3"]}
         style={styles.linearGradient}
       >
-        <View style={styles.DIV}>
-          <Image
-            style={styles.image}
-            source={require("../Image/ClickClick.png")}
-          />
-        </View>
-        <View style={styles.DIV2}>
-          <SpaceComponent height={16} />
-          <ActivityIndicator color="#fff" size={22} />
-        </View>
+        
+          <View style={styles.DIV}>
+            <Image
+              style={styles.image}
+              source={require("../Image/ClickClick.png")}
+            /> 
+          </View> 
+          <View style={styles.DIV2}>
+          <SpaceComponent height={16}/>
+          <ActivityIndicator color="#fff" size={22}/>
+          </View>
       </LinearGradient>
+    
     </View>
   );
 };
@@ -39,7 +43,9 @@ const Hello = () => {
 export default Hello;
 
 const styles = StyleSheet.create({
-  image: {},
+  image:{
+    
+  },
   Sngg: {
     right: 10,
     marginBottom: 20,
@@ -48,16 +54,17 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   imgGG: {},
-  DIV2: {
+  DIV2:{
     position: "relative",
     top: 250,
+    
   },
   DIV: {
     position: "absolute",
     top: 155,
     left: 40,
   },
-
+ 
   container: {
     flex: 1,
     backgroundColor: "#fff",
@@ -71,4 +78,5 @@ const styles = StyleSheet.create({
     flex: 1,
     width: "100%",
   },
+ 
 });

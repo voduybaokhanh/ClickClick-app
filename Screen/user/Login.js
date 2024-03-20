@@ -9,33 +9,40 @@ import {
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import React, { useState } from "react";
-import AxiosInstance from "./../../helper/AxiosInstance";
+import AxiosInstance from "./../../helper/Axiostance";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const Login = () => {
-  const [name, setName] = useState(""); // State để lưu trữ giá trị của email
+const Login = ({navigation}) => {
+  const [email, setEmail] = useState(""); // State để lưu trữ giá trị của email
   const [password, setPassword] = useState(""); // State để lưu trữ giá trị của password
-  // const actionLogin = async () => {
-  //   try {
-  //     const body = { name, password };
-  //     const instance = await AxiosInstance();
-  //     const result = await instance.post("/login.php", body);
-  //     const token = await AsyncStorage.getItem("token");
-  //     if (result.status) {
-  //       await AsyncStorage.setItem("token", result.user.id.toString());
-  //       alert("Đăng nhập thành công");
-        
 
-  //       // Token đã được lưu trữ thành công, thực hiện các thao tác tiếp theo nếu cần
-  //     } else {
-  //       alert("đăng nhập thất bại");
-  //     }
-  //     console.log(result.user.id);
-  //     console.log(token);
-  //   } catch (error) {
-  //     console.error("Lỗi khi thực hiện đăng nhập: ", error);
-  //   }
-  // }
+  const actionforgotsPassword = () => {
+    navigation.navigate('forgot')
+  }
+  const actionRegister = () => {
+    navigation.navigate('registerOTP')
+  }
+  const actionLogin = async () => {
+    try {
+      const body = { email, password };
+      const instance = await AxiosInstance();
+      const result = await instance.post("/login.php", body);
+      const token = await AsyncStorage.getItem("token");
+      if (result.status) {
+        await AsyncStorage.setItem("token", result.user.id.toString());
+        alert("Đăng nhập thành công");
+        navigation.navigate('BottomTab')
+
+        // Token đã được lưu trữ thành công, thực hiện các thao tác tiếp theo nếu cần
+      } else {
+        alert("đăng nhập thất bại");
+      }
+      console.log('id: ' + result.user.id);
+      console.log('token: '+token);
+    } catch (error) {
+      console.error("Lỗi khi thực hiện đăng nhập: ", error);
+    }
+  }
 
   return (
     <View style={styles.container}>
@@ -56,14 +63,13 @@ const Login = () => {
             >
               Sign in
             </Text>
-            
 
             <TextInput
-              placeholder="Name"
+              placeholder="Email"
               placeholderTextColor="#FFFFFF"
               style={styles.TextInbutEmail}
-              value={name}
-              onChangeText={(text) => setName(text)}
+              value={email}
+              onChangeText={(text) => setEmail(text)}
             />
             <View>
               <TextInput
@@ -81,7 +87,7 @@ const Login = () => {
             <View style={styles.Remember}>
               <Image source={require("../../Image/boxRemember.png")} />
               <Text style={styles.Text1}>Remember Me?</Text>
-              <Text style={styles.Text2}>Forgot Password</Text>
+              <Text onPress={actionforgotsPassword} style={styles.Text2}>Forgot Password</Text>
             </View>
             <TouchableOpacity onPress={actionLogin} style={styles.buttonSignin}>
               <Text style={styles.Text3}>Sign in</Text>
@@ -95,7 +101,7 @@ const Login = () => {
             </View>
             <View style={styles.Sngg}>
               <Text style={styles.Text4}>Don’t have an account?</Text>
-              <Text style={styles.Text2}>Register</Text>
+              <Text onPress={actionRegister} style={styles.Text2}>Register</Text>
             </View>
           </View>
         </ScrollView>
@@ -117,7 +123,7 @@ const styles = StyleSheet.create({
   imgGG: {},
   Text4: {
     fontSize: 20,
-    marginRight: 20,
+    marginRight: 10,
     color: "#FFFFFF",
   },
   buttonSignin: {
@@ -164,12 +170,12 @@ const styles = StyleSheet.create({
   DIV: {
     position: "absolute",
     top: 155,
-    left: 40,
+    left: 35,
   },
   TextInbutPassword: {
     fontSize: 20,
     paddingStart: 20,
-    width: 330,
+    width: 320,
     right: 30,
     height: 60,
     borderColor: "#FFFFFF",
@@ -182,7 +188,7 @@ const styles = StyleSheet.create({
   TextInbutEmail: {
     fontSize: 20,
     paddingStart: 20,
-    width: 330,
+    width: 320,
     right: 30,
     height: 60,
     borderColor: "#FFFFFF",

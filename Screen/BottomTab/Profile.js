@@ -9,8 +9,10 @@ import {
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useNavigation } from '@react-navigation/native'; // Thêm dòng này
 
 const Profile = () => {
+  const navigation = useNavigation(); // Thêm dòng này
   return (
     <LinearGradient
       locations={[0.05, 0.17, 0.8, 1]}
@@ -18,18 +20,15 @@ const Profile = () => {
       style={styles.linearGradient}
     >
       <SafeAreaView style={styles.container}>
-      <View style={styles.iconback}>
-              <Image source={require("../Image/Vector.png")}>
-                
-              </Image>
-
-            </View>
+      <TouchableOpacity onPress={() => navigation.goBack()} >
+              <Image  source={require("../../Image/arrow-left.png")}/>
+          </TouchableOpacity >
         <ScrollView showsVerticalScrollIndicator={false}>
           <View style={{ alignSelf: "center" }}>
             <View style={styles.profileImage}>
               <Image
-                source={require("../Image/jisoo1.jpg")}
-                style={styles.image}
+                source={require("../../Image/jisoo1.jpg")}
+                style={styles.image1}
               ></Image>
             </View>
 
@@ -64,55 +63,40 @@ const Profile = () => {
 
             <Text style={styles.status}>‘’I can draw my life by myself’’</Text>
 
-            <View style={styles.pic}>
-              <View style={{ marginTop: 32 }}>
-                <View style={styles.row}>
+            <View style={styles.pic}>   
                 <View style={styles.mediaImageContainer}>
                   <Image
-                    source={require("../Image/2.png")}
+                    source={require("../../Image/2.png")}
                     style={styles.image}
                     resizeMode="cover"
                   ></Image>
                 </View>
                 <View style={styles.mediaImageContainer}>
                   <Image
-                    source={require("../Image/2.png")}
+                    source={require("../../Image/2.png")}
                     style={styles.image}
                     resizeMode="cover"
                   ></Image>
-                </View>
-                
-
-                
-                </View>
-                
-              </View>
-              
+                </View>                            
             </View>
             <View style={styles.pic}>
-              <View style={{ marginTop: 32 }}>
+             
                 <View style={styles.row}>
                 <View style={styles.mediaImageContainer}>
                   <Image
-                    source={require("../Image/2.png")}
+                    source={require("../../Image/2.png")}
                     style={styles.image}
                     resizeMode="cover"
                   ></Image>
                 </View>
                 <View style={styles.mediaImageContainer}>
                   <Image
-                    source={require("../Image/2.png")}
+                    source={require("../../Image/2.png")}
                     style={styles.image}
                     resizeMode="cover"
                   ></Image>
+                </View>        
                 </View>
-                
-
-                
-                </View>
-                
-              </View>
-              
             </View>
           </View>
         </ScrollView>
@@ -124,6 +108,13 @@ const Profile = () => {
 export default Profile;
 
 const styles = StyleSheet.create({
+  image1:{
+   height:100,
+   width:100,
+    borderRadius: 75,
+    //overflow: "hidden",
+    paddingTop: 2,
+  },
   iconback: {
     flexDirection : 'row',
     justifyContent : 'space-between',
@@ -138,7 +129,10 @@ const styles = StyleSheet.create({
   pic:{
     flex: 1,
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
+    flexDirection:'row',
+    marginBottom:1,
+    marginTop:5
   },
 
   row:{
@@ -184,18 +178,14 @@ const styles = StyleSheet.create({
   },
 
   image: {
-    flex: 1,
-    height: undefined,
-    width: undefined,
+    flex:1,
+    height:undefined,
+    width:undefined
+
   },
 
   profileImage: {
-    width: 150,
-    height: 150,
-    borderRadius: 75,
-    overflow: "hidden",
-    left: 120,
-    paddingTop: 2,
+    alignItems:'center'
   },
 
   infoContainer: {

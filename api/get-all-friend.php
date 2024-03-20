@@ -22,7 +22,7 @@ try {
     $userid = $data->userid;
 
     // Truy vấn để lấy thông tin về mối quan hệ có trạng thái "friend" dựa trên userid
-    $getFriendshipsQuery = "SELECT * FROM friendships WHERE (userid = :userid OR friendshipid = :userid) AND status = 'friend'";
+    $getFriendshipsQuery = "SELECT * FROM friendships WHERE userid = :userid AND status = 'friend'";
     $getFriendshipsStmt = $dbConn->prepare($getFriendshipsQuery);
     $getFriendshipsStmt->bindParam(':userid', $userid, PDO::PARAM_INT);
     $getFriendshipsStmt->execute();
