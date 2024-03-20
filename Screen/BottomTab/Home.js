@@ -36,21 +36,32 @@ const Home = () => {
 
   const restoreLikedPosts = async () => {
     try {
-      const storedLikedPosts = await AsyncStorage.getItem("likedPosts");
-      if (storedLikedPosts) {
-        const likedPostsByUser = JSON.parse(storedLikedPosts);
-        const userId = await getUserID(); // Lấy userId từ AsyncStorage hoặc từ nơi bạn lưu trữ nó
-        const likedPostsForCurrentUser = likedPostsByUser[userId] || [];
+      const token = await AsyncStorage.getItem("token");
+      if (!token) {
+        console.log("Token (userid) not found in AsyncStorage");
+        return;
+      }
 
-        // Cập nhật trạng thái isLikedMap
+      const instance = await AxiosInstance();
+      const body = { userid: parseInt(token) };
+      const response = await instance.post("/get-all-like.php", body);
+
+      if (response.status) {
+        const likedPostsFromAPI = response.likes.map((like) =>
+          like.postid.toString()
+        );
         const newIsLikedMap = {};
-        likedPostsForCurrentUser.forEach((postId) => {
-          newIsLikedMap[postId] = true;
+        likedPostsFromAPI.forEach((postid) => {
+          newIsLikedMap[postid] = true;
         });
         setIsLikedMap(newIsLikedMap);
+      } else {
+        console.error(
+          "Error: Response from API does not contain expected data format."
+        );
       }
     } catch (error) {
-      console.error("Error restoring liked posts from AsyncStorage:", error);
+      console.error("Error restoring liked posts from API:", error);
     }
   };
 
@@ -117,14 +128,14 @@ const Home = () => {
       const body = { userid: parseInt(token) };
       const response = await instance.post("/get-all-post-friend.php", body);
 
-      // Thêm thuộc tính isLiked và postId vào từng bài viết trong mảng post
-      const postsWithPostId = response.posts.map((post) => ({
+      // Thêm thuộc tính isLiked và postid vào từng bài viết trong mảng post
+      const postsWithpostid = response.posts.map((post) => ({
         ...post,
-        postId: post.ID,
+        postid: post.ID,
       }));
 
       // Lưu trạng thái action vào state posts
-      setPosts(postsWithPostId);
+      setPosts(postsWithpostid);
     } catch (error) {
       console.error("Error fetching posts:", error);
     }
@@ -142,12 +153,12 @@ const Home = () => {
       const response = await instance.post("/get-all-post-userid.php", body);
 
       // Thêm thuộc tính postid vào từng bài viết trong mảng post
-      const postsWithPostId = response.posts.map((post) => ({
+      const postsWithpostid = response.posts.map((post) => ({
         ...post,
-        postId: post.ID,
+        postid: post.ID,
       }));
       // Lưu trạng thái action vào state posts
-      setPosts(postsWithPostId);
+      setPosts(postsWithpostid);
     } catch (error) {
       console.error("Error fetching posts:", error);
     }
@@ -160,7 +171,7 @@ const Home = () => {
   };
 
   // Trong phần xử lý phản hồi từ API:
-  const handleThatim = async (postId, userId) => {
+  const handleThatim = async (postid, userId) => {
     try {
       const token = await AsyncStorage.getItem("token");
       if (!token) {
@@ -172,36 +183,36 @@ const Home = () => {
       const body = {
         userid: parseInt(token),
         action: action,
-        postid: postId,
+        postid: postid,
       };
-  
+
       const response = await instance.post("/likes-post.php", body);
-      
+      console.log(response);
       // Cập nhật trạng thái isLikedMap
       const newIsLikedMap = { ...isLikedMap };
-      newIsLikedMap[postId] = response.action === 1;
+      newIsLikedMap[postid] = response.action === 1;
       setIsLikedMap(newIsLikedMap);
-  
+
       // Lấy danh sách các bài viết đã thích từ AsyncStorage
       const storedLikedPosts = await AsyncStorage.getItem("likedPosts");
       let likedPosts = storedLikedPosts ? JSON.parse(storedLikedPosts) : {};
       // Cập nhật danh sách bài viết đã thích tương ứng với userId
       likedPosts[userId] = likedPosts[userId] || [];
       if (response.action === 1) {
-        likedPosts[userId].push(postId);
+        likedPosts[userId].push(postid);
       } else {
-        likedPosts[userId] = likedPosts[userId].filter((id) => id !== postId);
+        likedPosts[userId] = likedPosts[userId].filter((id) => id !== postid);
       }
       // Lưu danh sách bài viết đã thích vào AsyncStorage
       await AsyncStorage.setItem("likedPosts", JSON.stringify(likedPosts));
-  
+
       // Cập nhật trạng thái dữ liệu của bài viết trong posts
       const updatedPosts = posts.map((post) => {
-        if (post.postId === postId) {
+        if (post.postid === postid) {
           return {
             ...post,
             isLiked: response.action === 1,
-            LIKES: response.LIKES // Cập nhật số lượt thích mới
+            LIKES: response.LIKES, // Cập nhật số lượt thích mới
           };
         }
         return post;
@@ -279,7 +290,7 @@ const Home = () => {
                 </View>
                 <View style={styles.tim_mes}>
                   <TouchableOpacity
-                    onPress={() => handleThatim(item.postId, item.USERID)}
+                    onPress={() => handleThatim(item.postid, item.USERID)}
                   >
                     <Image
                       style={{
@@ -288,8 +299,8 @@ const Home = () => {
                         alignItems: "center",
                       }}
                       source={
-                        item.isLiked
-                          ? require("../../Image/hearted.png") // Nếu isLiked là true, hiển thị icon hearted
+                        isLikedMap[item.postid]
+                          ? require("../../Image/hearted.png") // Nếu đã like, hiển thị icon hearted
                           : require("../../Image/heart.png") // Ngược lại, hiển thị icon heart
                       }
                     />
