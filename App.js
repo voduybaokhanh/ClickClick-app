@@ -24,7 +24,7 @@ export default function App(navigation) {
         <Stack.Screen name="Post" component={Post} />
         <Stack.Screen name="forgot" component={Forgetpassword} />
         <Stack.Screen name="register" component={Register} />
-        <Stack.Screen name="registerOTP" component={RegisterOtp} />
+        <Stack.Screen name="registerOTP" component={RegisterOtp} /> *
         <Stack.Screen name="resetPass" component={Resetpassword} />
 
       </Stack.Navigator>   
