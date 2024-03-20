@@ -293,8 +293,8 @@ const Home = () => {
                   >
                     <Image
                       style={{
-                        width: 40,
-                        height: 45,
+                        width: 30,
+                        height: 35,
                         alignItems: "center",
                       }}
                       source={
@@ -341,9 +341,10 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   postText: {
-    fontSize: 20,
+    fontSize: 18,
     marginLeft: 5,
-    top: 13,
+    color:"white",
+    top:5
   },
   linearGradient: {
     paddingLeft: 15,
@@ -356,15 +357,17 @@ const styles = StyleSheet.create({
     marginLeft: 10,
     height: 45,
     borderRadius: 24,
-    width: "85%",
-    paddingHorizontal: 10,
+    width: "90%",
+    paddingHorizontal: 15,
     top: 5,
+    fontSize:16
   },
   tim_mes: {
     flexDirection: "row",
     width: "90%",
     bottom: 10,
     marginTop: 20,
+    alignItems:"center"
   },
   status: {
     color: "white",
@@ -396,7 +399,6 @@ const styles = StyleSheet.create({
     width: "auto",
     height: "auto",
     backgroundColor: "#BFA7FF",
-    top: 80,
     borderRadius: 20,
     alignItems: "center",
     marginBottom: 20,
