@@ -28,7 +28,24 @@ try {
     $getFriendshipsStmt->execute();
     $friendships = $getFriendshipsStmt->fetchAll(PDO::FETCH_ASSOC);
 
-    echo json_encode(array('status' => true, 'friendships' => $friendships));
+    $friendNames = array(); 
+    foreach ($friendships as $friendship) {
+        $friendshipid = $friendship["FRIENDSHIPID"]; // Sửa tên cột thành friendshipid
+        // Truy vấn để lấy tên của người bạn dựa trên friendshipid
+        $getFriendNameQuery = "SELECT name FROM users WHERE id = :FRIENDSHIPID"; // Sửa tên cột thành userid
+        $getFriendNameStmt = $dbConn->prepare($getFriendNameQuery);
+        $getFriendNameStmt->bindParam(':FRIENDSHIPID', $friendshipid, PDO::PARAM_INT);
+        $getFriendNameStmt->execute();
+        $friendName = $getFriendNameStmt->fetch(PDO::FETCH_ASSOC);
+        // Thêm tên của người bạn vào mảng
+        if ($friendName) {
+            $friendNames[] = $friendName["name"];
+        }
+    }
+
+    // Trả về friendNames theo index
+echo json_encode(array('status' => true, 'friendships' => $friendships, 'friendName' => array_values($friendNames)));
+
 } catch (Exception $e) {
     echo json_encode(array('status' => false, 'message' => $e->getMessage()));
 }

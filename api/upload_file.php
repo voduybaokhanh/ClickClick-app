@@ -21,7 +21,7 @@
                 "error" => true,
                 "message" => "Upload successful",
                 // "path" => "http://172.16.71.27:8686/uploads/".$fileName
-                "path" => "http://172.20.10.2:8686/uploads/".$fileName
+                "path" => "http://192.168.1.2:8686/uploads/".$fileName
             )
         );
     } catch (Exception $e) {
