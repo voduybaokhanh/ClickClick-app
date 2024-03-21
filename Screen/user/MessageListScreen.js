@@ -44,7 +44,7 @@ const MessageListScreen = () => {
                   flexDirection: "row",
                   alignItems: "center",
                   marginBottom: 10,
-                  paddingHorizontal: 10,
+                  paddingHorizontal: 20,
                 }}
               >
                 <Image
@@ -68,7 +68,7 @@ const MessageListScreen = () => {
                   {item.message[item.message.length - 1].date}
                 </Text>
                 <Image
-                  source={require("../../Image/arrow-point-to-right.png")}
+                  source={require("../../Image/Vector.png")}
                 />
               </Pressable>
             );
@@ -371,6 +371,40 @@ const data = [
       },
     ],
   },
+
+  {
+    id: 8,
+    name: "Alex",
+    image: require("../../Image/image2.png"),
+    message: [
+      {
+        id: 1,
+        type: "image",
+        role: "acceptor",
+        image: require("../../Image/image1.png"),
+      },
+      {
+        id: 2,
+        type: "text",
+        role: "acceptor",
+        text: "Hello, have a great day!",
+      },
+      {
+        id: 3,
+        type: "text",
+        role: "sender",
+        text: "Thank you broo!",
+      },
+      {
+        id: 4,
+        type: "text",
+        role: "sender",
+        text: "What your name sir ?",
+        date: "7:01 PM",
+      },
+    ],
+  },
+
   {
     id: 8,
     name: "Alex",

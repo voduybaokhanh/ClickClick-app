@@ -2,8 +2,8 @@ import React from 'react';
 import { StyleSheet , Image} from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Home from './Home';
-import Messenger from './Messenger';
-import Notification from './Notification';
+
+import Notifications from '../user/Notifications';
 import AddPost from './AddPost';
 import Profile from './Profile';
 import CustomHomeIcon from './../../Image/home_icon.png';
