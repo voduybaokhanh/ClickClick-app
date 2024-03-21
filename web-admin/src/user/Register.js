@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import AxiosInstance from "../../../web-admin/src/helper/Axiostance";
-import { useHistory } from "react-router-dom";
 import Login from "./Login";
 
 const Register = () => {
@@ -8,7 +7,6 @@ const Register = () => {
     const [password, setPassword] = useState(""); // State để lưu trữ giá trị của password
     const [passwordConfirm, setPasswordConfirm] = useState(""); // State để lưu trữ giá trị của password confirm
     const [role, setRole] = useState(""); // State để lưu trữ giá trị của vai trò
-    const history = useHistory();
 
     const handleRegister = async (e) => {
         e.preventDefault(); // Ngăn chặn sự kiện mặc định của form
@@ -35,8 +33,8 @@ const Register = () => {
                 setPassword("");
                 setPasswordConfirm("");
                 setRole("");
-                //chuyen qua login
-                history.push("/login");
+                // Chuyển hướng đến trang đăng nhập
+                window.location.href = "/login";
             } else {
                 alert("Đăng ký thất bại!");
             }
