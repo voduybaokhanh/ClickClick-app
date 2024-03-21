@@ -21,13 +21,13 @@ const TestPost = () => {
             // Upload ảnh lên server
             const data = new FormData();
             data.append('image', {
-                name: imageName,
+                name: imageName, // Đảm bảo rằng name là một chuỗi (string)
                 type: 'image/jpeg',
                 uri: photo.uri,
             });
             data.append('upload_preset', 'ml_default');
-            console.log('FormData:', data); // Log FormData object to check content
-            const result = await axios.post('http://192.168.1.7:8686/upload_file.php', data, {
+            console.log('FormData:',data); // Log FormData object to check content
+            const result = await axios.post('http://192.168.1.7:8686/upload_file.php',data, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },
@@ -35,6 +35,7 @@ const TestPost = () => {
             console.log('Result:', result.data);
 
             setImageOnline(result.data.image);
+            
         } else {
             console.log('Camera permission denied');
         }

@@ -6,6 +6,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Camera } from 'expo-camera';
 import { useNavigation } from '@react-navigation/native';
 import moment from 'moment';
+import axios from 'axios';
 
 
 const AddPost = () => {
@@ -15,6 +16,7 @@ const AddPost = () => {
   const [hasPermission, setHasPermission] = useState(null);
   const cameraRef = useRef(null);
   const [capturedImageUri, setCapturedImageUri] = useState(null); // State để lưu đường dẫn của ảnh đã chụp
+  
 
   // Thêm useEffect để yêu cầu quyền truy cập camera
   useEffect(() => {
@@ -26,16 +28,16 @@ const AddPost = () => {
 
   const takePicture = async () => {
     if (cameraRef.current) {
-      const photo = await cameraRef.current.takePictureAsync();
-  
-      // Lấy thời gian hiện tại và chuyển đổi thành chuỗi thích hợp cho tên ảnh
-      const currentTime = moment().format('YYYYMMDD_HHmmss');
-      const imageName = `photo_${currentTime}.jpg`;
+        const { status } = await Camera.requestCameraPermissionsAsync();
+        if (status === 'granted') {
+            const photo = await cameraRef.current.takePictureAsync();
+            setCapturedImageUri(photo.uri);
+            console.log(photo.uri);
   
       // Cập nhật đường dẫn của ảnh đã chụp và tên của ảnh
-      setCapturedImageUri(photo.uri);
-      setImage(imageName);
+      
     }
+  }
   };
   const retakePicture = () => {
     // Xóa đường dẫn của ảnh đã chụp để mở lại camera
@@ -51,55 +53,53 @@ const AddPost = () => {
       }
   
       // Upload ảnh lên server và lấy đường dẫn ảnh từ phản hồi của server
-      const uploadedImageUrl = await uploadImage();
+    uploadImage();
   
       const instance = await AxiosInstance();
       const body = {
         userid: parseInt(token),
         content: content,
-        image: uploadedImageUrl, // Sử dụng đường dẫn ảnh đã được upload
+        image: capturedImageUri, // Sử dụng đường dẫn ảnh đã được upload
       };
       
       const response = await instance.post("/add-posts.php", body);
       console.log(response.data);
       
       navigation.goBack();
+
     } catch (error) {
       console.error("Error adding post:", error);
     }
   };
   
-const uploadImage = async () => {
-  try {
-    const formData = new FormData();
-    formData.append('image', {
-      uri: capturedImageUri,
-      name: image,
-      type: 'image/jpeg',
-    });
-    const response = await fetch('http://192.168.1.7:8686/upload_file.php', {
-      method: 'POST',
-      body: formData,
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    });
-
-
-    const responseData = await response.json(); // Lưu trữ response từ server trong biến cục bộ
-
-    console.log("Response from server:", responseData); // In ra nội dung của phản hồi
-
-    if (responseData.error) {
-      throw new Error(responseData.message);
-    } else {
-      return responseData.image; // Trả về đường dẫn của ảnh từ phản hồi của server
+  const uploadImage = async () => {
+    try {
+        // Tạo tên ảnh dựa trên timestamp
+        const imageName = `photo_${Date.now()}.jpg`;
+  
+        // Upload ảnh lên server
+        const data = new FormData();
+        data.append('image', {
+            name: imageName, // Đảm bảo rằng name là một chuỗi (string)
+            type: 'image/jpeg',
+            uri: capturedImageUri, // Thay thế photo.uri bằng capturedImageUri
+        });
+        data.append('upload_preset', 'ml_default');
+        console.log('FormData:',data); // Log FormData object to check content
+        console.log(capturedImageUri);
+        const result = await axios.post('http://192.168.1.7:8686/upload_file.php',data, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+        });
+        console.log('Result:', result.data);
+  
+        setCapturedImageUri(result.data.image);
+    } catch (error) {
+      console.error("Error uploading image:", error);
+      throw error; // Ném lỗi để xử lý trong hàm gọi
     }
-  } catch (error) {
-    console.error("Error uploading image:", error);
-    throw error; // Ném lỗi để xử lý trong hàm gọi
-  }
-};
+  };
 
   
   return (
@@ -167,7 +167,6 @@ const uploadImage = async () => {
   )
 }
 
-export default AddPost;
 
 const styles = StyleSheet.create({
   text1:{
@@ -251,3 +250,5 @@ const styles = StyleSheet.create({
     zIndex: 1,
     },
     })
+
+export default AddPost;
