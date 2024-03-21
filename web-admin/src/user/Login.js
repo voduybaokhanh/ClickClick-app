@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import AxiosInstance from "../../../web-admin/src/helper/Axiostance";
-import Register from "./Register";
 import { Link } from 'react-router-dom';
 
 const Login = (props) => {
@@ -11,7 +10,7 @@ const Login = (props) => {
     try {
       const body = { email, password };
       const instance = await AxiosInstance();
-      const result = await instance.post("/login.php", body)
+      const result = await instance.post("/login_admin.php", body)
       if (result.status) {
         // Lưu thông tin người dùng vào localStorage
         saveUser(result.user); // Assumed that user data is returned from the API as result.data

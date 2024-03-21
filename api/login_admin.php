@@ -20,7 +20,7 @@ try {
     $stmt->execute();
     $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    if ($user && $user['role'] === 'admin' && password_verify($password, $user["password"])) {
+    if ($email === $user["email"] && $password === $user["password"] && $user['role'] === 'admin') {
         echo json_encode(
             array(
                 "status" => true,
