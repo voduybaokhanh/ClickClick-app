@@ -10,7 +10,7 @@ try {
     $uploadDirectory = "/uploads/";
     $fileName = $_FILES['image']['name']; // Lấy tên của file
     $fileTmpName  = $_FILES['image']['tmp_name'];
-    $uploadPath = $currentDirectory . $uploadDirectory . $fileName;
+    $uploadPath = $currentDirectory .$uploadDirectory.$fileName;
     
     // Upload file
     move_uploaded_file($fileTmpName, $uploadPath);
@@ -20,7 +20,7 @@ try {
         array(
             "error" => false,
             "message" => "Upload successful",
-            "image" => "http://192.168.1.7:8686/uploads/" . $fileName
+            "image" => "http://192.168.1.7:8686/uploads/".$fileName
         )
     );
 } catch (Exception $e) {
