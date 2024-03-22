@@ -11,7 +11,7 @@ import {
 import { LinearGradient } from "expo-linear-gradient";
 import AxiosInstance from "../../helper/Axiostance";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { Camera } from "expo-camera";
+import { Camera, CameraType } from "expo-camera";
 import { useNavigation } from "@react-navigation/native";
 import moment from "moment";
 import axios from "axios";
@@ -21,9 +21,9 @@ const AddPost = () => {
   const [content, setContent] = useState(""); // State để lưu nội dung bài viết
   const [hasPermission, setHasPermission] = useState(null);
   const cameraRef = useRef(null);
-  const [capturedImageUri, setCapturedImageUri] = useState(null); // State để lưu đường dẫn của ảnh đã chụp
-  const [contentImage, setcontentImage] = useState(null)
-  
+  const [capturedImageUri, setCapturedImageUri] = useState(null); // State để lưu đường dẫn của ảnh đã chụp\
+  const [Imageconten, setImageconten] = useState(null);
+  const [cameraType, setCameraType] = useState(Camera.Constants.Type.back); // Ban đầu sử dụng camera sau
 
   useEffect(() => {
     (async () => {
@@ -39,6 +39,7 @@ const AddPost = () => {
       if (status === "granted") {
         const photo = await cameraRef.current.takePictureAsync();
         setCapturedImageUri(photo.uri);
+        setImageconten(photo.uri); // Gán giá trị của capturedImageUri cho Imageconten
       }
     }
   };
@@ -57,46 +58,57 @@ const AddPost = () => {
         console.log("Token (userid) not found in AsyncStorage");
         return;
       }
-
-      // Upload ảnh lên server và lấy đường dẫn ảnh từ phản hồi của server
-     await uploadImage();
-
-      const instance = await AxiosInstance();
-      const body = {
-        userid: parseInt(token),
-        content: content,
-        image: contentImage, // Sử dụng đường dẫn ảnh đã được upload
-      };
-
-      const response = await instance.post("/add-posts.php", body);
-      console.log(response.data);
-
-      // Reset capturedImageUri to null after successfully sending the post
-      // navigation.goBack();
-    setCapturedImageUri(null);
-
+  
+      // Chỉ thực hiện upload ảnh nếu capturedImageUri đã được gán giá trị
+      if (capturedImageUri) {
+        // Upload ảnh lên Cloudinary và lấy đường dẫn ảnh từ phản hồi của Cloudinary
+        const uploadedImageUrl = await uploadImage();
+  
+        const instance = await AxiosInstance();
+        const body = {
+          userid: parseInt(token),
+          content: content,
+          image: uploadedImageUrl, // Sử dụng đường dẫn ảnh đã được upload lên Cloudinary
+        };
+  
+        const response = await instance.post("/add-posts.php", body);
+        console.log("uploadImgaeuri " + uploadedImageUrl);
+  
+        // Reset capturedImageUri to null after successfully sending the post
+        setCapturedImageUri(null);
+      } else {
+        // Nếu không có ảnh được chụp, gửi bài viết chỉ với nội dung
+        const instance = await AxiosInstance();
+        const body = {
+          userid: parseInt(token),
+          content: content,
+        };
+  
+        const response = await instance.post("/add-posts.php", body);
+        console.log(response.data);
+      }
+  
     } catch (error) {
       console.error("Error adding post:", error);
     }
   };
-
   // Hàm upload ảnh
   const uploadImage = async () => {
     try {
       // Tạo tên ảnh dựa trên timestamp
       const imageName = `photo_${Date.now()}.jpg`;
-
-      // Upload ảnh lên server
+  
+      // Upload ảnh lên Cloudinary
       const data = new FormData();
-      data.append("image", {
+      data.append("file", {
         name: imageName,
         type: "image/jpeg",
-        uri: capturedImageUri,
+        uri: Imageconten,
       });
       data.append("upload_preset", "ml_default");
-      console.log("FormData:", data);
+  
       const result = await axios.post(
-        "http://192.168.1.7:8686/upload_file.php",
+        'https://api.cloudinary.com/v1_1/dffuzgy5h/image/upload',
         data,
         {
           headers: {
@@ -104,105 +116,130 @@ const AddPost = () => {
           },
         }
       );
-      console.log("Result:", result.data.image);
-
-      setcontentImage(result.data.image);
+      console.log("Result:", result.data.secure_url);
+  
+      setImageconten(result.data.secure_url);
+      return result.data.secure_url; // Trả về đường dẫn của ảnh đã upload
     } catch (error) {
       console.error("Error uploading image:", error);
       throw error;
     }
   };
 
-  return (
-    <View style={styles.container}>
-      <LinearGradient
-        locations={[0.05, 0.17, 0.8, 1]}
-        colors={["#3B21B7", "#8B64DA", "#D195EE", "#CECBD3"]}
-        style={styles.linearGradient}
-      >
-        <ScrollView>
-          <View style={styles.head}>
-            <TouchableOpacity onPress={() => navigation.goBack()}>
-              <Image source={require("../../Image/arrow-left.png")} />
-            </TouchableOpacity>
-            <TouchableOpacity>
-              <Image
-                style={styles.iconsetting}
-                source={require("../../Image/setting_icon.png")}
-              />
-            </TouchableOpacity>
-          </View>
-          <View style={{ marginTop: 60, marginLeft: 10 }}>
-            <Text style={styles.creat}>Create new post</Text>
-            <Text style={styles.text}>Share the moment with your friends</Text>
-          </View>
-          <View style={styles.itempost}>
-            <View style={styles.namepost}>
-              <Image
-                style={styles.avt}
-                source={require("../../Image/avatar1.png")}
-              />
-              <View style={{ flexDirection: "column", marginLeft: 10 }}>
-                <Text style={styles.name}>You</Text>
-              </View>
-            </View>
-            <View style={{ width: "90%" }}>
-              <Camera
-                style={styles.camera}
-                ref={cameraRef}
-                type={Camera.Constants.Type.back}
-              />
-              {capturedImageUri && (
-                <Image
-                  source={{ uri: capturedImageUri }}
-                  style={styles.capturedImage}
-                />
-              )}
+  // Hàm chuyển đổi giữa camera trước và camera sau
+  const switchCameraType = () => {
+    setCameraType(
+      cameraType === Camera.Constants.Type.back
+        ? Camera.Constants.Type.front
+        : Camera.Constants.Type.back
+    );
+  };
+
+return (
+  <View style={styles.container}>
+    <LinearGradient
+      locations={[0.05, 0.17, 0.8, 1]}
+      colors={["#3B21B7", "#8B64DA", "#D195EE", "#CECBD3"]}
+      style={styles.linearGradient}
+    >
+      <ScrollView>
+        <View style={styles.head}>
+          <TouchableOpacity onPress={() => navigation.goBack()}>
+            <Image source={require("../../Image/arrow-left.png")} />
+          </TouchableOpacity>
+          <TouchableOpacity>
+            <Image
+              style={styles.iconsetting}
+              source={require("../../Image/setting_icon.png")}
+            />
+          </TouchableOpacity>
+        </View>
+        <View style={{ marginTop: 60, marginLeft: 10 }}>
+          <Text style={styles.creat}>Create new post</Text>
+          <Text style={styles.text}>Share the moment with your friends</Text>
+        </View>
+        <View style={styles.itempost}>
+          <View style={styles.namepost}>
+            <Image
+              style={styles.avt}
+              source={require("../../Image/avatar1.png")}
+            />
+            <View style={{ flexDirection: "column", marginLeft: 10 }}>
+              <Text style={styles.name}>You</Text>
             </View>
           </View>
-          <View style={{ alignItems: "center", bottom: 47 }}>
-            {!capturedImageUri ? (
-              <TouchableOpacity style={styles.button} onPress={takePicture}>
-                <Image
-                  style={{ width: 80, height: 80 }}
-                  source={require("../../Image/camera_icon.png")}
-                />
-              </TouchableOpacity>
-            ) : (
-              <View>
-                <TouchableOpacity style={styles.button} onPress={retakePicture}>
-                  <Image
-                    style={{ width: 80, height: 80 }}
-                    source={require("../../Image/delete.png")}
-                  />
-                </TouchableOpacity>
-              </View>
+          <View style={{ width: "90%" }}>
+            <Camera
+              style={styles.camera}
+              ref={cameraRef}
+              type={cameraType}
+            />
+            {capturedImageUri && (
+              <Image
+                source={{ uri: capturedImageUri }}
+                style={styles.capturedImage}
+              />
             )}
           </View>
-          <View style={{ marginTop: 10, alignItems: "center" }}>
-            <TextInput
-              style={styles.mes}
-              placeholder="Add a message"
-              placeholderTextColor={"#635A8F"}
-              value={content}
-              onChangeText={setContent} // Cập nhật nội dung bài viết khi người dùng nhập
-            />
-          </View>
-          {capturedImageUri && ( // Chỉ render khi có ảnh được chụp
-            <TouchableOpacity
-              style={{ alignItems: "center", bottom: 100 }}
-              onPress={sendPost} // Gọi hàm sendPost khi ấn
-            >
-              <Text style={{ color: "white", fontSize: 16 }}>Post</Text>
+        </View>
+        
+        <View style={{ justifyContent:"space-evenly",flexDirection:"row",alignItems:"center",bottom:47 }}>
+        <View>
+              <TouchableOpacity style={styles.button} onPress={switchCameraType}>
+                <Image
+                  style={{ width: 80, height: 80 }}
+                  source={require("../../Image/camerasau.png")}
+                />
+              </TouchableOpacity>
+            </View>
+          {!capturedImageUri ? (
+            <TouchableOpacity style={styles.button} onPress={takePicture}>
+              <Image
+                style={{ width: 80, height: 80 }}
+                source={require("../../Image/camera_icon.png")}
+              />
             </TouchableOpacity>
+          ) : (
+            <View>
+              <TouchableOpacity style={styles.button} onPress={retakePicture}>
+                <Image
+                  style={{ width: 80, height: 80 }}
+                  source={require("../../Image/delete.png")}
+                />
+              </TouchableOpacity>
+            </View>
           )}
-        </ScrollView>
-      </LinearGradient>
-    </View>
-  );
+        </View>
+        
+        <View style={{ marginTop: 10, alignItems: "center" }}>
+          <TextInput
+            style={styles.mes}
+            placeholder="Add a message"
+            placeholderTextColor={"#635A8F"}
+            value={content}
+            onChangeText={setContent} // Cập nhật nội dung bài viết khi người dùng nhập
+          />
+        </View>
+        {capturedImageUri && ( // Chỉ render khi có ảnh được chụp
+          <TouchableOpacity
+            style={{ alignItems: "center", bottom: 110 }}
+            onPress={sendPost} // Gọi hàm sendPost khi ấn
+          >
+             <Image
+                style={{ width: 150, height: 80,borderRadius:70 }}
+                source={require("../../Image/send.png")}
+              />
+          </TouchableOpacity>
+        )}
+      </ScrollView>
+    </LinearGradient>
+  </View>
+);
 };
 
+
 const styles = StyleSheet.create({
+  
   text1: {
     fontSize: 20,
   },

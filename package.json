@@ -16,6 +16,7 @@
     "@react-navigation/native-stack": "^6.9.18",
     "@types/react": "~18.2.45",
     "axios": "^1.6.7",
+    "base-64": "^1.0.0",
     "cloudinary-react": "^1.8.1",
     "cloudinary-react-native": "^0.2.0",
     "expo": "~50.0.2",
