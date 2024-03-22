@@ -200,7 +200,6 @@
         console.error("Error liking post:", error);
       }
     };
-
     return (
       <View style={styles.container}>
         <LinearGradient
@@ -236,6 +235,8 @@
           <FlatList
             style={styles.FlatList}
             data={posts}
+            refreshing
+            onRefresh={fetchPosts}
             // Trong FlatList renderItem:
             renderItem={({ item }) => (
               <View style={styles.itempost}>
