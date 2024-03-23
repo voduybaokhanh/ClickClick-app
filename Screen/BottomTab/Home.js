@@ -24,16 +24,6 @@
 
     // Thêm state để lưu trạng thái của người dùng (tất cả hoặc bạn bè)
     const [selectedFriend, setSelectedFriend] = useState("all");
-
-    const getUserID = async () => {
-      try {
-        const token = await AsyncStorage.getItem("token");
-        return token;
-      } catch (error) {
-        console.error("Error retrieving userid from AsyncStorage:", error);
-      }
-    };
-
     const restoreLikedPosts = async () => {
       try {
         const token = await AsyncStorage.getItem("token");
@@ -64,7 +54,6 @@
         console.error("Error restoring liked posts from API:", error);
       }
     };
-
     useEffect(() => {
       fetchPosts();
       selectFriend();
@@ -74,15 +63,6 @@
     useEffect(() => {
       restoreLikedPosts();
     }, []);
-    // Hàm lưu danh sách các bài viết đã thích vào AsyncStorage
-    const saveLikedPosts = async (likedPosts) => {
-      try {
-        await AsyncStorage.setItem("likedPosts", JSON.stringify(likedPosts));
-      } catch (error) {
-        console.error("Error saving liked posts to AsyncStorage:", error);
-      }
-    };
-
     const selectFriend = async () => {
       try {
         const token = await AsyncStorage.getItem("token");
@@ -221,7 +201,6 @@
         console.error("Error liking post:", error);
       }
     };
-
     return (
       <View style={styles.container}>
         <LinearGradient
@@ -257,6 +236,8 @@
           <FlatList
             style={styles.FlatList}
             data={posts}
+            refreshing
+            onRefresh={fetchPosts}
             // Trong FlatList renderItem:
             renderItem={({ item }) => (
               <View style={styles.itempost}>
@@ -281,7 +262,7 @@
                 </View>
                 <View style={{ width: "90%", marginBottom: 20 }}>
                   <Image
-                    style={{ width: "auto" }}
+                    style={{ width:300,height:300 }}
                     source={{ uri:item.IMAGE}}
                   />
                   <View style={{ width: "90%", alignSelf: "center" }}>
@@ -369,9 +350,12 @@
     },
     status: {
       color: "white",
-      fontSize: 15,
+      fontSize: 20,
+      fontStyle:"normal",
+      fontWeight:"bold",
       position: "absolute",
       bottom: 5,
+      color:"white",
       alignSelf: "center",
     },
     namepost: {
