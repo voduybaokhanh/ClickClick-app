@@ -39,7 +39,7 @@ const MessageListScreen = () => {
           renderItem={({ item }) => {
             return (
               <Pressable
-                onPress={() => navigation.navigate("Mess", { data: item })}
+                onPress={() => navigation.navigate("MessProps", { data: item })}
                 style={{
                   flexDirection: "row",
                   alignItems: "center",

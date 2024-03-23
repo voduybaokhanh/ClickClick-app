@@ -29,8 +29,8 @@ export default function App(navigation) {
         <Stack.Screen name="register" component={Register} />
         <Stack.Screen name="registerOTP" component={RegisterOtp} /> 
         <Stack.Screen name="resetPass" component={Resetpassword} />  */}
-        {/* <Stack.Screen name="messlistscreen" component={MessageListScreen} /> */}
-        <Stack.Screen name="Notifications" component={Notifications} />  
+        <Stack.Screen name="messlistscreen" component={MessageListScreen} />
+        {/* <Stack.Screen name="Notifications" component={Notifications} />   */}
         {/* <Stack.Screen name="MessProps" component={MessProps} />  */}
 
       </Stack.Navigator>   
