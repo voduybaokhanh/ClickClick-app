@@ -11,37 +11,34 @@ include_once './helpers/jwt.php';
 
 try {
     // Nhận dữ liệu từ JSON
-    $data = json_decode(file_get_contents("php://input"));
-
-    // Kiểm tra xem dữ liệu `id` đã được truyền hay chưa
-    if (!isset($data->postid)) {
+    if (!isset($_GET['postid'])) {
+        http_response_code(400);
         echo json_encode(array('status' => false, 'message' => 'Thiếu tham số postid'));
         exit;
     }
 
-    // Lấy id từ dữ liệu đầu vào
-    $postId = $data->postid;
+    $postid = $_GET['postid'];
+
 
 
     // Kiểm tra bài viết trong bảng chats
     $sqlCheckChats = "SELECT * FROM chats WHERE postid = :postid";
     $stmtCheckChats = $dbConn->prepare($sqlCheckChats);
-    $stmtCheckChats->bindParam(':postid', $postId, PDO::PARAM_INT);
+    $stmtCheckChats->bindParam(':postid', $postid, PDO::PARAM_INT);
     $stmtCheckChats->execute();
-
 
     // Nếu có tin nhắn liên quan trong bảng chats, xóa chúng
     if ($stmtCheckChats->rowCount() > 0) {
         $sqlDeleteChats = "DELETE FROM chats WHERE postid = :postid";
         $stmtDeleteChats = $dbConn->prepare($sqlDeleteChats);
-        $stmtDeleteChats->bindParam(':postid', $postId, PDO::PARAM_INT);
+        $stmtDeleteChats->bindParam(':postid', $postid, PDO::PARAM_INT);
         $stmtDeleteChats->execute();
     }
 
     // Tiến hành xóa bài viết từ bảng posts
-    $sqlDeletePost = "DELETE FROM posts WHERE id = :postid AND available = 1";
+    $sqlDeletePost = "DELETE FROM posts WHERE id = :postid AND available = 0";
     $stmtDeletePost = $dbConn->prepare($sqlDeletePost);
-    $stmtDeletePost->bindParam(':postid', $postId, PDO::PARAM_INT);
+    $stmtDeletePost->bindParam(':postid', $postid, PDO::PARAM_INT);
     $stmtDeletePost->execute();
 
     if ($stmtDeletePost->rowCount() > 0) {
@@ -63,3 +60,4 @@ try {
         "message" => "Không thể xóa bài viết: " . $e->getMessage()
     ));
 }
+?>
