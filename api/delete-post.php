@@ -39,7 +39,7 @@ try {
     }
 
     // Tiến hành xóa bài viết từ bảng posts
-    $sqlDeletePost = "DELETE FROM posts WHERE id = :postid AND available = 1";
+    $sqlDeletePost = "DELETE FROM posts WHERE id = :postid AND available = 0";
     $stmtDeletePost = $dbConn->prepare($sqlDeletePost);
     $stmtDeletePost->bindParam(':postid', $postId, PDO::PARAM_INT);
     $stmtDeletePost->execute();

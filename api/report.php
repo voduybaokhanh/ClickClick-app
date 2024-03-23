@@ -21,7 +21,7 @@ try {
     $postid = $data->postid;
 
     // Cập nhật cột AVAILABLE trong bảng POSTS
-    $updateAvailableQuery = "UPDATE posts SET available = 1 WHERE id = :postid";
+    $updateAvailableQuery = "UPDATE posts SET available = 0 WHERE id = :postid";
     $updateAvailableStmt = $dbConn->prepare($updateAvailableQuery);
     $updateAvailableStmt->bindParam(':postid', $postid, PDO::PARAM_INT);
     $updateAvailableStmt->execute();
