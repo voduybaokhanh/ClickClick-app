@@ -19,8 +19,6 @@ try {
 
     $postid = $_GET['postid'];
 
-
-
     // Kiểm tra bài viết trong bảng chats
     $sqlCheckChats = "SELECT * FROM chats WHERE postid = :postid";
     $stmtCheckChats = $dbConn->prepare($sqlCheckChats);
@@ -35,13 +33,27 @@ try {
         $stmtDeleteChats->execute();
     }
 
+    // Kiểm tra bài viết trong bảng likes
+    $sqlCheckLikes = "SELECT * FROM likes WHERE postid = :postid";
+    $stmtCheckLikes = $dbConn->prepare($sqlCheckLikes);
+    $stmtCheckLikes->bindParam(':postid', $postid, PDO::PARAM_INT);
+    $stmtCheckLikes->execute();
+
+    // Nếu có likes liên quan trong bảng likes, xóa chúng
+    if ($stmtCheckLikes->rowCount() > 0) {
+        $sqlDeleteLikes = "DELETE FROM likes WHERE postid = :postid";
+        $stmtDeleteLikes = $dbConn->prepare($sqlDeleteLikes);
+        $stmtDeleteLikes->bindParam(':postid', $postid, PDO::PARAM_INT);
+        $stmtDeleteLikes->execute();
+    }
+
     // Tiến hành xóa bài viết từ bảng posts
-    $sqlDeletePost = "DELETE FROM posts WHERE id = :postid AND available = 0";
+    $sqlDeletePost = "DELETE FROM posts WHERE ID = :postid AND AVAILABLE = 0";
     $stmtDeletePost = $dbConn->prepare($sqlDeletePost);
     $stmtDeletePost->bindParam(':postid', $postid, PDO::PARAM_INT);
     $stmtDeletePost->execute();
 
-    if ($stmtDeletePost->rowCount() > 0) {
+    if ($stmtDeletePost) {
         echo json_encode(array(
             "status" => true,
             "message" => "Bài viết đã được xóa thành công."

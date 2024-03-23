@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import AxiosInstance from "../helper/Axiostance"; // Đảm bảo rằng đường dẫn và tên file đúng
+import AxiosInstance from "../../../web-admin/src/helper/Axiostance"; // Đảm bảo rằng đường dẫn và tên file đúng
 import swal from 'sweetalert';
 
 const List = ({ saveUser }) => {
@@ -23,7 +23,7 @@ const List = ({ saveUser }) => {
         fetchData();
     }, []);
 
-    const handleDelete = async (postid) => { // Thay đổi tham số từ ID thành postid
+    const handleDelete = async (ID) => { // Thay đổi tham số từ ID thành postid
         swal({
             title: "Xác nhận xóa?",
             text: "Xóa dữ liệu khỏi hệ thống!",
@@ -34,11 +34,12 @@ const List = ({ saveUser }) => {
             if (willDelete) {
                 try {
                     const axiosInstance = await AxiosInstance();
-                    const response = await axiosInstance.delete(`/delete-post.php?postid=${postid}`); // Sử dụng postid thay vì ID
+                    const response = await axiosInstance.delete(`/delete-post.php?postid=${ID}`); // Sử dụng postid thay vì ID
+                    console.log(response);
                     if (response.status) {
                         swal('Xóa thành công');
                         // Update the state after successful deletion
-                        setPosts(posts.filter(post => post.ID !== postid)); // Sử dụng postid thay vì ID
+                        setPosts(posts.filter(posts => posts.ID !== ID)); // Sử dụng postid thay vì ID
                     } else {
                         swal('Xóa thất bại');
                     }
@@ -55,10 +56,11 @@ const List = ({ saveUser }) => {
         try {
             const axiosInstance = await AxiosInstance();
             const response = await axiosInstance.get(`/cancel.php?postid=${ID}`); // Thay đổi phương thức từ post sang get và truyền postid qua URL
+            console.log(response);
             if (response.status) {
                 swal('Hủy báo cáo thành công');
                 // Refresh list after successful cancellation
-                const updatedPosts = posts.filter(post => post.ID !== ID);
+                const updatedPosts = posts.filter(posts => posts.ID !== ID);
                 setPosts(updatedPosts);
             } else {
                 swal('Hủy báo cáo thất bại');
