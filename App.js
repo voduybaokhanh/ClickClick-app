@@ -20,7 +20,7 @@ export default function App(navigation) {
   return (
       <NavigationContainer styles={styles.container}>
       <Stack.Navigator screenOptions={{headerShown: false}}>
-        {/* <Stack.Screen name="Hello" component={Hello} />
+        <Stack.Screen name="Hello" component={Hello} />
         <Stack.Screen name="Login" component={Login} />
         <Stack.Screen name="Home" component={Home} />
         <Stack.Screen name="BottomTab" component={BottomTab} />
@@ -28,10 +28,10 @@ export default function App(navigation) {
         <Stack.Screen name="forgot" component={Forgetpassword} />
         <Stack.Screen name="register" component={Register} />
         <Stack.Screen name="registerOTP" component={RegisterOtp} /> 
-        <Stack.Screen name="resetPass" component={Resetpassword} />  */}
+        <Stack.Screen name="resetPass" component={Resetpassword} /> 
         <Stack.Screen name="messlistscreen" component={MessageListScreen} />
-        {/* <Stack.Screen name="Notifications" component={Notifications} />   */}
-        {/* <Stack.Screen name="MessProps" component={MessProps} />  */}
+        <Stack.Screen name="Notifications" component={Notifications} />  
+        <Stack.Screen name="MessProps" component={MessProps} /> 
 
       </Stack.Navigator>   
     </NavigationContainer>
