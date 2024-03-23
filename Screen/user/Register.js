@@ -78,8 +78,6 @@ const handleOtpChange = (newOtp) => {
       colors={["#3B21B7", "#8B64DA", "#D195EE", "#CECBD3"]}
       style={styles.linearGradient}
     >
-      
-        
       <View style={styles.container}>
       <TouchableOpacity onPress={() => navigation.goBack()} >
           <Image style={styles.image}
@@ -145,12 +143,16 @@ const handleOtpChange = (newOtp) => {
 export default Register;
 
 const styles = StyleSheet.create({
-  image:{
-    marginLeft:10,
+  back:{
 
   },
+  image:{
+    
+  },
   header:{
-    alignItems:"center",
+    marginTop:70,
+    alignItems:"flex-start",
+    
   },
   khung:{
     justifyContent:"center",
@@ -159,7 +161,6 @@ const styles = StyleSheet.create({
   label:{
    fontSize:30,
    color:"white",
-   marginBottom:60,
    fontWeight:'bold'
   },
   Text11:{
