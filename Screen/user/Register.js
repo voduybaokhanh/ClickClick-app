@@ -11,8 +11,9 @@ import { LinearGradient } from "expo-linear-gradient";
 import React, { useState } from "react";
 import AxiosInstance from "./../../helper/Axiostance";
 
-
-const Register = ({ navigation }) => {
+const Register = ({ navigation, route }) => {
+  const {params} = route;
+  const email = params.email;
   const [name, setName] = useState(""); // State để lưu trữ giá trị của email
   const [password, setPassword] = useState("");
   const [password_confirm, setpassword_confirm] = useState("");
@@ -53,10 +54,11 @@ const handleOtpChange = (newOtp) => {
   };
   const actionoRegister = async () => {
     try {
-      const body = { name, password, password_confirm, otp };
+      const body = { email,name, password, password_confirm, otp };
       const instance = await AxiosInstance();
       const result = await instance.post("/register.php", body);
       console.log(body);
+     // console.log(JSON.stringify(result));
       if (result.status) {
         alert("Đăng ký thành công");
         navigation.navigate("Login");
@@ -76,34 +78,41 @@ const handleOtpChange = (newOtp) => {
       colors={["#3B21B7", "#8B64DA", "#D195EE", "#CECBD3"]}
       style={styles.linearGradient}
     >
-      <ScrollView>
       <View style={styles.container}>
+      <TouchableOpacity onPress={() => navigation.goBack()} >
+          <Image style={styles.image}
+              source={require("../../Image/arrow-left.png")}
+             />
+        </TouchableOpacity>
+        <View style={styles.header}>
+          <Text style={styles.label}>Register</Text>
+        </View>
+        <View style={styles.khung}>
         <TextInput
           placeholder="Name"
           placeholderTextColor="#FFFFFF"
-          style={styles.TextInbutEmail}
+          style={styles.TextInbut}
           value={name}
           onChangeText={(text) => setName(text)}
         />
         <TextInput
           placeholder="Password"
           placeholderTextColor="#FFFFFF"
-          style={styles.TextInbutPassword}
+          style={styles.TextInbut}
           value={password}
           onChangeText={(text) => setPassword(text)}
         />
-        {/* <Image style={styles.eye} source={require("../../Image/eye.png")} /> */}
-
         <TextInput
           placeholder="Confirm PassWord"
           placeholderTextColor="#FFFFFF"
-          style={styles.TextInbutPassword}
+          style={styles.TextInbut}
           value={password_confirm}
           onChangeText={(text) => setpassword_confirm(text)}
         />
+        
         <Text style={styles.Text11}>Enter code OTP</Text>
         <OTPInput numInputs={6} value={otp} onOtpChange={handleOtpChange} />
-        {/* <Image style={styles.eye2} source={require("../../Image/eye.png")} /> */}
+        
         <View style={styles.Remember}>
           <Image source={require("../../Image/boxRemember.png")} />
           <Text style={styles.Text1}>
@@ -124,8 +133,9 @@ const handleOtpChange = (newOtp) => {
             Login
           </Text>
         </View>
+        </View>
       </View>
-      </ScrollView>
+
     </LinearGradient>
   );
 };
@@ -133,12 +143,32 @@ const handleOtpChange = (newOtp) => {
 export default Register;
 
 const styles = StyleSheet.create({
+  back:{
+
+  },
+  image:{
+    
+  },
+  header:{
+    marginTop:70,
+    alignItems:"flex-start",
+    
+  },
+  khung:{
+    justifyContent:"center",
+    alignItems:"center"
+  },
+  label:{
+   fontSize:30,
+   color:"white",
+   fontWeight:'bold'
+  },
   Text11:{
+    marginTop:10,
+    marginBottom:10,
     fontSize: 17,
     fontWeight: "bold",
     color: "#FFFFFF",
-    margin: 10,
-    left:10,
   },
   Sngg: {
     right: 3,
@@ -168,35 +198,16 @@ const styles = StyleSheet.create({
     flex: 1,
     width: "100%",
   },
-  TextInbutEmail: {
+  TextInbut: {
+    paddingHorizontal:10,
     fontSize: 20,
-    paddingStart: 20,
-    width: 330,
-    right: 3,
+    width:'100%',
     height: 65,
     borderColor: "#FFFFFF",
     borderWidth: 3,
     borderRadius: 25,
-    margin: 30,
-    padding: 20,
-    marginBottom: 20,
-    marginTop: 200,
+    marginTop: 20,
   },
-
-  TextInbutPassword: {
-    fontSize: 20,
-    paddingStart: 20,
-    width: 330,
-    right: 3,
-    height: 65,
-    borderColor: "#FFFFFF",
-    borderWidth: 3,
-    borderRadius: 25,
-    margin: 30,
-    padding: 20,
-    marginBottom: 20,
-  },
-
   eye: {
     position: "absolute",
     top: 334,
@@ -211,8 +222,6 @@ const styles = StyleSheet.create({
 
   Remember: {
     width: 300,
-    left: 25,
-    margin: 10,
     alignItems: "center",
     justifyContent: "space-between",
     flexDirection: "row",
@@ -235,27 +244,24 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: "#3B21B2",
   },
-  buttonSignin: {
-    paddingStart: 20,
+  buttonSignin:{
     width: 330,
-    left: 30,
     height: 60,
     backgroundColor: "#635A8F",
     borderRadius: 25,
     marginTop: 20,
-    padding: 5,
     alignItems: "center",
+    justifyContent:"center"
   },
   Text3: {
     fontSize: 25,
     fontWeight: "bold",
     color: "#FFFFFF",
-    marginTop: 6,
   },
   otpContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    width: '60%',
+    width: '90%',
   },
   input: {
     height: 50,
@@ -263,14 +269,14 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: "#4100c4",
     textAlign: "center",
-    marginRight: 20,
     fontSize: 20,
-    left: 20,
     borderRadius: 5,
     marginBottom: 20,
+    color:"white"
   },
   container:{
-    right: 10,
-    bottom: 40,
+    flex:1,
+    padding:10,
+    justifyContent:"center",
   }
 });
