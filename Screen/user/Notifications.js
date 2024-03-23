@@ -37,6 +37,25 @@ const Notifications = () => {
           <Text style={styles.tn}> New </Text>
 
         </View>
+
+        <FlatList
+          data={data}
+          keyExtractor={(item) => item.id.toString()}
+          renderItem={({ item }) => {
+           return (
+           <Pressable
+                onPress={() => navigation.navigate("Mess", { data: item })}
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  marginBottom: 10,
+                  paddingHorizontal: 20,
+                }}
+              ></Pressable>
+           );
+          }}
+        />
+
       </SafeAreaView>
     </LinearGradient>
   );
@@ -68,10 +87,57 @@ const styles = StyleSheet.create({
     paddingTop: 20,
   },
 
-  View: {
-    fontFamily : 'bold',
-    color : 'White'
+  textNew: {
+    marginLeft : 35,
+    paddingTop: 30,
 
   },
 
+tn : {
+  
+  fontStyle : "bold",
+  color: "white",
+  fontSize : 12,
+  
+  
+
+}
+
 });
+
+
+  const data = [
+    {
+      id: 1,
+      name: "John",
+      image: require("../../Image/image1.png"),
+      message: [
+        {
+          id: 1,
+          type: "text",
+          role: "acceptor",
+          text: "What are you doing ?",
+        },
+        {
+          id: 2,
+          type: "text",
+          role: "acceptor",
+          text: "Hello, have a great day!",
+        },
+        {
+          id: 3,
+          type: "text",
+          role: "sender",
+          text: "Thank you broo!",
+        },
+        {
+          id: 4,
+          type: "image",
+          role: "sender",
+          text: "Hello, have a great day!",
+          image: require("../../Image/image2.png"),
+          date: "11:00 PM",
+        },
+],
+    },
+  ];
