@@ -2,7 +2,7 @@
 $databaseHost = '127.0.0.1:3306';
 $databaseName = 'duan';
 $databaseUsername = 'root';
-$databasePassword = 'Thanhbinh2300';
+$databasePassword = '90852';
 
 try {
 	$dbConn = new PDO(
