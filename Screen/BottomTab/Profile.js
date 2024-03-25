@@ -27,15 +27,15 @@ const Profile = () => {
         console.log("Token (userid) not found in AsyncStorage");
         return;
       }
-
       const instance = await AxiosInstance();
       const body = { userid: parseInt(token) };
       const response = await instance.post("/get-userid.php", body);
-      const status = await response.json();
-      if (status) {
-        setUserData(user); // Cập nhật state userData với dữ liệu từ API
+      if (response.status) {
+        await AsyncStorage.setItem("token", response.user.id.toString());
+        navigation.navigate('BottomTab')
+      // Token đã được lưu trữ thành công, thực hiện các thao tác tiếp theo nếu cần
       } else {
-        console.error("API error:", data.message);
+        alert("Không tìm thấy người dùng");
       }
       // Thêm thuộc tính isLiked và postid vào từng bài viết trong mảng post
       
