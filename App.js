@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { View, Text,StyleSheet } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Register from './Screen/user/Register';
@@ -15,8 +15,8 @@ const Stack = createNativeStackNavigator();
 
 export default function App(navigation) {
   return (
-      <NavigationContainer styles={styles.container}>
-      <Stack.Navigator screenOptions={{headerShown: false}}>
+    <NavigationContainer styles={styles.container}>
+      <Stack.Navigator screenOptions={{ headerShown: false }}>
         <Stack.Screen name="Hello" component={Hello} />
         <Stack.Screen name="Login" component={Login} />
         <Stack.Screen name="Home" component={Home} />
@@ -27,7 +27,7 @@ export default function App(navigation) {
         <Stack.Screen name="registerOTP" component={RegisterOtp} />
         <Stack.Screen name="resetPass" component={Resetpassword} />
 
-      </Stack.Navigator>   
+      </Stack.Navigator>
     </NavigationContainer>
 
   );

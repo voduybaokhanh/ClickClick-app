@@ -34,7 +34,7 @@ const List = ({ saveUser }) => {
             if (willDelete) {
                 try {
                     const axiosInstance = await AxiosInstance();
-                    const response = await axiosInstance.delete(`/delete-post.php?postid=${ID}`); // Sử dụng postid thay vì ID
+                    const response = await axiosInstance.delete(`/delete-post-admin.php?postid=${ID}`); // Sử dụng postid thay vì ID
                     console.log(response);
                     if (response.status) {
                         swal('Xóa thành công');
