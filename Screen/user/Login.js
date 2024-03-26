@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import React, { useState } from "react";
-import AxiosInstance from "./../../helper/Axiostance";
+import AxiosInstance from "../../helper/Axiostance";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const Login = ({navigation}) => {
@@ -27,6 +27,7 @@ const Login = ({navigation}) => {
       const body = { email, password };
       const instance = await AxiosInstance();
       const result = await instance.post("/login.php", body);
+      console.log('>>>>>>>>: ' + result.data)
       const token = await AsyncStorage.getItem("token");
       if (result.status) {
         await AsyncStorage.setItem("token", result.user.id.toString());
@@ -82,7 +83,7 @@ const Login = ({navigation}) => {
               />
               <Image
                 style={styles.eye}
-                source={require("../../Image/eye.png")}
+                // source={require("../../Image/eye.png")}
               />
             </View>
             <View style={styles.Remember}>

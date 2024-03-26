@@ -55,11 +55,13 @@ const styles = StyleSheet.create({
   },
   imgGG: {},
   DIV2:{
+    
     position: "relative",
     top: 250,
     
   },
   DIV: {
+    justifyContent:"center",
     position: "absolute",
     top: 155,
     left: 40,

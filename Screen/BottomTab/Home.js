@@ -79,6 +79,7 @@
           (friendship, index) => ({
             label: responseFriend.friendName[index],
             value: friendship.FRIENDSHIPID.toString(),
+            avatar: responseFriend.friendName.avatar 
           })
         );
 
@@ -103,16 +104,17 @@
           console.log("Token (userid) not found in AsyncStorage");
           return;
         }
-
+  
         const instance = await AxiosInstance();
         const body = { userid: parseInt(token) };
         const response = await instance.post("/get-all-post-friend.php", body);
+  
         // Thêm thuộc tính isLiked và postid vào từng bài viết trong mảng post
         const postsWithpostid = response.posts.map((post) => ({
           ...post,
           postid: post.ID,
         }));
-
+  
         // Lưu trạng thái action vào state posts
         setPosts(postsWithpostid);
       } catch (error) {
@@ -273,8 +275,8 @@
                     >
                       <Image
                         style={{
-                          width: 40,
-                          height: 45,
+                          width: 38,
+                          height: 42,
                           alignItems: "center",
                         }}
                         source={
@@ -321,6 +323,7 @@
       marginBottom: 10,
     },
     postText: {
+      color:"white",
       fontSize: 20,
       marginLeft: 5,
       top: 13,
@@ -379,10 +382,9 @@
       width: "auto",
       height: "auto",
       backgroundColor: "#BFA7FF",
-      top: 80,
       borderRadius: 20,
       alignItems: "center",
-      marginBottom: 20,
+      marginBottom: 15,
     },
     header: {
       flexDirection: "row",
