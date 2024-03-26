@@ -75,7 +75,16 @@ const BottomTab = () => {
           ),
         }}
       />
-     
+     <Tab.Screen
+        name="Notification"
+        component={Notifications}
+        options={{
+            headerShown: false,
+          tabBarIcon: ({ color, size }) => (
+            <Image source={CustomNotificationIcon}  />
+          ),
+        }}
+      />
       <Tab.Screen
         name="Profile"
         component={Profile}
