@@ -40,10 +40,10 @@ function Mess() {
           </View>
           <Text style={{ textAlign: 'center', color: '#ffffff' }}>3:23pm</Text>
           <FlatList style={{ marginTop: 20, paddingHorizontal: 10, marginBottom: 65 }} data={data} renderItem={renderItem} keyExtractor={(item) => item.id.toString()} />
-          <View style={{ flexDirection: 'row', columnGap: 10, position: 'absolute', bottom: 0, height: 60, width: '100%', backgroundColor: '#CBB6EE', justifyContent: 'center', alignItems: 'center' }}>
-            <TextInput style={{ width: '80%', height: '60%', paddingHorizontal: 10, borderRadius: 20, backgroundColor: '#635A8F', padding: 0, color: 'white', fontSize: 17 }} value={textInput.toString()} onChangeText={(e) => setTextInput(e)} />
+          <View style={{ flexDirection: 'row', columnGap: 10, position: 'absolute', bottom: 0, height: 100, width: '100%', backgroundColor: '#CBB6EE', justifyContent: 'center', alignItems: 'center',borderRadius:30 }}>
+            <TextInput style={{ width: '60%', height: '40%', paddingHorizontal: 10, borderRadius: 20, backgroundColor: '#635A8F', padding: 0, color: 'white', fontSize: 17 }} value={textInput.toString()} onChangeText={(e) => setTextInput(e)} />
             <Pressable>
-              <Image source={require('../Image/send.png')} />
+              <Image style={{height:50,width:100}} source={require('../Image/send.png')} />
             </Pressable>
           </View>
         </ImageBackground>

@@ -67,9 +67,7 @@ const MessageListScreen = () => {
                 <Text style={{ alignSelf: "flex-end" }}>
                   {item.message[item.message.length - 1].date}
                 </Text>
-                <Image
-                  source={require("../../Image/Vector.png")}
-                />
+                <Image source={require("../../Image/Vector.png")} />
               </Pressable>
             );
           }}
@@ -108,15 +106,15 @@ const styles = StyleSheet.create({
 
 const data = [
   {
-    id: 1,
-    name: "John",
-    image: require("../../Image/image1.png"),
-    message: [
+    ID: 1,
+    NAME: "John",
+    NAME: require("../../Image/image1.png"),
+    chats: [
       {
-        id: 1,
+        ID: 1,
         type: "text",
         role: "acceptor",
-        text: "What are you doing ?",
+        CONTENT: "What are you doing ?",
       },
       {
         id: 2,
@@ -404,10 +402,9 @@ const data = [
       },
     ],
   },
-
   {
-    id: 8,
-    name: "Alex",
+    id: 9, // Sửa id thành giá trị duy nhất khác
+    name: "Alex", // Giữ nguyên thông tin của phần tử cùng tên
     image: require("../../Image/image2.png"),
     message: [
       {

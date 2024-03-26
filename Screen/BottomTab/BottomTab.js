@@ -11,6 +11,7 @@ import CustomMessengerIcon from './../../Image/messenger_icon.png';
 import CustomNotificationIcon from './../../Image/notification_icon.png';
 import CustomAddPostIcon from './../../Image/addpost_icon.png';
 import CustomProfileIcon from './../../Image/profile_icon.png';
+import MessageListScreen from '../user/MessageListScreen';
 import TestPost from './TestPost';
 
 const Tab = createBottomTabNavigator();
@@ -56,7 +57,7 @@ const BottomTab = () => {
       />
       <Tab.Screen
         name="Messenger"
-        component={Messenger}
+        component={MessageListScreen}
         options={{
             headerShown: false,
           tabBarIcon: ({ color, size }) => (
@@ -74,16 +75,7 @@ const BottomTab = () => {
           ),
         }}
       />
-      <Tab.Screen
-        name="Notification"
-        component={Notification}
-        options={{
-            headerShown: false,
-          tabBarIcon: ({ color, size }) => (
-            <Image source={CustomNotificationIcon}  />
-          ),
-        }}
-      />
+     
       <Tab.Screen
         name="Profile"
         component={Profile}
