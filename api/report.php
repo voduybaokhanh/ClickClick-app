@@ -20,11 +20,19 @@ try {
     $userid = $data->userid;
     $postid = $data->postid;
 
-    // Cập nhật cột AVAILABLE trong bảng POSTS
-    $updateAvailableQuery = "UPDATE posts SET available = 0 WHERE id = :postid";
-    $updateAvailableStmt = $dbConn->prepare($updateAvailableQuery);
-    $updateAvailableStmt->bindParam(':postid', $postid, PDO::PARAM_INT);
-    $updateAvailableStmt->execute();
+    // Thêm bản ghi vào bảng reports
+    $addReportQuery = "INSERT INTO reports (userid, postid, time) VALUES (:userid, :postid, NOW())";
+    $addReportStmt = $dbConn->prepare($addReportQuery);
+    $addReportStmt->bindParam(':userid', $userid, PDO::PARAM_INT);
+    $addReportStmt->bindParam(':postid', $postid, PDO::PARAM_INT);
+    $addReportStmt->execute();
+
+    // Ẩn bài viết cho người dùng đó
+    $hidePostQuery = "UPDATE posts SET available = 0 WHERE id = :postid AND userid != :userid";
+    $hidePostStmt = $dbConn->prepare($hidePostQuery);
+    $hidePostStmt->bindParam(':postid', $postid, PDO::PARAM_INT);
+    $hidePostStmt->bindParam(':userid', $userid, PDO::PARAM_INT);
+    $hidePostStmt->execute();
 
     echo json_encode(array('status' => true, 'message' => 'Báo cáo thành công'));
 } catch (Exception $e) {
