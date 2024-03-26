@@ -13,7 +13,7 @@ try {
     $data = json_decode(file_get_contents("php://input"));
 
     // Kiểm tra xem có userid được gửi hay không
-    if (!isset ($data->userid)) {
+    if (!isset($data->userid)) {
         http_response_code(400);
         echo json_encode(array('status' => false, 'message' => 'Thiếu tham số userid'));
         exit;
@@ -30,6 +30,8 @@ try {
 
     $friendNames = array();
     foreach ($friendships as $friendship) {
+        $friendshipid = $friendship["FRIENDSHIPID"]; // Sửa tên cột thành friendshipid
+
         // Truy vấn để lấy tin nhắn gần nhất dựa trên userid và FRIENDSHIPID
         $getLastMessageQuery = "SELECT CONTENT FROM chats WHERE (senderid = :userid AND receiverid = :FRIENDSHIPID) OR (senderid = :FRIENDSHIPID AND receiverid = :userid) ORDER BY TIME DESC LIMIT 1";
         $getLastMessageStmt = $dbConn->prepare($getLastMessageQuery);
@@ -37,21 +39,20 @@ try {
         $getLastMessageStmt->bindParam(':FRIENDSHIPID', $friendshipid, PDO::PARAM_INT);
         $getLastMessageStmt->execute();
         $lastMessage = $getLastMessageStmt->fetch(PDO::FETCH_ASSOC);
-        
-        $friendshipid = $friendship["FRIENDSHIPID"]; // Sửa tên cột thành friendshipid
+
         // Truy vấn để lấy tên của người bạn dựa trên friendshipid
-        $getFriendNameQuery = "SELECT name,AVATAR FROM users WHERE id = :FRIENDSHIPID"; // Sửa tên cột thành userid
+        $getFriendNameQuery = "SELECT name, AVATAR FROM users WHERE id = :FRIENDSHIPID"; // Sửa tên cột thành userid
         $getFriendNameStmt = $dbConn->prepare($getFriendNameQuery);
         $getFriendNameStmt->bindParam(':FRIENDSHIPID', $friendshipid, PDO::PARAM_INT);
         $getFriendNameStmt->execute();
         $friendName = $getFriendNameStmt->fetch(PDO::FETCH_ASSOC);
+
         // Thêm tên của người bạn vào mảng
         if ($friendName) {
             $friendNames[] = array(
                 "name" => $friendName["name"],
                 "avatar" => $friendName["AVATAR"],
                 "lastMessage" => $lastMessage
-
             );
         }
     }
