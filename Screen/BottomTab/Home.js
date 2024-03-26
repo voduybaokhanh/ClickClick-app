@@ -73,29 +73,30 @@
         const instance = await AxiosInstance();
         const body = { userid: parseInt(token) };
         const responseFriend = await instance.post("/get-all-friend.php", body);
-
+    
         // Chuyển đổi dữ liệu thành mảng các đối tượng có thuộc tính label và value
         const formattedData = responseFriend.friendships.map(
-          (friendship, index) => ({
-            label: responseFriend.friendName[index],
+          (friendship) => ({
+            label: responseFriend.friendName.find(friend => friend.USERID === friendship.FRIENDSHIPID).name,
             value: friendship.FRIENDSHIPID.toString(),
-            avatar: responseFriend.friendName.avatar 
+            avatar: responseFriend.friendName.find(friend => friend.USERID === friendship.FRIENDSHIPID).avatar,
           })
         );
-
+    
         // Thêm người dùng hiện tại vào mảng datafriend
         const currentUser = { label: "Tôi", value: token };
         const updatedDataFriend = [currentUser, ...formattedData];
-
+    
         // Thêm mục "Mọi người" vào đầu danh sách bạn bè
         updatedDataFriend.unshift({ label: "Mọi người", value: "all" });
-
+    
         // Gán giá trị cho datafriend
         setdatafriend(updatedDataFriend);
       } catch (error) {
         console.error("Error fetching posts:", error);
       }
     };
+    
 
     const fetchPosts = async () => {
       try {
