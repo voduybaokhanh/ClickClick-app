@@ -79,6 +79,7 @@
           (friendship, index) => ({
             label: responseFriend.friendName[index],
             value: friendship.FRIENDSHIPID.toString(),
+            avatar: responseFriend.friendName.avatar 
           })
         );
 

@@ -1,6 +1,8 @@
 import { LinearGradient } from "expo-linear-gradient";
 import React from "react";
 import { useNavigation } from "@react-navigation/native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import AxiosInstance from "../../helper/Axiostance";
 
 import {
   FlatList,
@@ -11,9 +13,35 @@ import {
   Text,
   View,
 } from "react-native";
+import { useState, useEffect } from "react";
 
 const MessageListScreen = () => {
   const navigation = useNavigation();
+  const [friendList, setFriendList] = useState([]);
+  useEffect(() => {
+    fetchFriendList();
+  }, []);
+
+  const fetchFriendList = async () => {
+    try {
+      const token = await AsyncStorage.getItem("token");
+      if (!token) {
+        console.log("Token (userid) not found in AsyncStorage");
+        return;
+      }
+
+      const instance = await AxiosInstance();
+      const body = { userid: parseInt(token) };
+      const response = await instance.post("/get-all-friend.php", body);
+
+      // Lưu trạng thái action vào state friendList
+      setFriendList(response.friendName);
+      console.log(response.friendName);
+    } catch (error) {
+      console.error("Error fetching friend list:", error);
+    }
+  };
+
   return (
     <LinearGradient
       locations={[0.05, 0.17, 0.8, 1]}
@@ -34,8 +62,8 @@ const MessageListScreen = () => {
           />
         </View>
         <FlatList
-          data={data}
-          keyExtractor={(item) => item.id.toString()}
+          data={friendList}
+          keyExtractor={(item, index) => index.toString()}
           renderItem={({ item }) => {
             return (
               <Pressable
@@ -49,7 +77,7 @@ const MessageListScreen = () => {
               >
                 <Image
                   style={{ width: 70, height: 70, borderRadius: 50 }}
-                  source={item.image}
+                  source={{ uri: item.avatar }}
                 />
                 <View
                   style={{
@@ -58,14 +86,14 @@ const MessageListScreen = () => {
                   }}
                 >
                   <Text style={styles.textName}>{item.name}</Text>
-                  {item.message[item.message.length - 1].type === "image" ? (
-                    <Text style={{}}>Send image</Text>
+                  {item.lastMessage ? (
+                    <Text style={{fontSize:17,color: "white"}} >{item.lastMessage.CONTENT}</Text>
                   ) : (
-                    <Text>{item.message[item.message.length - 1].text}</Text>
+                    <Text style={{fontSize:17,color: "white"}}>No messages</Text>
                   )}
                 </View>
                 <Text style={{ alignSelf: "flex-end" }}>
-                  {item.message[item.message.length - 1].date}
+                  {item.lastMessage ? item.lastMessageDate : ''}
                 </Text>
                 <Image source={require("../../Image/Vector.png")} />
               </Pressable>
@@ -99,339 +127,7 @@ const styles = StyleSheet.create({
     flex: 1,
     color: "white",
     fontSize: 22,
-    fontWeight: "500",
+    fontWeight: "bold",
     paddingTop: 20,
   },
 });
-
-const data = [
-  {
-    ID: 1,
-    NAME: "John",
-    NAME: require("../../Image/image1.png"),
-    chats: [
-      {
-        ID: 1,
-        type: "text",
-        role: "acceptor",
-        CONTENT: "What are you doing ?",
-      },
-      {
-        id: 2,
-        type: "text",
-        role: "acceptor",
-        text: "Hello, have a great day!",
-      },
-      {
-        id: 3,
-        type: "text",
-        role: "sender",
-        text: "Thank you broo!",
-      },
-      {
-        id: 4,
-        type: "image",
-        role: "sender",
-        text: "Hello, have a great day!",
-        image: require("../../Image/image2.png"),
-        date: "11:00 PM",
-      },
-      {
-        id: 5,
-        type: "text",
-        role: "sender",
-        text: "Thank you broo!",
-      },
-      {
-        id: 6,
-        type: "image",
-        role: "sender",
-        text: "Hello, have a great day!",
-        image: require("../../Image/image2.png"),
-        date: "11:00 PM",
-      },
-      {
-        id: 7,
-        type: "text",
-        role: "sender",
-        text: "Thank you broo!",
-      },
-      {
-        id: 8,
-        type: "image",
-        role: "sender",
-        text: "Hello, have a great day!",
-        image: require("../../Image/image2.png"),
-        date: "11:00 PM",
-      },
-    ],
-  },
-  {
-    id: 2,
-    name: "Jane",
-    image: require("../../Image/image2.png"),
-    message: [
-      {
-        id: 1,
-        type: "image",
-        role: "acceptor",
-        image: require("../../Image/image1.png"),
-      },
-      {
-        id: 2,
-        type: "text",
-        role: "acceptor",
-        text: "Hello, have a great day!",
-      },
-      {
-        id: 3,
-        type: "text",
-        role: "sender",
-        text: "Thank you broo!",
-      },
-      {
-        id: 4,
-        type: "image",
-        role: "sender",
-        image: require("../../Image/image1.png"),
-        date: "7:00 AM",
-      },
-      {
-        id: 5,
-        type: "text",
-        role: "sender",
-        text: "Hello, have a great day!",
-        date: "7:00 AM",
-      },
-    ],
-  },
-  {
-    id: 3,
-    name: "Eva",
-    image: require("../../Image/image1.png"),
-    message: [
-      {
-        id: 1,
-        type: "image",
-        role: "acceptor",
-        image: require("../../Image/image1.png"),
-      },
-      {
-        id: 2,
-        type: "text",
-        role: "acceptor",
-        text: "Hello, have a great day!",
-      },
-      {
-        id: 3,
-        type: "text",
-        role: "sender",
-        text: "Thank you broo!",
-      },
-      {
-        id: 4,
-        type: "text",
-        role: "sender",
-        text: "What are you doing ?",
-        image: require("../../Image/image2.png"),
-        date: "2:00 PM",
-      },
-    ],
-  },
-  {
-    id: 4,
-    name: "Trump",
-    image: require("../../Image/image2.png"),
-    message: [
-      {
-        id: 1,
-        type: "image",
-        role: "acceptor",
-        image: require("../../Image/image1.png"),
-      },
-      {
-        id: 2,
-        type: "text",
-        role: "acceptor",
-        text: "Hello, have a great day!",
-      },
-      {
-        id: 3,
-        type: "text",
-        role: "sender",
-        text: "Thank you broo!",
-      },
-      {
-        id: 4,
-        type: "text",
-        role: "sender",
-        text: "Do you have money ?",
-        image: require("../../Image/image2.png"),
-        date: "6:00 PM",
-      },
-    ],
-  },
-  {
-    id: 5,
-    name: "Cross",
-    image: require("../../Image/image1.png"),
-    message: [
-      {
-        id: 1,
-        type: "image",
-        role: "acceptor",
-        image: require("../../Image/image1.png"),
-      },
-      {
-        id: 2,
-        type: "text",
-        role: "acceptor",
-        text: "Hello, have a great day!",
-      },
-      {
-        id: 3,
-        type: "text",
-        role: "sender",
-        text: "Thank you broo!",
-      },
-      {
-        id: 4,
-        type: "image",
-        role: "sender",
-        text: "Hello, have a great day!",
-        image: require("../../Image/image2.png"),
-        date: "12:00 PM",
-      },
-    ],
-  },
-  {
-    id: 6,
-    name: "Alice",
-    image: require("../../Image/image2.png"),
-    message: [
-      {
-        id: 1,
-        type: "image",
-        role: "acceptor",
-        image: require("../../Image/image1.png"),
-      },
-      {
-        id: 2,
-        type: "text",
-        role: "acceptor",
-        text: "Hello, have a great day!",
-      },
-      {
-        id: 3,
-        type: "text",
-        role: "sender",
-        text: "Thank you broo!",
-      },
-      {
-        id: 4,
-        type: "image",
-        role: "sender",
-        text: "Hello, have a great day!",
-        image: require("../../Image/image2.png"),
-        date: "1:00 AM",
-      },
-    ],
-  },
-  {
-    id: 7,
-    name: "William",
-    image: require("../../Image/image1.png"),
-    message: [
-      {
-        id: 1,
-        type: "image",
-        role: "acceptor",
-        image: require("../../Image/image1.png"),
-      },
-      {
-        id: 2,
-        type: "text",
-        role: "acceptor",
-        text: "Hello, have a great day!",
-      },
-      {
-        id: 3,
-        type: "text",
-        role: "sender",
-        text: "Thank you broo!",
-      },
-      {
-        id: 4,
-        type: "text",
-        role: "sender",
-        text: "I don't know",
-        date: "7:56 PM",
-      },
-    ],
-  },
-
-  {
-    id: 8,
-    name: "Alex",
-    image: require("../../Image/image2.png"),
-    message: [
-      {
-        id: 1,
-        type: "image",
-        role: "acceptor",
-        image: require("../../Image/image1.png"),
-      },
-      {
-        id: 2,
-        type: "text",
-        role: "acceptor",
-        text: "Hello, have a great day!",
-      },
-      {
-        id: 3,
-        type: "text",
-        role: "sender",
-        text: "Thank you broo!",
-      },
-      {
-        id: 4,
-        type: "text",
-        role: "sender",
-        text: "What your name sir ?",
-        date: "7:01 PM",
-      },
-    ],
-  },
-  {
-    id: 9, // Sửa id thành giá trị duy nhất khác
-    name: "Alex", // Giữ nguyên thông tin của phần tử cùng tên
-    image: require("../../Image/image2.png"),
-    message: [
-      {
-        id: 1,
-        type: "image",
-        role: "acceptor",
-        image: require("../../Image/image1.png"),
-      },
-      {
-        id: 2,
-        type: "text",
-        role: "acceptor",
-        text: "Hello, have a great day!",
-      },
-      {
-        id: 3,
-        type: "text",
-        role: "sender",
-        text: "Thank you broo!",
-      },
-      {
-        id: 4,
-        type: "text",
-        role: "sender",
-        text: "What your name sir ?",
-        date: "7:01 PM",
-      },
-    ],
-  },
-];
