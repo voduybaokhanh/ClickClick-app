@@ -6,13 +6,15 @@ import {
   FlatList,
   Image,
   TextInput,
-  TouchableOpacity,Pressable
+  TouchableOpacity,
+  Pressable,
 } from "react-native";
 import AxiosInstance from "../../helper/Axiostance";
 import { LinearGradient } from "expo-linear-gradient";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Dropdown } from "react-native-element-dropdown";
 import { StatusBar } from "expo-status-bar";
+import { useNavigation } from "@react-navigation/native";
 
 const Home = () => {
   const [posts, setPosts] = useState([]);
@@ -20,6 +22,7 @@ const Home = () => {
   const [isLikedMap, setIsLikedMap] = useState({});
   const [content, setContent] = useState("");
   const [friendID, setfriendID] = useState("");
+  const navigation = useNavigation();
   const [datafriend, setdatafriend] = useState([
     { label: "Mọi người", value: "1" },
   ]);
@@ -59,7 +62,8 @@ const Home = () => {
   useEffect(() => {
     fetchPosts();
     selectFriend();
-    restoreLikedPosts(); // Khôi phục trạng thái isLiked từ AsyncStorage khi trang được load lại
+    restoreLikedPosts();
+    // Lấy và lưu trữ ID người dùng hiện tại khi trang được load
   }, [reload, selectedFriend]);
 
   useEffect(() => {
@@ -101,25 +105,29 @@ const Home = () => {
     }
   };
 
-  const sendMessage = async (userid,ID) => {
+  const sendMessage = async (userid, ID) => {
     try {
       const token = await AsyncStorage.getItem("token");
       if (!token) {
         console.log("Token (userid) not found in AsyncStorage");
         return;
       }
-
+      // Kiểm tra nếu SENDERID và RECEIVERID giống nhau
+      if (parseInt(token) === userid) {
+        alert("Không thể nhắn tin cho chính bạn!");
+        return; // Kết thúc hàm nếu người dùng cố gắng gửi tin nhắn cho chính họ
+      }
       const instance = await AxiosInstance();
       const body = {
         SENDERID: parseInt(token),
         RECEIVERID: userid, // Thay đổi RECEIVERID theo người dùng nhận tin nhắn
         content: content, // Nội dung tin nhắn
-        postid: ID
+        postid: ID,
       };
       const response = await instance.post("/chats.php", body);
       if (response.status) {
         // Tin nhắn gửi thành công, có thể cập nhật giao diện hoặc thực hiện các hành động khác
-        console.log("Message sent successfully");
+        alert("Tin nhắn đã được gửi!");
         setContent(""); // Xóa nội dung tin nhắn sau khi gửi
       }
     } catch (error) {
@@ -138,7 +146,6 @@ const Home = () => {
       const instance = await AxiosInstance();
       const body = { userid: parseInt(token) };
       const response = await instance.post("/get-all-post-friend.php", body);
-     ;
       setfriendID(response.posts);
       // Thêm thuộc tính isLiked và postid vào từng bài viết trong mảng post
       const postsWithpostid = response.posts.map((post) => ({
@@ -148,8 +155,6 @@ const Home = () => {
 
       // Lưu trạng thái action vào state posts
       setPosts(postsWithpostid);
-
-
     } catch (error) {
       console.error("Error fetching posts:", error);
     }
@@ -323,9 +328,8 @@ const Home = () => {
                     placeholderTextColor={"#635A8F"}
                     value={content.toString()}
                     onChangeText={(e) => setContent(e)}
-                    
                   />
-                  <Pressable onPress={() => sendMessage(item.userid,item.ID)}>
+                  <Pressable onPress={() => sendMessage(item.userid, item.ID)}>
                     <Image
                       style={{ height: 50, width: 100 }}
                       source={require("../../Image/send.png")}

@@ -90,53 +90,36 @@ const messageRef = useRef();
   };
  
   const renderItem = ({ item }) => {
-    const RECEIVERID = friendshipid;
-  
-    const token = AsyncStorage.getItem("token");
-    if (!token) {
-      console.log("Token (userid) not found in AsyncStorage");
-      return null; // Trả về null nếu không tìm thấy token
-    }
-    
-    // Kiểm tra xem item có phải là của RECEIVERID hay không
-    const isReceiver = item.SENDERID === RECEIVERID;
-  
-    // Kiểm tra xem SENDERID có giống với token hay không
-    const isCurrentUser = item.SENDERID === parseInt(token);
+    // Xác định xem mục đó có phải từ người nhận hay người dùng hiện tại không
+    const isReceiver = item.SENDERID === friendshipid; // Giả sử friendshipid đại diện cho ID của người nhận
   
     return (
-      <View
-        style={{
-          flexDirection: isReceiver ? "row" : "row-reverse",
-          marginTop: 10,
-        }}
-      >
-        {/* Kiểm tra nếu item có postid (hình ảnh) */}
+      <View style={{ alignItems: isReceiver ? 'flex-start' : 'flex-end', marginVertical: 5 }}>
+        {/* Hiển thị hình ảnh nếu có */}
         {item.postid && (
           <Image
-            style={{ borderRadius: 20, width: 200, height: 150, marginRight: isReceiver ? 0 : 10, marginLeft: isReceiver ? 10 : 0 }}
+            style={{ borderRadius: 20, width: 200, height: 150, marginBottom: 5 }}
             source={{ uri: item.postid }}
           />
         )}
-        {/* Kiểm tra nếu item có nội dung văn bản */}
+  
+        {/* Hiển thị tin nhắn */}
         {item.CONTENT && (
-          <Text
+          <View
             style={[
               {
-                height: 50,
-                backgroundColor: isReceiver ? "#635A8F" : "#3E8A85", // Thay đổi màu nền dựa trên người gửi/nhận
-                textAlign: "center",
-                fontSize: 20,
-                padding: 15,
-                color: "white",
+                backgroundColor: isReceiver ? "#635A8F" : "#3E8A85",
                 borderRadius: 15,
-                marginRight: isReceiver ? 0 : 10,
-                marginLeft: isReceiver ? 10 : 0,
+                marginHorizontal: 10,
+                marginVertical: 5,
+                paddingHorizontal: 15,
+                paddingVertical: 10,
+                maxWidth: '70%', // Giới hạn chiều rộng của tin nhắn thành 70% của container
               },
             ]}
           >
-            {item.CONTENT}
-          </Text>
+            <Text style={{ color: "white", fontSize: 18 }}>{item.CONTENT}</Text>
+          </View>
         )}
       </View>
     );
