@@ -22,7 +22,8 @@ try {
     $RECEIVERID = $data->RECEIVERID;
 
     // Truy vấn để lấy thông tin về cuộc trò chuyện
-    $postQuery = "SELECT * FROM chats WHERE (SENDERID = :SENDERID AND RECEIVERID = :RECEIVERID) OR (SENDERID = :RECEIVERID AND RECEIVERID = :SENDERID)";
+    $postQuery = "SELECT * FROM chats WHERE (SENDERID = :SENDERID AND RECEIVERID = :RECEIVERID) OR (SENDERID = :RECEIVERID AND RECEIVERID = :SENDERID) ORDER BY chats.time ASC";
+
     $postStmt = $dbConn->prepare($postQuery);
     $postStmt->bindParam(':SENDERID', $SENDERID, PDO::PARAM_INT);
     $postStmt->bindParam(':RECEIVERID', $RECEIVERID, PDO::PARAM_INT);

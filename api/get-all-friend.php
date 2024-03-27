@@ -41,7 +41,7 @@ try {
         $lastMessage = $getLastMessageStmt->fetch(PDO::FETCH_ASSOC);
 
         // Truy vấn để lấy tên của người bạn dựa trên friendshipid
-        $getFriendNameQuery = "SELECT name, AVATAR FROM users WHERE id = :FRIENDSHIPID"; // Sửa tên cột thành userid
+        $getFriendNameQuery = "SELECT id,name, AVATAR FROM users WHERE id = :FRIENDSHIPID"; // Sửa tên cột thành userid
         $getFriendNameStmt = $dbConn->prepare($getFriendNameQuery);
         $getFriendNameStmt->bindParam(':FRIENDSHIPID', $friendshipid, PDO::PARAM_INT);
         $getFriendNameStmt->execute();
@@ -52,7 +52,8 @@ try {
             $friendNames[] = array(
                 "name" => $friendName["name"],
                 "avatar" => $friendName["AVATAR"],
-                "lastMessage" => $lastMessage
+                "lastMessage" => $lastMessage,
+                "friendshipid" => $friendshipid
             );
         }
     }
