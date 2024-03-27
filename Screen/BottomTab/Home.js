@@ -127,7 +127,7 @@ const Home = () => {
       const response = await instance.post("/chats.php", body);
       if (response.status) {
         // Tin nhắn gửi thành công, có thể cập nhật giao diện hoặc thực hiện các hành động khác
-        alert("Tin nhắn đã được gửi!");
+        alert("Tin nhắn đã được gửi");
         setContent(""); // Xóa nội dung tin nhắn sau khi gửi
       }
     } catch (error) {
@@ -170,7 +170,7 @@ const Home = () => {
       const instance = await AxiosInstance();
       const body = { userid: parseInt(userId) };
       const response = await instance.post("/get-all-post-userid.php", body);
-
+      setfriendID(response.posts);
       // Thêm thuộc tính postid vào từng bài viết trong mảng post
       const postsWithpostid = response.posts.map((post) => ({
         ...post,
@@ -275,7 +275,7 @@ const Home = () => {
         <FlatList
           style={styles.FlatList}
           data={posts}
-          refreshing
+          refreshing={reload}
           onRefresh={fetchPosts}
           // Trong FlatList renderItem:
           renderItem={({ item }) => (
