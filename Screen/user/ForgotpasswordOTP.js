@@ -11,9 +11,8 @@ import { LinearGradient } from "expo-linear-gradient";
 import React, { useState } from "react";
 import AxiosInstance from "../../helper/Axiostance";
 
-
-const Forgetpassword = ({navigation}) => {
-  const [email, setemail] = useState("")
+const Forgetpassword = ({ navigation }) => {
+  const [email, setemail] = useState("");
 
   const actionForgot = async () => {
     try {
@@ -22,7 +21,7 @@ const Forgetpassword = ({navigation}) => {
       const result = await instance.post("/get-otp.php", body);
       if (result.status) {
         alert("Đã gửi mã otp");
-        navigation.navigate('resetPass');
+        navigation.navigate("resetPass");
         // Token đã được lưu trữ thành công, thực hiện các thao tác tiếp theo nếu cần
       } else {
         alert("gửi mã otp thất bại");
@@ -30,8 +29,7 @@ const Forgetpassword = ({navigation}) => {
     } catch (error) {
       console.error("Lỗi khi thực hiện: ", error);
     }
-  }
-
+  };
 
   return (
     <LinearGradient
@@ -47,19 +45,18 @@ const Forgetpassword = ({navigation}) => {
         </Text>
 
         <Text style={styles.Text2}>Enter your email address</Text>
-      
 
-      <TextInput
-        placeholder="Email"
-        placeholderTextColor="#FFFFFF"
-        style={styles.TextInbutEmail}
-        value={email}
-        onChangeText={(text) => setemail(text)}
-      />
+        <TextInput
+          placeholder="Email"
+          placeholderTextColor="#FFFFFF"
+          style={styles.TextInbutEmail}
+          value={email}
+          onChangeText={(text) => setemail(text)}
+        />
 
-      <TouchableOpacity onPress={actionForgot} style={styles.buttonRecover}>
-        <Text style={styles.Text3}>Recover PassWord</Text>
-      </TouchableOpacity>
+        <TouchableOpacity onPress={actionForgot} style={styles.buttonRecover}>
+          <Text style={styles.Text3}>Recover PassWord</Text>
+        </TouchableOpacity>
       </View>
     </LinearGradient>
   );
@@ -134,8 +131,8 @@ const styles = StyleSheet.create({
     flex: 1,
     width: "100%",
   },
-  container:{
-    top:60,
-    right: 10
-  }
+  container: {
+    top: 60,
+    right: 10,
+  },
 });
