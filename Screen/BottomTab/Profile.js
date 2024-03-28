@@ -13,38 +13,32 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation } from '@react-navigation/native';
 
+
 const Profile = () => {
   const navigation = useNavigation();
-  useEffect(() => {
-    fetchProfile();
-   // Khôi phục trạng thái isLiked từ AsyncStorage khi trang được load lại
-  });
-
+ 
   const fetchProfile = async () => {
     try {
       const token = await AsyncStorage.getItem("token");
-      if (!token) {
-        console.log("Token (userid) not found in AsyncStorage");
-        return;
-      }
+      const body = { userid: parseInt(token)};
       const instance = await AxiosInstance();
-      const body = { userid: parseInt(token) };
-      const response = await instance.post("/get-userid.php", body);
-      if (response.status) {
-        await AsyncStorage.setItem("token", response.user.id.toString());
-        navigation.navigate('BottomTab')
-      // Token đã được lưu trữ thành công, thực hiện các thao tác tiếp theo nếu cần
-      } else {
-        alert("Không tìm thấy người dùng");
-      }
-      // Thêm thuộc tính isLiked và postid vào từng bài viết trong mảng post
+      const result = await instance.post("/get-userid.php", body);
+      console.log('>>>>>>>>: ' + result.data)
+      if (result.status) {
+        const userData = result.data; // Truy cập dữ liệu từ result.data
+        await AsyncStorage.setItem("token", userData.id.toString());
       
-
-      // Lưu trạng thái action vào state posts
+        // Token đã được lưu trữ thành công, thực hiện các thao tác tiếp theo nếu cần
+      }
+      console.log('id: ' + userData.id);
+      console.log('token: '+token);
     } catch (error) {
-      console.error("Error fetching posts:", error);
+      console.error("Lỗi khi thực hiện : ", error);
     }
-  };
+  }
+  useEffect(() => {
+    fetchProfile(); // Chạy hàm fetchProfile khi component được render
+  }, []);
   
   return (
     <LinearGradient
@@ -61,7 +55,7 @@ const Profile = () => {
             <View style={{ alignSelf: "center" }}>
               <View style={styles.profileImage}>
                 <Image
-                  source={{ uri: response.user.avatar}}
+                  source={{ uri:user.avatar}}
                   style={styles.image1}
                 />
               </View>
@@ -73,7 +67,7 @@ const Profile = () => {
                     { fontWeight: "500", fontSize: 35 },
                   ]}
                 >
-                  {response.user.name}
+                  {user.name}
                 </Text>
                 <Text
                   style={[
@@ -81,7 +75,7 @@ const Profile = () => {
                     { color: "#4F39B4", fontSize: 20 },
                   ]}
                 >
-                  {response.user.id}
+                  {user.id}
                 </Text>
               </View>
 
@@ -105,7 +99,7 @@ const Profile = () => {
                 </View>
               </View>
 
-              <Text style={styles.status}>{response.user.text}</Text>
+              <Text style={styles.status}>{user.text}</Text>
 
               {/* Hiển thị các hình ảnh */}
               {/* <View style={styles.pic}>

@@ -278,8 +278,9 @@ const Home = () => {
           refreshing
           onRefresh={fetchPosts}
           // Trong FlatList renderItem:
-          renderItem={({ item }) => (
-            <View style={styles.itempost}>
+          renderItem={({ item, index }) => (
+            <View style={[styles.itempost,  
+              index + 1 === posts.length ? {marginBottom: 90} : {}]}>
               <View style={styles.namepost}>
                 <Image source={{ uri: item.AVATAR }} style={styles.avt} />
                 <View style={{ flexDirection: "column", marginLeft: 10 }}>
@@ -311,7 +312,7 @@ const Home = () => {
                     <Image
                       style={{
                         width: 38,
-                        height: 42,
+                        height: 40,
                         alignItems: "center",
                       }}
                       source={
@@ -331,8 +332,8 @@ const Home = () => {
                   />
                   <Pressable onPress={() => sendMessage(item.userid, item.ID)}>
                     <Image
-                      style={{ height: 50, width: 100 }}
-                      source={require("../../Image/send.png")}
+                      style={{ height: 40, width: 40 , top:5, left:5}}
+                      source={require("../../Image/sent.png")}
                     />
                   </Pressable>
                 </View>
@@ -379,10 +380,10 @@ const styles = StyleSheet.create({
   },
   mes: {
     backgroundColor: "#E5D7F7",
-    marginLeft: 10,
+    marginLeft: 5,
     height: 45,
     borderRadius: 24,
-    width: "50%",
+    width: "75%",
     paddingHorizontal: 10,
     top: 5,
   },
