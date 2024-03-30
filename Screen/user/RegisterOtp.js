@@ -24,7 +24,7 @@ import {
         console.log(result);
         if (result.status) {
           alert("Đã gửi mã otp");
-          navigation.navigate('register')
+          navigation.navigate('register', {email})
           // Token đã được lưu trữ thành công, thực hiện các thao tác tiếp theo nếu cần
         } else {
           alert("gửi mã otp thất bại");

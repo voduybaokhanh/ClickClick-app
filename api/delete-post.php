@@ -20,13 +20,25 @@ try {
     }
 
     // Lấy id từ dữ liệu đầu vào
-    $id = $data->id;
+    $postid = $data->id;
 
-    // Chuẩn bị và thực thi truy vấn SQL để xóa bài đăng
-    $sqlQuery = "DELETE FROM posts WHERE id = :id";
-    $stmt = $dbConn->prepare($sqlQuery);
-    $stmt->bindParam(':id', $id, PDO::PARAM_INT);
-    $stmt->execute();
+    // Chuẩn bị và thực thi truy vấn SQL để xóa các bản ghi từ bảng like liên quan đến bài viết
+    $likeQuery = "DELETE FROM likes WHERE postid = :postid";
+    $likeStmt = $dbConn->prepare($likeQuery);
+    $likeStmt->bindParam(':postid', $postid, PDO::PARAM_INT);
+    $likeStmt->execute();
+
+    // Chuẩn bị và thực thi truy vấn SQL để xóa các bản ghi từ bảng chat liên quan đến bài viết
+    $chatQuery = "DELETE FROM chat WHERE postid = :postid";
+    $chatStmt = $dbConn->prepare($chatQuery);
+    $chatStmt->bindParam(':postid', $postid, PDO::PARAM_INT);
+    $chatStmt->execute();
+
+    // Chuẩn bị và thực thi truy vấn SQL để xóa bài viết chính
+    $postQuery = "DELETE FROM posts WHERE id = :postid";
+    $postStmt = $dbConn->prepare($postQuery);
+    $postStmt->bindParam(':postid', $postid, PDO::PARAM_INT);
+    $postStmt->execute();
 
     // Trả về kết quả thành công
     echo json_encode(array("status" => true, "message" => "Xóa bài viết thành công!"));

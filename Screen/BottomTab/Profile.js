@@ -15,9 +15,9 @@ const Profile = () => {
   const navigation = useNavigation(); // Thêm dòng này
   return (
     <LinearGradient
-      locations={[0.05, 0.17, 0.8, 1]}
-      colors={["#3B21B7", "#8B64DA", "#D195EE", "#CECBD3"]}
-      style={styles.linearGradient}
+    locations={[0.05, 0.4, 0.8, 1]}
+    colors={["#FFFFFF", "#8B64DA", "#D195EE", "#CECBD3"]}
+    style={styles.linearGradient}
     >
       <SafeAreaView style={styles.container}>
       <TouchableOpacity onPress={() => navigation.goBack()} >
@@ -33,17 +33,17 @@ const Profile = () => {
             </View>
 
             <View style={styles.infoContainer}>
-              <Text style={[styles.text, { fontWeight: "400", fontSize: 30 }]}>
+              <Text style={[styles.name, { fontWeight: "500", fontSize: 35 }]}>
                 Jisoo
               </Text>
-              <Text style={[styles.text, { color: "#4F39B4", fontSize: 20 }]}>
+              <Text style={[styles.text10, { color: "#4F39B4", fontSize: 20 }]}>
                 @BlackPink
               </Text>
             </View>
 
             <View style={styles.statsContainer}>
               <View style={styles.statsBox}>
-                <Text style={[styles.text, { fontSize: 20 }]}>483</Text>
+                <Text style={styles.text}>483</Text>
                 <Text style={[styles.text, styles.subText]}>Posts</Text>
               </View>
 
@@ -56,7 +56,7 @@ const Profile = () => {
                   },
                 ]}
               >
-                <Text style={[styles.text, { fontSize: 20 }]}>20 </Text>
+                <Text style={styles.text}>20 </Text>
                 <Text style={[styles.text, styles.subText]}>Friend </Text>
               </View>
             </View>
@@ -108,6 +108,12 @@ const Profile = () => {
 export default Profile;
 
 const styles = StyleSheet.create({
+  name:{
+      fontFamily: "HelveticaNeue",
+      color: "#ffffff",
+      fontWeight:"bold",
+      
+  },
   image1:{
    height:100,
    width:100,
@@ -171,10 +177,17 @@ const styles = StyleSheet.create({
     flex: 1,
     width: "100 %",
   },
-
+  text10: {
+    fontFamily: "HelveticaNeue",
+    color: "#ffffff",
+    fontSize:22,
+    fontSize:"300"
+  },
   text: {
     fontFamily: "HelveticaNeue",
-    color: "#3B21B2",
+    color: "#ffffff",
+    fontWeight:"bold",
+    fontSize:22
   },
 
   image: {

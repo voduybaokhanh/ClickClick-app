@@ -20,8 +20,7 @@ try {
 
     $userid = $data->userid;
 
-    // Truy vấn để lấy tất cả bài viết có mối quan hệ là "friend" với userid
-    $postQuery = "SELECT AVATAR,TIME,NAME,CONTENT,LIKES FROM posts WHERE userid = :userid
+    $postQuery = "SELECT ID,userid,IMAGE, AVATAR,TIME,NAME,CONTENT,LIKES FROM posts WHERE userid = :userid
                   ORDER BY posts.time DESC";
     $postStmt = $dbConn->prepare($postQuery);
     $postStmt->bindParam(':userid', $userid, PDO::PARAM_INT);
