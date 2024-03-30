@@ -183,11 +183,28 @@ const Home = () => {
     }
   };
 
-  const handleBaocao = () => {
-    // Xử lý khi icon được ấn
-    console.log("Icon đã được ấn");
-    // Thêm mã xử lý bạn muốn thực hiện khi icon được ấn
-  };
+
+
+  // const handleBaocao = async (postid, userId) => {
+  //   try {
+  //     const axiosInstance = await AxiosInstance();
+  //     const response = await axiosInstance.get(`/report.php?postid=${ID}`); // Thay đổi phương thức từ post sang get và truyền postid qua URL
+  //     console.log(response);
+  //     if (response.status) {
+  //         swal('Báo cáo thành công');
+  //         // Refresh list after successful cancellation
+  //         const updatedPosts = posts.filter(posts => posts.ID !== ID);
+  //         setPosts(updatedPosts);
+  //     } else {
+  //         swal('Báo cáo thất bại');
+  //     }
+  // } catch (error) {
+  //     console.error('Error canceling report:', error);
+  // }
+   
+  // };
+
+
 
   // Trong phần xử lý phản hồi từ API:
   const handleThatim = async (postid, userId) => {
@@ -274,7 +291,7 @@ const Home = () => {
         </View>
         <FlatList
           style={styles.FlatList}
-          data={posts}
+          data={posts.filter(post => post.available === 1)}
           refreshing={reload}
           onRefresh={fetchPosts}
           // Trong FlatList renderItem:
