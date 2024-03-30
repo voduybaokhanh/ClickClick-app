@@ -11,6 +11,9 @@ import BottomTab from './Screen/BottomTab/BottomTab';
 import Forgetpassword from './Screen/user/ForgotpasswordOTP';
 import RegisterOtp from './Screen/user/RegisterOtp';
 import Resetpassword from './Screen/user/Resetpassword';
+import MessageListScreen from './Screen/user/MessageListScreen';
+import MessProps from './Screen/MessProps';
+import Notifications from './Screen/user/Notifications';
 const Stack = createNativeStackNavigator();
 
 export default function App(navigation) {
@@ -24,8 +27,11 @@ export default function App(navigation) {
         <Stack.Screen name="Post" component={Post} />
         <Stack.Screen name="forgot" component={Forgetpassword} />
         <Stack.Screen name="register" component={Register} />
-        <Stack.Screen name="registerOTP" component={RegisterOtp} />
-        <Stack.Screen name="resetPass" component={Resetpassword} />
+        <Stack.Screen name="registerOTP" component={RegisterOtp} /> 
+        <Stack.Screen name="resetPass" component={Resetpassword} /> 
+        <Stack.Screen name="messlistscreen" component={MessageListScreen} />
+        <Stack.Screen name="Notifications" component={Notifications} />  
+        <Stack.Screen name="MessProps" component={MessProps} /> 
 
       </Stack.Navigator>
     </NavigationContainer>
