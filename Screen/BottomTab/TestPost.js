@@ -1,4 +1,4 @@
-haimport React, { useState, useRef } from 'react';
+import React, { useState, useRef } from 'react';
 import { StyleSheet, Text, View, Button, Image } from 'react-native';
 import { Camera } from 'expo-camera';
 import axios from 'axios';
