@@ -16,7 +16,7 @@ import { useNavigation } from '@react-navigation/native';
 
 const Profile = () => {
   const navigation = useNavigation();
- 
+
   const fetchProfile = async () => {
     try {
       const token = await AsyncStorage.getItem("token");
@@ -25,12 +25,10 @@ const Profile = () => {
       const result = await instance.post("/get-userid.php", body);
       console.log('>>>>>>>>: ' + result.data)
       if (result.status) {
-        const userData = result.data; // Truy cập dữ liệu từ result.data
-        await AsyncStorage.setItem("token", userData.id.toString());
-      
-        // Token đã được lưu trữ thành công, thực hiện các thao tác tiếp theo nếu cần
-      }
-      console.log('id: ' + userData.id);
+        const user = result.data; // Truy cập dữ liệu từ result.data
+        await AsyncStorage.setItem("token", user.id.toString());// Token đã được lưu trữ thành công, thực hiện các thao tác tiếp theo nếu cần
+ }
+      console.log('id: ' + user.id);
       console.log('token: '+token);
     } catch (error) {
       console.error("Lỗi khi thực hiện : ", error);
@@ -99,9 +97,7 @@ const Profile = () => {
                 </View>
               </View>
 
-              <Text style={styles.status}>{user.text}</Text>
-
-              {/* Hiển thị các hình ảnh */}
+              <Text style={styles.status}>{user.text}</Text> {/* Hiển thị các hình ảnh */}
               {/* <View style={styles.pic}>
                 {userData.images.map((image, index) => (
                   <View key={index} style={styles.mediaImageContainer}>
@@ -127,8 +123,7 @@ const styles = StyleSheet.create({
   name:{
       fontFamily: "HelveticaNeue",
       color: "#ffffff",
-      fontWeight:"bold",
-      
+      fontWeight:"bold"         
   },
   image1:{
    height:100,
