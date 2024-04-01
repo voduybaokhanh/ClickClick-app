@@ -183,24 +183,20 @@ return (
           </View>
         </View>
         
-        <View style={{ justifyContent:"space-evenly",flexDirection:"row",alignItems:"center",bottom:47 }}>
-        <View>
-              <TouchableOpacity style={styles.button} onPress={switchCameraType}>
-                <Image
-                  style={{ width: 80, height: 80 }}
-                  source={require("../../Image/camerasau.png")}
-                />
-              </TouchableOpacity>
-            </View>
+        <View style={{ flexDirection:"row",alignItems:"center",bottom:47 }}>
+       
           {!capturedImageUri ? (
+            <View style={styles.cam}>
             <TouchableOpacity style={styles.button} onPress={takePicture}>
               <Image
                 style={{ width: 80, height: 80 }}
                 source={require("../../Image/camera_icon.png")}
               />
             </TouchableOpacity>
+            </View>
+            
           ) : (
-            <View>
+            <View style={styles.cam}>
               <TouchableOpacity style={styles.button} onPress={retakePicture}>
                 <Image
                   style={{ width: 80, height: 80 }}
@@ -209,9 +205,17 @@ return (
               </TouchableOpacity>
             </View>
           )}
+           <View style={styles.change_cam}>
+              <TouchableOpacity style={styles.button} onPress={switchCameraType}>
+                <Image
+                  style={{ width: 60, height: 60, right:15,top:15}}
+                  source={require("../../Image/change_camera.png")}
+                />
+              </TouchableOpacity>
+         </View>
         </View>
         
-        <View style={{ marginTop: 10, alignItems: "center" }}>
+        <View style={{ marginTop: 10, alignItems: "center"}}>
           <TextInput
             style={styles.mes}
             placeholder="Add a message"
@@ -226,8 +230,8 @@ return (
             onPress={sendPost} // Gọi hàm sendPost khi ấn
           >
              <Image
-                style={{ width: 150, height: 80,borderRadius:70 }}
-                source={require("../../Image/send.png")}
+                style={{ width: 40, height: 40}}
+                source={require("../../Image/sent.png")}
               />
           </TouchableOpacity>
         )}
@@ -239,13 +243,21 @@ return (
 
 
 const styles = StyleSheet.create({
-  
+ change_cam:{
+width:"100%",
+alignItems:"flex-end"
+ },
+  cam:{
+  top:5,
+  width:'100%',
+  alignItems:"center",
+  position:"absolute",
+  },
   text1: {
     fontSize: 20,
   },
   mes: {
     backgroundColor: "#E5D7F7",
-    marginLeft: 10,
     height: 50,
     borderRadius: 24,
     width: "80%",

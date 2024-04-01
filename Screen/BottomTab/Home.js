@@ -252,7 +252,7 @@ const Home = () => {
             style={styles.iconsetting}
             source={require("../../Image/chu_click.png")}
           />
-          <View style={{ alignItems: "center" }}>
+          <View >
             <Dropdown
               style={styles.search}
               placeholder="Mọi người"
@@ -271,6 +271,10 @@ const Home = () => {
               }}
             />
           </View>
+          <Image
+            style={styles.iconsetting}
+            source={require("../../Image/setting_icon.png")}
+          />
         </View>
         <FlatList
           style={styles.FlatList}
@@ -438,7 +442,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    marginRight: 100,
     top: 63,
     position: "relative",
   },
