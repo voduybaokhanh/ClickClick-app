@@ -20,7 +20,7 @@ try {
 
     $userid = $data->userid;
 
-    $postQuery = "SELECT ID,USERID, AVATAR,TIME,NAME,CONTENT,LIKES FROM posts WHERE userid = :userid
+    $postQuery = "SELECT ID,userid,IMAGE, AVATAR,TIME,NAME,CONTENT,LIKES FROM posts WHERE userid = :userid
                   ORDER BY posts.time DESC";
     $postStmt = $dbConn->prepare($postQuery);
     $postStmt->bindParam(':userid', $userid, PDO::PARAM_INT);

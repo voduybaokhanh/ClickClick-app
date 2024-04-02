@@ -20,26 +20,26 @@ import Axiostance from "../helper/Axiostance";
 function Mess({route}) {
   const [content, setcontent] = useState("");
   const [chatData, setChatData] = useState([]);
-  const { avatar, name ,friendshipid} = route.params || {};
+  const { avatar, name, friendshipid } = route.params || {};
 
+  const messageRef = useRef();
 
-
-
-const messageRef = useRef();
   useEffect(() => {
     const showSubscription = Keyboard.addListener('keyboardDidShow', () => {
       messageRef.current?.scrollToEnd();
     });
- 
-
 
     return () => {
       showSubscription.remove();
     };
   }, []);
+
   useEffect(() => {
     fetchChatData();
+    const interval = setInterval(fetchChatData, 5000); // Fetch chat data every 5 seconds
+    return () => clearInterval(interval);
   }, []);
+
   const sendMessage = async () => {
     try {
       const token = await AsyncStorage.getItem("token");
@@ -51,24 +51,21 @@ const messageRef = useRef();
       const instance = await Axiostance();
       const body = {
         SENDERID: parseInt(token),
-        RECEIVERID: friendshipid, // Thay đổi RECEIVERID theo người dùng nhận tin nhắn
-        content: content, // Nội dung tin nhắn
+        RECEIVERID: friendshipid,
+        content: content,
       };
       const response = await instance.post("/chats.php", body);
       if (response.status) {
-        // Tin nhắn gửi thành công, có thể cập nhật giao diện hoặc thực hiện các hành động khác
         console.log("Message sent successfully");
-        setcontent(""); // Xóa nội dung tin nhắn sau khi gửi
+        setcontent("");
+        // Fetch chat data after sending message
+        fetchChatData();
       }
-      await fetchChatData().then(() => {
-      });
     } catch (error) {
       console.error("Error sending message:", error);
     }
   };
 
-
-  
   const fetchChatData = async () => {
     try {
       const token = await AsyncStorage.getItem("token");
@@ -85,25 +82,20 @@ const messageRef = useRef();
       }
     } catch (error) {
       console.error("Error fetching chat data:", error);
-    } finally {
     }
   };
- 
+
   const renderItem = ({ item }) => {
-    // Xác định xem mục đó có phải từ người nhận hay người dùng hiện tại không
-    const isReceiver = item.SENDERID === friendshipid; // Giả sử friendshipid đại diện cho ID của người nhận
+    const isReceiver = item.SENDERID === friendshipid;
   
     return (
       <View style={{ alignItems: isReceiver ? 'flex-start' : 'flex-end', marginVertical: 5 }}>
-        {/* Hiển thị hình ảnh nếu có */}
         {item.postid && (
           <Image
             style={{ borderRadius: 20, width: 200, height: 150, marginBottom: 5 }}
             source={{ uri: item.POSTID }}
           />
         )}
-  
-        {/* Hiển thị tin nhắn */}
         {item.CONTENT && (
           <View
             style={[
@@ -114,7 +106,7 @@ const messageRef = useRef();
                 marginVertical: 5,
                 paddingHorizontal: 15,
                 paddingVertical: 10,
-                maxWidth: '70%', // Giới hạn chiều rộng của tin nhắn thành 70% của container
+                maxWidth: '70%',
               },
             ]}
           >
@@ -124,7 +116,6 @@ const messageRef = useRef();
       </View>
     );
   };
-  
 
   return (
     <KeyboardAvoidingView
@@ -167,9 +158,6 @@ const messageRef = useRef();
             size={35}
           />
         </View>
-        <Text style={{ textAlign: "center", color: "#ffffff" }}>
-          {chatData.TIME}
-        </Text>
         <FlatList
         ref={messageRef}
           style={{ paddingHorizontal: 10,  marginTop: -10 }}
@@ -207,9 +195,11 @@ const messageRef = useRef();
           />
           <Pressable onPress={sendMessage}>
             <Image
+            
               style={{ height: 50, width: 100 }}
               source={require("../Image/send.png")}
             />
+            
           </Pressable>
         </View>
       </ImageBackground>
