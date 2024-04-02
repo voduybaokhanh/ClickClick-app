@@ -200,7 +200,7 @@ return (
               <TouchableOpacity style={styles.button} onPress={retakePicture}>
                 <Image
                   style={{ width: 80, height: 80 }}
-                  source={require("../../Image/delete.png")}
+                  source={require("../../Image/delete_icon.png")}
                 />
               </TouchableOpacity>
             </View>
@@ -225,15 +225,17 @@ return (
           />
         </View>
         {capturedImageUri && ( // Chỉ render khi có ảnh được chụp
+        <View style={styles.sent}>
           <TouchableOpacity
             style={{ alignItems: "center", bottom: 110 }}
             onPress={sendPost} // Gọi hàm sendPost khi ấn
           >
              <Image
-                style={{ width: 40, height: 40}}
-                source={require("../../Image/sent.png")}
+                style={{ width: 80, height: 80}}
+                source={require("../../Image/icon_sent.png")}
               />
           </TouchableOpacity>
+          </View>
         )}
       </ScrollView>
     </LinearGradient>
@@ -243,6 +245,10 @@ return (
 
 
 const styles = StyleSheet.create({
+  sent:{
+    width:"100%",
+    alignItems:"flex-start"
+     },
  change_cam:{
 width:"100%",
 alignItems:"flex-end"

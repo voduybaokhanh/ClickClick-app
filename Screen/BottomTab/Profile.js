@@ -16,6 +16,11 @@ import { useNavigation } from '@react-navigation/native';
 
 const Profile = () => {
   const navigation = useNavigation();
+  const [user, setUser] = useState(null); // State to hold user data
+
+  useEffect(() => {
+    fetchProfile(); // Call fetchProfile when the component mounts
+  }, []);
 
   const fetchProfile = async () => {
     try {
@@ -23,20 +28,13 @@ const Profile = () => {
       const body = { userid: parseInt(token)};
       const instance = await AxiosInstance();
       const result = await instance.post("/get-userid.php", body);
-      console.log('>>>>>>>>: ' + result.data)
-      if (result.status) {
-        const user = result.data; // Truy cập dữ liệu từ result.data
-        await AsyncStorage.setItem("token", user.id.toString());// Token đã được lưu trữ thành công, thực hiện các thao tác tiếp theo nếu cần
- }
-      console.log('id: ' + user.id);
-      console.log('token: '+token);
+      console.log(user);
+      setUser(result.user); // Set the fetched user data into state
     } catch (error) {
-      console.error("Lỗi khi thực hiện : ", error);
+      console.error("Error fetching profile: ", error);
     }
   }
-  useEffect(() => {
-    fetchProfile(); // Chạy hàm fetchProfile khi component được render
-  }, []);
+  
   
   return (
     <LinearGradient
@@ -49,15 +47,16 @@ const Profile = () => {
           <Image source={require("../../Image/arrow-left.png")} />
         </TouchableOpacity>
         <ScrollView showsVerticalScrollIndicator={false}>
-            (
+          {/* Check if user state is null before rendering user data */}
+          {user && (
             <View style={{ alignSelf: "center" }}>
               <View style={styles.profileImage}>
                 <Image
-                  source={{ uri:user.avatar}}
+                  source={{ uri: user.AVATAR }}
                   style={styles.image1}
                 />
               </View>
-
+  
               <View style={styles.infoContainer}>
                 <Text
                   style={[
@@ -65,7 +64,7 @@ const Profile = () => {
                     { fontWeight: "500", fontSize: 35 },
                   ]}
                 >
-                  {user.name}
+                  {user.NAME}
                 </Text>
                 <Text
                   style={[
@@ -73,16 +72,15 @@ const Profile = () => {
                     { color: "#4F39B4", fontSize: 20 },
                   ]}
                 >
-                  {user.id}
+                  {user.email}
                 </Text>
               </View>
-
+  
               <View style={styles.statsContainer}>
                 <View style={styles.statsBox}>
-                  {/* <Text style={styles.text}>{userData.posts_count}</Text> */}
                   <Text style={[styles.text, styles.subText]}>Posts</Text>
                 </View>
-
+  
                 <View
                   style={[
                     styles.statsBox,
@@ -92,25 +90,18 @@ const Profile = () => {
                     },
                   ]}
                 >
-                  {/* <Text style={styles.text}>{userData.friend_count}</Text> */}
                   <Text style={[styles.text, styles.subText]}>Friend</Text>
                 </View>
               </View>
 
-              <Text style={styles.status}>{user.text}</Text> {/* Hiển thị các hình ảnh */}
-              {/* <View style={styles.pic}>
-                {userData.images.map((image, index) => (
-                  <View key={index} style={styles.mediaImageContainer}>
-                    <Image
-                      source={{ uri: image }}
-                      style={styles.image}
-                      resizeMode="cover"
-                    />
-                  </View>
-                ))}
-              </View> */}
+              <Text style={styles.status}>{user.TEXT || "No status available"}</Text>
             </View>
-          )
+          )}
+          {!user && (
+            <View>
+              <Text>Loading...</Text>
+            </View>
+          )}
         </ScrollView>
       </SafeAreaView>
     </LinearGradient>
@@ -122,7 +113,7 @@ export default Profile;
 const styles = StyleSheet.create({
   name:{
       fontFamily: "HelveticaNeue",
-      color: "#ffffff",
+      color: "#3B21B2",
       fontWeight:"bold"         
   },
   image1:{
@@ -190,7 +181,7 @@ const styles = StyleSheet.create({
   },
   text10: {
     fontFamily: "HelveticaNeue",
-    color: "#ffffff",
+    color: "#3B21B2",
     fontSize:22,
     fontSize:"300"
   },
@@ -200,14 +191,11 @@ const styles = StyleSheet.create({
     fontWeight:"bold",
     fontSize:22
   },
-
   image: {
     flex:1,
     height:undefined,
     width:undefined
-
   },
-
   profileImage: {
     alignItems:'center'
   },
