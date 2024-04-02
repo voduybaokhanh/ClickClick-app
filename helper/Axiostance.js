@@ -16,6 +16,7 @@ const AxiosInstance = async (contentType = 'application/json') => {
                         'Accept': 'application/json',
                         'Content-Type': contentType
                     };
+            
                 }
             } catch (error) {
                 console.error('Lỗi khi truy xuất token từ AsyncStorage: ', error);

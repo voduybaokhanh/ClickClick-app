@@ -52,7 +52,7 @@ function Mess({route}) {
       const body = {
         SENDERID: parseInt(token),
         RECEIVERID: friendshipid,
-        CONTENT: content,
+        content: content,
       };
       const response = await instance.post("/chats.php", body);
       if (response.status) {
