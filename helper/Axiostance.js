@@ -14,7 +14,7 @@ const AxiosInstance = async (contentType = 'application/json') => {
                     config.headers = {
                         'Authorization': `Bearer ${token}`,
                         'Accept': 'application/json',
-                        'Content-Type': contentType
+                        'Content-Type': contentType,
                     };
                 }
             } catch (error) {

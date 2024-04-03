@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, FlatList } from 'react-native';
 import axios from 'axios'; // Import axios để gọi API
+import AxiosInstance from '../../helper/Axiostance';
 
 const Notifications = () => {
   const [notifications, setNotifications] = useState([]); // State để lưu trữ danh sách thông báo
-
   useEffect(() => {
     // Gọi API để lấy danh sách thông báo khi component được tải lần đầu
     fetchNotifications();
@@ -12,10 +12,13 @@ const Notifications = () => {
 
   const fetchNotifications = async () => {
     try {
+     const instance = await  AxiosInstance()
+
       // Gọi API để lấy danh sách thông báo
-      const response = await axios.post('URL_API', { userid: 'ID_NGUOI_DUNG' }); // Thay thế 'URL_API' và 'ID_NGUOI_DUNG' bằng URL và ID người dùng thực tế
+      const response = await instance.get('/get-all-notifications.php', { userid: 1 }); // Thay thế 'URL_API' và 'ID_NGUOI_DUNG' bằng URL và ID người dùng thực tế
       if (response.data.status) {
         // Nếu lấy dữ liệu thành công
+        console.log(response.data);
         setNotifications(response.data.notifications); // Cập nhật state với danh sách thông báo từ API
       } else {
         console.error('Error fetching notifications:', response.data.message);
