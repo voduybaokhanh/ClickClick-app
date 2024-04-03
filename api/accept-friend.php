@@ -23,9 +23,26 @@ try {
 
     $userid = $data->userid;
     $friendshipid = $data->friendshipid;
+    
+    // Kiểm tra xem người bạn đã tồn tại hay chưa
+    $checkFriendQuery = "SELECT * FROM users WHERE ID = :friendshipid";
+    $checkFriendStmt = $dbConn->prepare($checkFriendQuery);
+    $checkFriendStmt->bindParam(':friendshipid', $friendshipid, PDO::PARAM_INT);
+    $checkFriendStmt->execute();
+    $friend = $checkFriendStmt->fetch(PDO::FETCH_ASSOC);
+
+    // Kiểm tra xem người bạn có phải là chính người dùng hiện tại hay không
+    if ($friendshipid == $userid) {
+        throw new Exception('Không thể kết bạn với chính bản thân.');
+    }
+
+    if (!$friend) {
+        echo json_encode(array('status' => false, 'message' => 'Người bạn không tồn tại.'));
+        exit;
+    }
 
     // Kiểm tra xem người dùng đã có 20 người bạn chưa
-    $countFriendsQuery = "SELECT COUNT(*) as friendCount FROM friendships WHERE userid = :userid OR friendshipid = :userid";
+    $countFriendsQuery = "SELECT COUNT(*) as friendCount FROM friendships WHERE (userid = :userid OR friendshipid = :userid) AND status='friend'";
     $countFriendsStmt = $dbConn->prepare($countFriendsQuery);
     $countFriendsStmt->bindParam(':userid', $userid, PDO::PARAM_INT);
     $countFriendsStmt->execute();
@@ -38,7 +55,7 @@ try {
     }
 
     // Kiểm tra xem đối phương có 20 người bạn không
-    $countFriendsQuery = "SELECT COUNT(*) as friendCount FROM friendships WHERE userid = :friendshipid OR friendshipid = :friendshipid";
+    $countFriendsQuery = "SELECT COUNT(*) as friendCount FROM friendships WHERE (userid = :friendshipid OR friendshipid = :friendshipid) AND status='friend'";
     $countFriendsStmt = $dbConn->prepare($countFriendsQuery);
     $countFriendsStmt->bindParam(':friendshipid', $friendshipid, PDO::PARAM_INT);
     $countFriendsStmt->execute();

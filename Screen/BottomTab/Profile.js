@@ -1,104 +1,126 @@
+import React, { useState, useEffect } from "react";
 import {
   StyleSheet,
   Text,
   View,
   Image,
-  TextInput,
-  TouchableOpacity,
   ScrollView,
+  TouchableOpacity
 } from "react-native";
+import AxiosInstance from "../../helper/Axiostance";
 import { LinearGradient } from "expo-linear-gradient";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useNavigation } from '@react-navigation/native'; // Thêm dòng này
+import { useNavigation } from '@react-navigation/native';
 
 const Profile = () => {
-  const navigation = useNavigation(); // Thêm dòng này
+  const navigation = useNavigation();
+  useEffect(() => {
+    fetchProfile();
+   // Khôi phục trạng thái isLiked từ AsyncStorage khi trang được load lại
+  });
+
+  const fetchProfile = async () => {
+    try {
+      const token = await AsyncStorage.getItem("token");
+      if (!token) {
+        console.log("Token (userid) not found in AsyncStorage");
+        return;
+      }
+      const instance = await AxiosInstance();
+      const body = { userid: parseInt(token) };
+      const response = await instance.post("/get-userid.php", body);
+      if (response.status) {
+        await AsyncStorage.setItem("token", response.user.id.toString());
+        navigation.navigate('BottomTab')
+      // Token đã được lưu trữ thành công, thực hiện các thao tác tiếp theo nếu cần
+      } else {
+        alert("Không tìm thấy người dùng");
+      }
+      // Thêm thuộc tính isLiked và postid vào từng bài viết trong mảng post
+      
+
+      // Lưu trạng thái action vào state posts
+    } catch (error) {
+      console.error("Error fetching posts:", error);
+    }
+  };
+  
   return (
     <LinearGradient
-    locations={[0.05, 0.4, 0.8, 1]}
-    colors={["#FFFFFF", "#8B64DA", "#D195EE", "#CECBD3"]}
-    style={styles.linearGradient}
+      locations={[0.05, 0.4, 0.8, 1]}
+      colors={["#FFFFFF", "#8B64DA", "#D195EE", "#CECBD3"]}
+      style={styles.linearGradient}
     >
       <SafeAreaView style={styles.container}>
-      <TouchableOpacity onPress={() => navigation.goBack()} >
-              <Image  source={require("../../Image/arrow-left.png")}/>
-          </TouchableOpacity >
+        <TouchableOpacity onPress={() => navigation.goBack()}>
+          <Image source={require("../../Image/arrow-left.png")} />
+        </TouchableOpacity>
         <ScrollView showsVerticalScrollIndicator={false}>
-          <View style={{ alignSelf: "center" }}>
-            <View style={styles.profileImage}>
-              <Image
-                source={require("../../Image/jisoo1.jpg")}
-                style={styles.image1}
-              ></Image>
-            </View>
-
-            <View style={styles.infoContainer}>
-              <Text style={[styles.name, { fontWeight: "500", fontSize: 35 }]}>
-                Jisoo
-              </Text>
-              <Text style={[styles.text10, { color: "#4F39B4", fontSize: 20 }]}>
-                @BlackPink
-              </Text>
-            </View>
-
-            <View style={styles.statsContainer}>
-              <View style={styles.statsBox}>
-                <Text style={styles.text}>483</Text>
-                <Text style={[styles.text, styles.subText]}>Posts</Text>
+            (
+            <View style={{ alignSelf: "center" }}>
+              <View style={styles.profileImage}>
+                <Image
+                  source={{ uri: response.user.avatar}}
+                  style={styles.image1}
+                />
               </View>
 
-              <View
-                style={[
-                  styles.statsBox,
-                  {
-                    borderColor: "#FFFFFF",
-                    borderLeftWidth: 1,
-                  },
-                ]}
-              >
-                <Text style={styles.text}>20 </Text>
-                <Text style={[styles.text, styles.subText]}>Friend </Text>
+              <View style={styles.infoContainer}>
+                <Text
+                  style={[
+                    styles.name,
+                    { fontWeight: "500", fontSize: 35 },
+                  ]}
+                >
+                  {response.user.name}
+                </Text>
+                <Text
+                  style={[
+                    styles.text10,
+                    { color: "#4F39B4", fontSize: 20 },
+                  ]}
+                >
+                  {response.user.id}
+                </Text>
               </View>
-            </View>
 
-            <Text style={styles.status}>‘’I can draw my life by myself’’</Text>
+              <View style={styles.statsContainer}>
+                <View style={styles.statsBox}>
+                  {/* <Text style={styles.text}>{userData.posts_count}</Text> */}
+                  <Text style={[styles.text, styles.subText]}>Posts</Text>
+                </View>
 
-            <View style={styles.pic}>   
-                <View style={styles.mediaImageContainer}>
-                  <Image
-                    source={require("../../Image/2.png")}
-                    style={styles.image}
-                    resizeMode="cover"
-                  ></Image>
+                <View
+                  style={[
+                    styles.statsBox,
+                    {
+                      borderColor: "#FFFFFF",
+                      borderLeftWidth: 1,
+                    },
+                  ]}
+                >
+                  {/* <Text style={styles.text}>{userData.friend_count}</Text> */}
+                  <Text style={[styles.text, styles.subText]}>Friend</Text>
                 </View>
-                <View style={styles.mediaImageContainer}>
-                  <Image
-                    source={require("../../Image/2.png")}
-                    style={styles.image}
-                    resizeMode="cover"
-                  ></Image>
-                </View>                            
+              </View>
+
+              <Text style={styles.status}>{response.user.text}</Text>
+
+              {/* Hiển thị các hình ảnh */}
+              {/* <View style={styles.pic}>
+                {userData.images.map((image, index) => (
+                  <View key={index} style={styles.mediaImageContainer}>
+                    <Image
+                      source={{ uri: image }}
+                      style={styles.image}
+                      resizeMode="cover"
+                    />
+                  </View>
+                ))}
+              </View> */}
             </View>
-            <View style={styles.pic}>
-             
-                <View style={styles.row}>
-                <View style={styles.mediaImageContainer}>
-                  <Image
-                    source={require("../../Image/2.png")}
-                    style={styles.image}
-                    resizeMode="cover"
-                  ></Image>
-                </View>
-                <View style={styles.mediaImageContainer}>
-                  <Image
-                    source={require("../../Image/2.png")}
-                    style={styles.image}
-                    resizeMode="cover"
-                  ></Image>
-                </View>        
-                </View>
-            </View>
-          </View>
+          )
         </ScrollView>
       </SafeAreaView>
     </LinearGradient>

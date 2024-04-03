@@ -55,7 +55,7 @@ try {
     }
 
     // Kiểm tra xem người dùng đã có 20 người bạn chưa
-    $countFriendsQuery = "SELECT COUNT(*) as friendCount FROM friendships WHERE userid = :userid OR friendshipid = :userid";
+    $countFriendsQuery = "SELECT COUNT(*) as friendCount FROM friendships WHERE (userid = :userid OR friendshipid = :userid) AND status='friend'";
     $countFriendsStmt = $dbConn->prepare($countFriendsQuery);
     $countFriendsStmt->bindParam(':userid', $userid, PDO::PARAM_INT);
     $countFriendsStmt->execute();
@@ -68,7 +68,7 @@ try {
     }
 
     // Kiểm tra xem đối phương có 20 người bạn không
-    $countFriendsQuery = "SELECT COUNT(*) as friendCount FROM friendships WHERE userid = :friendshipid OR friendshipid = :friendshipid";
+    $countFriendsQuery = "SELECT COUNT(*) as friendCount FROM friendships WHERE (userid = :friendshipid OR friendshipid = :friendshipid) AND status='friend'";
     $countFriendsStmt = $dbConn->prepare($countFriendsQuery);
     $countFriendsStmt->bindParam(':friendshipid', $friendshipid, PDO::PARAM_INT);
     $countFriendsStmt->execute();
