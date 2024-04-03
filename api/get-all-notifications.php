@@ -31,3 +31,4 @@ try {
 } catch (Exception $e) {
     echo json_encode(array('status' => false, 'message' => $e->getMessage()));
 }
+?>
