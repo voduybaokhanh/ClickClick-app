@@ -51,56 +51,47 @@ const AddPost = () => {
   };
 
   // Hàm gửi bài viết
-  // Hàm gửi bài viết
-const sendPost = async () => {
-  try {
-    const token = await AsyncStorage.getItem("token");
-    if (!token) {
-      console.log("Token (userid) not found in AsyncStorage");
-      return;
+  const sendPost = async () => {
+    try {
+      const token = await AsyncStorage.getItem("token");
+      if (!token) {
+        console.log("Token (userid) not found in AsyncStorage");
+        return;
+      }
+  
+      // Chỉ thực hiện upload ảnh nếu capturedImageUri đã được gán giá trị
+      if (capturedImageUri) {
+        // Upload ảnh lên Cloudinary và lấy đường dẫn ảnh từ phản hồi của Cloudinary
+        const uploadedImageUrl = await uploadImage();
+  
+        const instance = await AxiosInstance();
+        const body = {
+          userid: parseInt(token),
+          content: content,
+          image: uploadedImageUrl, // Sử dụng đường dẫn ảnh đã được upload lên Cloudinary
+        };
+  
+        const response = await instance.post("/add-posts.php", body);
+        console.log("uploadImgaeuri " + uploadedImageUrl);
+  
+        // Reset capturedImageUri to null after successfully sending the post
+        setCapturedImageUri(null);
+      } else {
+        // Nếu không có ảnh được chụp, gửi bài viết chỉ với nội dung
+        const instance = await AxiosInstance();
+        const body = {
+          userid: parseInt(token),
+          content: content,
+        };
+  
+        const response = await instance.post("/add-posts.php", body);
+        console.log(response.data);
+      }
+  
+    } catch (error) {
+      console.error("Error adding post:", error);
     }
-
-    // Chỉ thực hiện upload ảnh nếu capturedImageUri đã được gán giá trị
-    if (content) {
-      // Upload ảnh lên Cloudinary và lấy đường dẫn ảnh từ phản hồi của Cloudinary
-      const uploadedImageUrl = await uploadImage();
-
-      const instance = await AxiosInstance();
-      const body = {
-        userid: parseInt(token),
-        content: content,
-        image: uploadedImageUrl, // Sử dụng đường dẫn ảnh đã được upload lên Cloudinary
-      };
-
-      const response = await instance.post("/add-posts.php", body);
-      console.log("Uploaded Image URL:", uploadedImageUrl);
-
-      // Reset capturedImageUri và content sau khi gửi bài viết thành công
-      setCapturedImageUri(null);
-      setContent(""); // Đặt giá trị content về rỗng sau khi gửi bài viết
-    } else {
-      const uploadedImageUrl = await uploadImage();
-      // Nếu không có nội dung được nhập, gửi bài viết chỉ với ảnh
-      const instance = await AxiosInstance();
-      const body = {
-        userid: parseInt(token),
-        content: "", // Đặt content là rỗng khi gửi bài viết chỉ với ảnh
-        image: uploadedImageUrl,
-      };
-
-      const response = await instance.post("/add-posts.php", body);
-
-      // Reset capturedImageUri sau khi gửi bài viết thành công
-      setCapturedImageUri(null);
-      setContent(""); // Đặt giá trị content về rỗng sau khi gửi bài viết
-      console.log("Data:", response.data);
-    }
-
-  } catch (error) {
-    console.error("Error adding post:", error);
-  }
-};
-
+  };
   // Hàm upload ảnh
   const uploadImage = async () => {
     try {
@@ -124,7 +115,9 @@ const sendPost = async () => {
             "Content-Type": "multipart/form-data",
           },
         }
-      );  
+      );
+      console.log("Result:", result.data.secure_url);
+  
       setImageconten(result.data.secure_url);
       return result.data.secure_url; // Trả về đường dẫn của ảnh đã upload
     } catch (error) {
@@ -167,6 +160,10 @@ return (
         </View>
         <View style={styles.itempost}>
           <View style={styles.namepost}>
+            <Image
+              style={styles.avt}
+              source={require("../../Image/avatar1.png")}
+            />
             <View style={{ flexDirection: "column", marginLeft: 10 }}>
               <Text style={styles.name}>You</Text>
             </View>
@@ -270,7 +267,7 @@ const styles = StyleSheet.create({
   avt: {},
   name: {
     color: "white",
-    fontSize: 35,
+    fontSize: 16,
     fontWeight: "bold",
   },
   itempost: {

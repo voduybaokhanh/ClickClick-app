@@ -2,8 +2,8 @@ import React from 'react';
 import { StyleSheet , Image} from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Home from './Home';
-
-import Notifications from '../user/Notifications';
+import Messenger from './Messenger';
+import Notification from './Notification';
 import AddPost from './AddPost';
 import Profile from './Profile';
 import CustomHomeIcon from './../../Image/home_icon.png';
@@ -11,7 +11,6 @@ import CustomMessengerIcon from './../../Image/messenger_icon.png';
 import CustomNotificationIcon from './../../Image/notification_icon.png';
 import CustomAddPostIcon from './../../Image/addpost_icon.png';
 import CustomProfileIcon from './../../Image/profile_icon.png';
-import MessageListScreen from '../user/MessageListScreen';
 import TestPost from './TestPost';
 
 const Tab = createBottomTabNavigator();
@@ -57,7 +56,7 @@ const BottomTab = () => {
       />
       <Tab.Screen
         name="Messenger"
-        component={MessageListScreen}
+        component={Messenger}
         options={{
             headerShown: false,
           tabBarIcon: ({ color, size }) => (
@@ -75,9 +74,9 @@ const BottomTab = () => {
           ),
         }}
       />
-     <Tab.Screen
+      <Tab.Screen
         name="Notification"
-        component={Notifications}
+        component={Notification}
         options={{
             headerShown: false,
           tabBarIcon: ({ color, size }) => (
