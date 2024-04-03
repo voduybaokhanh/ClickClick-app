@@ -20,6 +20,18 @@ try {
     $userid = $data->userid;
     $postid = $data->postid;
 
+    // Kiểm tra xem bài viết có tồn tại không
+    $checkPostQuery = "SELECT * FROM posts WHERE id = :postid";
+    $checkPostStmt = $dbConn->prepare($checkPostQuery);
+    $checkPostStmt->bindParam(':postid', $postid, PDO::PARAM_INT);
+    $checkPostStmt->execute();
+    $post = $checkPostStmt->fetch(PDO::FETCH_ASSOC);
+
+    if (!$post) {
+        http_response_code(404);
+        echo json_encode(array('status' => false, 'message' => 'Bài viết không tồn tại'));
+        exit;
+    }
     // Cập nhật cột AVAILABLE trong bảng POSTS
     $updateAvailableQuery = "UPDATE posts SET available = 0 WHERE id = :postid";
     $updateAvailableStmt = $dbConn->prepare($updateAvailableQuery);
