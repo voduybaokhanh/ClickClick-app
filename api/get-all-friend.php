@@ -28,7 +28,10 @@ try {
     $getFriendshipsStmt->execute();
     $friendships = $getFriendshipsStmt->fetchAll(PDO::FETCH_ASSOC);
 
-    $friendNames = array(); 
+    // Lấy số lượng bạn bè
+    $friendCount = count($friendships);
+
+    $friendNames = array();
     foreach ($friendships as $friendship) {
         $friendshipid = $friendship["FRIENDSHIPID"]; // Sửa tên cột thành friendshipid
         // Truy vấn để lấy tên của người bạn dựa trên friendshipid
@@ -43,10 +46,8 @@ try {
         }
     }
 
-    // Trả về friendNames theo index
-echo json_encode(array('status' => true, 'friendships' => $friendships, 'friendName' => array_values($friendNames)));
-
+    // Trả về friendNames theo index cùng với số lượng bạn bè
+    echo json_encode(array('status' => true, 'friendCount' => $friendCount, 'friendships' => $friendships, 'friendName' => array_values($friendNames)));
 } catch (Exception $e) {
     echo json_encode(array('status' => false, 'message' => $e->getMessage()));
 }
-?>
