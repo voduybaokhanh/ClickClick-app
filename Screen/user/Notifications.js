@@ -1,26 +1,17 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { StyleSheet, Text, View, FlatList, ImageBackground, Pressable } from 'react-native';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { StyleSheet, Text, View, FlatList, ImageBackground, Pressable, Dimensions } from 'react-native';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import AxiosInstance from '../../helper/Axiostance';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from "expo-linear-gradient";
 
 const Notifications = () => {
-  const userID = useRef()
   const [notifications, setNotifications] = useState([]);
-  const [listFriend, setListFriend] = useState([])
   const [listFriendStatus, setlistFriendStatus] = useState([])
   
   useEffect(() =>{
-    const getId =  async() =>{
-    const idUser = await AsyncStorage.getItem("token")
-    console.log(idUser, "a");
-     userID.current = idUser
-    }
-    getId()
     fetchNotifications();
   },[])
-  console.log(notifications);
   useEffect(() => {
     // Gọi API để lấy danh sách thông báo khi component được tải lần đầu
    
@@ -28,14 +19,13 @@ const Notifications = () => {
   const fetchNotifications = async () => {
     try {
       const instance = await AxiosInstance();
-
+      const idUser = await AsyncStorage.getItem("token")
       // Gọi API để lấy danh sách thông báo
       //
-      const responseNoti = await instance.post('/get-all-notifications.php', { userid: 4 });
-      const responseFriend = await instance.post('/get-all-friendlist.php', { userid: 4 });
-      const responseFriendStatus = await instance.post('/get-all-friendships.php', { userid: 4 });
-      if(responseFriend?.status){
-        setListFriend(responseFriend)
+      const responseNoti = await instance.post('/get-all-notifications.php', { userid: idUser });
+      const responseFriendStatus = await instance.post('/get-all-friendships.php', { userid: idUser });
+      if(responseFriendStatus?.status){
+        console.log(responseFriendStatus.invitations);
         setlistFriendStatus([...responseFriendStatus.invitations])
       }
       // Thay thế 'URL_API' và 'ID_NGUOI_DUNG' bằng URL và ID người dùng thực tế
@@ -51,37 +41,60 @@ const Notifications = () => {
   };
 
   // Function để render mỗi mục trong danh sách thông báo
-  const renderItem = ({ item }) => {
-
+  const renderItem = useCallback(({ item }) => {
     return(
       <View style={styles.notificationItem}>
         <View style={styles.avatar}></View>
         <View style={{flexDirection:'column'}}>
-        <Text style={styles.textNoti} >{item.CONTENT}</Text>
-       <Text style={styles.textNoti} >{item.TIME.substring(item.TIME.length -8, item.TIME.length -3)}</Text>
+        <Text style={[styles.textNoti, {width: Dimensions.get('window').width * 0.7}]} numberOfLines={2} >{item.CONTENT}</Text>
+        <Text style={styles.textNoti} >{item.TIME.substring(item.TIME.length -8, item.TIME.length -3)}</Text>
         </View>
     </View>
     )
-  };
-  const renderItemFriend = ({ item, index }) => {
+  },[]);
+  const renderItemFriend = useCallback(({ item, index }) => {
     return(
-      <View style={styles.notificationItem}>
-      <Text>{listFriend.friendName[index] || item.NAME}</Text>
+      <View style={[styles.notificationItem, {flexDirection:'column'}]}>
+        <View style={{flexDirection: 'row', justifyContent:'flex-start', alignItems:'center'}}>
+          <View style={{width: 50, height: 50, borderRadius: 50, backgroundColor: 'white'}}/>
       {item.STATUS == 'pending' && 
-      <Text>da gui loi moi ket ban</Text>
+      <View>
+        <Text style={[styles.textNoti, {marginLeft: 10}]}>{ item.NAME} da gui loi moi ket ban</Text>
+        <Text style={[styles.textNoti,{marginLeft: 10}]}>{item.TIME.substring(item.TIME.length -8, item.TIME.length -3)}</Text>
+      </View>      
   }
+        </View>
       {item.STATUS == 'pending' && 
-      <View style={{flexDirection: 'row',gap: 10}}>
-        <Pressable style={{width: 100, height: 40, backgroundColor:'red'}}>
-        <Text>Accept</Text>
+      <View style={{flexDirection: 'row',gap: 10, justifyContent:'center'}}>
+        <Pressable onPress={() => handleAcceptFriend(item.ID,item.NAME)} style={[styles.btnFriend, {backgroundColor: 'white', flex: 1}]}>
+        <Text style={styles.textBtnFriend}>Accept</Text>
         </Pressable>
-        <Pressable style={{width: 100, height: 40, backgroundColor:'red'}}>
-        <Text>Delete</Text>
+        <Pressable onPress={(() => handleDeleteFriend(item.ID))} style={[styles.btnFriend, {backgroundColor:'white', flex: 1}]}>
+          <Text style={styles.textBtnFriend}>Delete</Text>
         </Pressable>
         </View>}
     </View>
     )
-  };
+  },[]);
+
+  const handleAcceptFriend =(friendshipid,name) => {
+        const acceptFriend  = async () =>{
+      const instance = await AxiosInstance();
+      const idUser = await AsyncStorage.getItem("token")
+      const res= await instance.post('/accept-friend.php', { userid: idUser, friendshipid: friendshipid });
+          if(res.status){
+      setNotifications((val) => [{"CONTENT": `Bạn đã chấp nhận lời mời kết bạn từ ${name}.`, "ID": 99, "RECEIVERID": idUser, "TIME": "2024-03-30 16:54:06", "USERID": friendshipid},...val])
+          }
+    }
+
+        acceptFriend()
+        setlistFriendStatus((val) => val.filter((item) => item.ID !== friendshipid))
+  }
+
+  const handleDeleteFriend = (friendshipid) =>{
+      setlistFriendStatus((val) => val.filter((item) => item.ID !== friendshipid) )
+  }
+
   return (
       <LinearGradient
         locations={[0.05, 0.17, 0.8, 1]}
@@ -94,14 +107,15 @@ const Notifications = () => {
       <FlatList
         data={notifications}
         renderItem={renderItem}
-        keyExtractor={(item) => item.ID.toString()} // Sử dụng trường ID làm key
+        keyExtractor={(item,index) => index.toString()} // Sử dụng trường ID làm key
       />
      </SafeAreaView>
      <View style={{flex: 1}}>
+     <Text style={styles.title}>Add friend</Text>
       <FlatList
       data={listFriendStatus.flat()}
       renderItem={renderItemFriend}
-      keyExtractor={(item) => item.USERID.toString()}
+      keyExtractor={(item,index) => index.toString()}
       />
      </View>
      </LinearGradient>
@@ -123,7 +137,6 @@ const styles = StyleSheet.create({
   },
   notificationItem: {
     flexDirection:'row',
-    alignItems:'center',
     padding: 10,
     gap: 10,
     borderBottomWidth: 1,
@@ -150,4 +163,24 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     width: "100%",
   },
+  btnFriend:{
+    width: 100, 
+    height: 40, 
+    borderRadius: 20,
+    justifyContent:'center', 
+    alignItems:'center',
+    shadowColor: '#635A8F',
+    shadowOffset:{width: 0, height: 4},
+    shadowRadius: 4,
+    shadowOpacity: 1
+  },
+  textBtnFriend:{
+    color:'#635A8F', 
+    fontWeight: "bold",
+    fontSize: 18
+  },
+   textNotiFriend:{
+    color: '#fff',
+    fontSize: 20
+   }
 });
