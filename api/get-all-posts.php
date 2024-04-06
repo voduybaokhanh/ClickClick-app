@@ -23,7 +23,7 @@ try {
         array(
             "status" => true,
             "postCount" => $postCount,
-            "allPosts" => $posts
+            "all-posts" => $posts
         )
     );
 } catch (Exception $e) {
