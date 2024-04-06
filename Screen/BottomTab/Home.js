@@ -79,12 +79,12 @@ const Home = () => {
       const instance = await AxiosInstance();
       const body = { userid: parseInt(token) };
       const responseFriend = await instance.post(
-        "/get-all-friendlist.php",
+        "/get-all-friendships.php",
         body
       );
 
       // Chuyển đổi dữ liệu thành mảng các đối tượng có thuộc tính label và value
-      const formattedData = responseFriend.friendships.map(
+      const formattedData = responseFriend.friendship.map(
         (friendship, index) => ({
           label: responseFriend.friendName[index],
           value: friendship.FRIENDSHIPID.toString(),
