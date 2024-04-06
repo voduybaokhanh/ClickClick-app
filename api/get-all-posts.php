@@ -7,11 +7,11 @@ header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers
 //http://127.0.0.1:8686/get-all-posts.php
 //import file connection.php
 // hiện tất cả bài đăng
-include_once './connection.php'; 
+include_once './connection.php';
 // đọc dữ liệu từ database
 $sqlQuery = "SELECT AVATAR,TIME,NAME,CONTENT,LIKES FROM posts";
 $stmt = $dbConn->prepare($sqlQuery);
-$stmt -> execute();
+$stmt->execute();
 // lấy tất cả dữ liệu từ câu lệnh pdo
 $post = $stmt->fetchAll(PDO::FETCH_ASSOC);
 // trả về dữ liệu dạng json
@@ -21,4 +21,3 @@ echo json_encode(
         "all-post" => $post
     )
 );
-?>
