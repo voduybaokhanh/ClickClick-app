@@ -61,7 +61,7 @@ const Profile = () => {
                 <Text
                   style={[
                     styles.name,
-                    { fontWeight: "500", fontSize: 21 },
+                    { fontWeight: "500", fontSize: 35 },
                   ]}
                 >
                   {user.NAME}
@@ -72,7 +72,7 @@ const Profile = () => {
                     { color: "#4F39B4", fontSize: 20 },
                   ]}
                 >
-                  {user.EMAIL}
+                  {user.email}
                 </Text>
               </View>
   
