@@ -306,7 +306,7 @@ const Home = () => {
               <View style={{ width: "90%", marginBottom: 20 }}>
                 <Image
                   style={{ width: 300, height: 300 }}
-                  source={{ uri: item.IMAGE }}
+                  source={{ uri: item.IMAGE}}
                 />
                 <View style={{ width: "90%", alignSelf: "center" }}>
                   <Text style={styles.status}>{item.CONTENT}</Text>
@@ -338,7 +338,7 @@ const Home = () => {
                   />
                   <TouchableOpacity onPress={() => sendMessage(item.userid, item.ID)}>
                     <Image
-                      style={{ height: 60, width: 60 , top:5, left:5}}
+                      style={{ height: 40, width: 40 , top:5, left:5}}
                       source={require("../../Image/sent.png")}
                     />
                   </TouchableOpacity>

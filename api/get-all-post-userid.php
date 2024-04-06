@@ -25,9 +25,11 @@ try {
     $postStmt = $dbConn->prepare($postQuery);
     $postStmt->bindParam(':userid', $userid, PDO::PARAM_INT);
     $postStmt->execute();
+    
     $posts = $postStmt->fetchAll(PDO::FETCH_ASSOC);
+    $postCount = count($posts);
 
-    echo json_encode(array('status' => true, 'posts' => $posts));
+    echo json_encode(array('status' => true, 'postCount' => $postCount ,'posts' => $posts));
 } catch (Exception $e) {
     echo json_encode(array('status' => false, 'message' => $e->getMessage()));
 }

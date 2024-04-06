@@ -28,6 +28,9 @@ try {
     $getFriendshipsStmt->execute();
     $friendships = $getFriendshipsStmt->fetchAll(PDO::FETCH_ASSOC);
 
+    // lay so luong ban be
+    $friendCount =count($friendships);
+
     $friendNames = array(); 
     foreach ($friendships as $friendship) {
         $friendshipid = $friendship["FRIENDSHIPID"]; // Sửa tên cột thành friendshipid
@@ -44,7 +47,7 @@ try {
     }
 
     // Trả về friendNames theo index
-echo json_encode(array('status' => true, 'friendships' => $friendships, 'friendName' => array_values($friendNames)));
+echo json_encode(array('status' => true, 'friendCount'=>$friendCount ,'friendships' => $friendships, 'friendName' => array_values($friendNames)));
 
 } catch (Exception $e) {
     echo json_encode(array('status' => false, 'message' => $e->getMessage()));
