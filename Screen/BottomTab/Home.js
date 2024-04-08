@@ -7,13 +7,11 @@ import {
   Image,
   TextInput,
   TouchableOpacity,
-  Pressable,
 } from "react-native";
 import AxiosInstance from "../../helper/Axiostance";
 import { LinearGradient } from "expo-linear-gradient";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Dropdown } from "react-native-element-dropdown";
-import { StatusBar } from "expo-status-bar";
 import { useNavigation } from "@react-navigation/native";
 
 const Home = () => {
@@ -260,6 +258,7 @@ const Home = () => {
               placeholderStyle={styles.placeholderStyle}
               iconstyle={styles.iconStyle}
               selectedTextStyle={styles.placeholderStyle}
+              containerStyle={styles.dropdown}
               data={datafriend}
               labelField="label"
               valueField="value"
@@ -272,10 +271,13 @@ const Home = () => {
               }}
             />
           </View>
+          <View style={styles.viewSetting}>
           <Image
             style={styles.iconsetting}
             source={require("../../Image/setting_icon.png")}
           />
+          </View>
+        
         </View>
         <FlatList
           style={styles.FlatList}
@@ -285,7 +287,7 @@ const Home = () => {
           // Trong FlatList renderItem:
           renderItem={({ item, index }) => {
             return (
-       <View style={[styles.itempost,  
+            <View style={[styles.itempost,  
               index + 1 === posts.length ? {marginBottom: 90} : {}]}>
               <View style={styles.namepost}>
                 <Image source={{ uri: item.AVATAR }} style={styles.avt} />
@@ -318,8 +320,7 @@ const Home = () => {
                     <Image
                       style={{
                         width: 38,
-                        height: 40,
-                        alignItems: "center",
+                        height: 42
                       }}
                       source={
                         isLikedMap[item.postid]
@@ -364,7 +365,7 @@ const styles = StyleSheet.create({
   },
   placeholderStyle: {
     color: "#fff",
-    fontSize: 20,
+    fontSize: 18,
   },
   container: {
     flex: 1,
@@ -464,7 +465,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#443A74",
     borderRadius: 24,
     fontSize: 13,
-    width: 145,
+    width: 160,
     fontWeight: "bold",
   },
   linearGradient: {
@@ -474,6 +475,14 @@ const styles = StyleSheet.create({
     flex: 1,
     width: "100%",
   },
+  viewSetting:{
+    width: 70,
+    alignItems: 'flex-end'
+  },
+  dropdown: {
+    marginTop: 5,
+    borderRadius: 24
+  }
 });
 
 export default Home;

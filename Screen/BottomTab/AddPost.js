@@ -167,7 +167,7 @@ return (
         </View>
         <View style={styles.itempost}>
           <View style={styles.namepost}>
-            <View style={{ flexDirection: "column", marginLeft: 10 }}>
+            <View style={{ marginLeft: 10,flexDirection:"row" }}>
               <Text style={styles.name}>You</Text>
             </View>
           </View>
@@ -186,7 +186,7 @@ return (
           </View>
         </View>
         
-        <View style={{ flexDirection:"row",alignItems:"center",bottom:47 }}>
+        <View style={{ flexDirection:"row",alignItems:"center" }}>
        
           {!capturedImageUri ? (
             <View style={styles.cam}>
@@ -211,7 +211,7 @@ return (
            <View style={styles.change_cam}>
               <TouchableOpacity style={styles.button} onPress={switchCameraType}>
                 <Image
-                  style={{ width: 60, height: 60, right:15,top:15}}
+                  style={{ width: 60, height: 60, right:15}}
                   source={require("../../Image/change_camera.png")}
                 />
               </TouchableOpacity>
@@ -228,7 +228,7 @@ return (
           />
         </View>
         {capturedImageUri && ( // Chỉ render khi có ảnh được chụp
-        <View style={styles.sent}>
+          <View style={styles.sent}>
           <TouchableOpacity
             style={{ alignItems: "center", bottom: 110 }}
             onPress={sendPost} // Gọi hàm sendPost khi ấn
@@ -257,7 +257,6 @@ width:"100%",
 alignItems:"flex-end"
  },
   cam:{
-  top:5,
   width:'100%',
   alignItems:"center",
   position:"absolute",
@@ -288,7 +287,7 @@ alignItems:"flex-end"
   avt: {},
   name: {
     color: "white",
-    fontSize: 35,
+    fontSize: 21,
     fontWeight: "bold",
   },
   itempost: {

@@ -15,11 +15,13 @@ import MessageListScreen from './Screen/user/MessageListScreen';
 import MessProps from './Screen/MessProps';
 import Notifications from './Screen/user/Notifications';
 import Profile  from './Screen/BottomTab/Profile';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 const Stack = createNativeStackNavigator();
 
 export default function App(navigation) {
   return (
-      <NavigationContainer styles={styles.container}>
+    <SafeAreaProvider styles={styles.container}>
+      <NavigationContainer >
       <Stack.Navigator screenOptions={{headerShown: false}}>
         <Stack.Screen name="Hello" component={Hello} />
         <Stack.Screen name="Login" component={Login} />
@@ -36,6 +38,7 @@ export default function App(navigation) {
         <Stack.Screen name="MessProps" component={MessProps} /> 
       </Stack.Navigator>   
     </NavigationContainer>
+    </SafeAreaProvider>
 
   );
 }
@@ -43,7 +46,6 @@ export default function App(navigation) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
   },
