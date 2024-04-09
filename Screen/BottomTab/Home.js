@@ -7,13 +7,11 @@ import {
   Image,
   TextInput,
   TouchableOpacity,
-  Pressable,
 } from "react-native";
 import AxiosInstance from "../../helper/Axiostance";
 import { LinearGradient } from "expo-linear-gradient";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Dropdown } from "react-native-element-dropdown";
-import { StatusBar } from "expo-status-bar";
 import { useNavigation } from "@react-navigation/native";
 
 const Home = () => {
@@ -105,7 +103,7 @@ const Home = () => {
     }
   };
 
-  const sendMessage = async (userid, ID) => {
+  const sendMessage = async (USERID, ID) => {
     try {
       const token = await AsyncStorage.getItem("token");
       if (!token) {
@@ -113,17 +111,18 @@ const Home = () => {
         return;
       }
       // Kiểm tra nếu SENDERID và RECEIVERID giống nhau
-      if (parseInt(token) === userid) {
+      if (parseInt(token) === USERID) {
         alert("Không thể nhắn tin cho chính bạn!");
         return; // Kết thúc hàm nếu người dùng cố gắng gửi tin nhắn cho chính họ
       }
       const instance = await AxiosInstance();
       const body = {
         SENDERID: parseInt(token),
-        RECEIVERID: userid, // Thay đổi RECEIVERID theo người dùng nhận tin nhắn
+        RECEIVERID: USERID, // Thay đổi RECEIVERID theo người dùng nhận tin nhắn
         content: content, // Nội dung tin nhắn
         postid: ID,
       };
+      console.log(body);
       const response = await instance.post("/chats.php", body);
       if (response.status) {
         // Tin nhắn gửi thành công, có thể cập nhật giao diện hoặc thực hiện các hành động khác
@@ -252,13 +251,14 @@ const Home = () => {
             style={styles.iconsetting}
             source={require("../../Image/chu_click.png")}
           />
-          <View style={{ alignItems: "center" }}>
+          <View >
             <Dropdown
               style={styles.search}
               placeholder="Mọi người"
               placeholderStyle={styles.placeholderStyle}
               iconstyle={styles.iconStyle}
               selectedTextStyle={styles.placeholderStyle}
+              containerStyle={styles.dropdown}
               data={datafriend}
               labelField="label"
               valueField="value"
@@ -271,6 +271,13 @@ const Home = () => {
               }}
             />
           </View>
+          <View style={styles.viewSetting}>
+          <Image
+            style={styles.iconsetting}
+            source={require("../../Image/setting_icon.png")}
+          />
+          </View>
+        
         </View>
         <FlatList
           style={styles.FlatList}
@@ -279,8 +286,10 @@ const Home = () => {
           onRefresh={fetchPosts}
           keyboardShouldPersistTaps='handled' 
           // Trong FlatList renderItem:
-          renderItem={({ item }) => (
-            <View style={styles.itempost}>
+          renderItem={({ item, index }) => {
+            return (
+            <View style={[styles.itempost,  
+              index + 1 === posts.length ? {marginBottom: 90} : {}]}>
               <View style={styles.namepost}>
                 <Image source={{ uri: item.AVATAR }} style={styles.avt} />
                 <View style={{ flexDirection: "column", marginLeft: 10 }}>
@@ -300,7 +309,7 @@ const Home = () => {
               <View style={{ width: "90%", marginBottom: 20 }}>
                 <Image
                   style={{ width: 300, height: 300 }}
-                  source={{ uri: item.IMAGE }}
+                  source={{ uri: item.IMAGE}}
                 />
                 <View style={{ width: "90%", alignSelf: "center" }}>
                   <Text style={styles.status}>{item.CONTENT}</Text>
@@ -312,8 +321,7 @@ const Home = () => {
                     <Image
                       style={{
                         width: 38,
-                        height: 42,
-                        alignItems: "center",
+                        height: 42
                       }}
                       source={
                         isLikedMap[item.postid]
@@ -330,16 +338,18 @@ const Home = () => {
                     value={content.toString()}
                     onChangeText={(e) => setContent(e)}
                   />
-                  <Pressable onPress={() => sendMessage(item.userid, item.ID)}>
+                  <TouchableOpacity onPress={() => sendMessage(item.userid, item.ID)}>
                     <Image
-                      style={{ height: 50, width: 100 }}
-                      source={require("../../Image/send.png")}
+                      style={{ height: 40, width: 40 , top:5, left:5}}
+                      source={require("../../Image/sent.png")}
                     />
-                  </Pressable>
+                  </TouchableOpacity>
                 </View>
               </View>
             </View>
-          )}
+            )
+          }
+        }
           keyExtractor={(item, index) => index.toString()}
         />
       </LinearGradient>
@@ -356,7 +366,7 @@ const styles = StyleSheet.create({
   },
   placeholderStyle: {
     color: "#fff",
-    fontSize: 20,
+    fontSize: 18,
   },
   container: {
     flex: 1,
@@ -380,10 +390,10 @@ const styles = StyleSheet.create({
   },
   mes: {
     backgroundColor: "#E5D7F7",
-    marginLeft: 10,
+    marginLeft: 5,
     height: 45,
     borderRadius: 24,
-    width: "50%",
+    width: "75%",
     paddingHorizontal: 10,
     top: 5,
   },
@@ -438,7 +448,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    marginRight: 100,
     top: 63,
     position: "relative",
   },
@@ -457,7 +466,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#443A74",
     borderRadius: 24,
     fontSize: 13,
-    width: 145,
+    width: 160,
     fontWeight: "bold",
   },
   linearGradient: {
@@ -467,6 +476,14 @@ const styles = StyleSheet.create({
     flex: 1,
     width: "100%",
   },
+  viewSetting:{
+    width: 70,
+    alignItems: 'flex-end'
+  },
+  dropdown: {
+    marginTop: 5,
+    borderRadius: 24
+  }
 });
 
 export default Home;

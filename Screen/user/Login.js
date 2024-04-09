@@ -5,7 +5,6 @@ import {
   Image,
   TextInput,
   TouchableOpacity,
-  ScrollView,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import React, { useState } from "react";
@@ -52,8 +51,8 @@ const Login = ({navigation}) => {
         colors={["#3B21B7", "#8B64DA", "#D195EE", "#CECBD3"]}
         style={styles.linearGradient}
       >
-        <ScrollView>
-          <View style={styles.DIV}>
+       
+          
             <Image
               style={styles.image}
               source={require("../../Image/ClickClick.png")}
@@ -105,8 +104,8 @@ const Login = ({navigation}) => {
               <Text style={styles.Text4}>Don’t have an account?</Text>
               <Text onPress={actionRegister} style={styles.Text2}>Register</Text>
             </View>
-          </View>
-        </ScrollView>
+          
+       
       </LinearGradient>
     </View>
   );
@@ -131,7 +130,6 @@ const styles = StyleSheet.create({
   buttonSignin: {
     paddingStart: 20,
     width: 330,
-    right: 30,
     height: 60,
     backgroundColor: "#635A8F",
     borderRadius: 25,
@@ -158,7 +156,7 @@ const styles = StyleSheet.create({
 
   Remember: {
     width: 320,
-    right: 25,
+  
     margin: 10,
     alignItems: "center",
     justifyContent: "space-between",
@@ -167,18 +165,11 @@ const styles = StyleSheet.create({
   eye: {
     position: "absolute",
     top: 27,
-    right: 60,
-  },
-  DIV: {
-    position: "absolute",
-    top: 155,
-    left: 35,
   },
   TextInbutPassword: {
     fontSize: 20,
     paddingStart: 20,
     width: 320,
-    right: 30,
     height: 60,
     borderColor: "#FFFFFF",
     borderWidth: 3,
@@ -191,7 +182,6 @@ const styles = StyleSheet.create({
     fontSize: 20,
     paddingStart: 20,
     width: 320,
-    right: 30,
     height: 60,
     borderColor: "#FFFFFF",
     borderWidth: 3,
@@ -203,8 +193,8 @@ const styles = StyleSheet.create({
   TextSingIn: {
     marginTop: 30,
     marginBottom: 20,
-    right: 20,
     fontSize: 30,
+    right:110,
     fontWeight: "bold",
     color: "#FFFFFF",
   },
@@ -220,6 +210,8 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     flex: 1,
     width: "100%",
+    justifyContent:'center',
+    alignItems:'center'
   },
   buttonText: {
     fontSize: 18,

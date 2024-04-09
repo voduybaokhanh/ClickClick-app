@@ -5,7 +5,7 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { SpaceComponent } from "../components";
 
 const Hello = ({navigation}) => {
@@ -13,7 +13,6 @@ const Hello = ({navigation}) => {
     setTimeout (() => {
       navigation.navigate('Login')
     },3000);
-    return () => clearTimeout(timeout);
    },
    []);
   return (

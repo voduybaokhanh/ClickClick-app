@@ -90,10 +90,10 @@ function Mess({route}) {
   
     return (
       <View style={{ alignItems: isReceiver ? 'flex-start' : 'flex-end', marginVertical: 5 }}>
-        {item.postid && (
+        {item.POSTID && (
           <Image
             style={{ borderRadius: 20, width: 200, height: 150, marginBottom: 5 }}
-            source={{ uri: item.postid }}
+            source={{ uri: item.POSTID }}
           />
         )}
         {item.CONTENT && (
