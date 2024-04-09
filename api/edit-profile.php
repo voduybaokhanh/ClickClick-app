@@ -136,4 +136,4 @@ if (!empty($updatesPosts)) {
         )
     );
 }
-?>
+
