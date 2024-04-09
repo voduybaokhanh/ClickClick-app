@@ -33,7 +33,6 @@ try {
     // Duyệt qua từng cuộc trò chuyện để lấy hình ảnh từ bài đăng (nếu có)
     foreach ($chats as &$chat) {
         $postid = $chat['postid']; // Lấy postid từ cuộc trò chuyện
-
         if ($postid) {
             // Truy vấn để lấy hình ảnh từ bài đăng
             $getPostImageQuery = "SELECT image FROM posts WHERE ID = :postid";

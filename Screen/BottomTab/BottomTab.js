@@ -12,7 +12,6 @@ import CustomNotificationIcon from './../../Image/notification_icon.png';
 import CustomAddPostIcon from './../../Image/addpost_icon.png';
 import CustomProfileIcon from './../../Image/profile_icon.png';
 import MessageListScreen from '../user/MessageListScreen';
-import TestPost from './TestPost';
 
 const Tab = createBottomTabNavigator();
 

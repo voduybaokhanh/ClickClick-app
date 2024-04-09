@@ -167,7 +167,7 @@ return (
         </View>
         <View style={styles.itempost}>
           <View style={styles.namepost}>
-            <View style={{ flexDirection: "column", marginLeft: 10 }}>
+            <View style={{ marginLeft: 10,flexDirection:"row" }}>
               <Text style={styles.name}>You</Text>
             </View>
           </View>
@@ -186,35 +186,39 @@ return (
           </View>
         </View>
         
-        <View style={{ justifyContent:"space-evenly",flexDirection:"row",alignItems:"center",bottom:47 }}>
-        <View>
-              <TouchableOpacity style={styles.button} onPress={switchCameraType}>
-                <Image
-                  style={{ width: 80, height: 80 }}
-                  source={require("../../Image/camerasau.png")}
-                />
-              </TouchableOpacity>
-            </View>
+        <View style={{ flexDirection:"row",alignItems:"center" }}>
+       
           {!capturedImageUri ? (
+            <View style={styles.cam}>
             <TouchableOpacity style={styles.button} onPress={takePicture}>
               <Image
                 style={{ width: 80, height: 80 }}
                 source={require("../../Image/camera_icon.png")}
               />
             </TouchableOpacity>
+            </View>
+            
           ) : (
-            <View>
+            <View style={styles.cam}>
               <TouchableOpacity style={styles.button} onPress={retakePicture}>
                 <Image
                   style={{ width: 80, height: 80 }}
-                  source={require("../../Image/delete.png")}
+                  source={require("../../Image/delete_icon.png")}
                 />
               </TouchableOpacity>
             </View>
           )}
+           <View style={styles.change_cam}>
+              <TouchableOpacity style={styles.button} onPress={switchCameraType}>
+                <Image
+                  style={{ width: 60, height: 60, right:15}}
+                  source={require("../../Image/change_camera.png")}
+                />
+              </TouchableOpacity>
+         </View>
         </View>
         
-        <View style={{ marginTop: 10, alignItems: "center" }}>
+        <View style={{ marginTop: 10, alignItems: "center"}}>
           <TextInput
             style={styles.mes}
             placeholder="Add a message"
@@ -224,15 +228,17 @@ return (
           />
         </View>
         {capturedImageUri && ( // Chỉ render khi có ảnh được chụp
+          <View style={styles.sent}>
           <TouchableOpacity
             style={{ alignItems: "center", bottom: 110 }}
             onPress={sendPost} // Gọi hàm sendPost khi ấn
           >
              <Image
-                style={{ width: 150, height: 80,borderRadius:70 }}
-                source={require("../../Image/send.png")}
+                style={{ width: 80, height: 80}}
+                source={require("../../Image/icon_sent.png")}
               />
           </TouchableOpacity>
+          </View>
         )}
       </ScrollView>
     </LinearGradient>
@@ -242,13 +248,24 @@ return (
 
 
 const styles = StyleSheet.create({
-  
+  sent:{
+    width:"100%",
+    alignItems:"flex-start"
+     },
+ change_cam:{
+width:"100%",
+alignItems:"flex-end"
+ },
+  cam:{
+  width:'100%',
+  alignItems:"center",
+  position:"absolute",
+  },
   text1: {
     fontSize: 20,
   },
   mes: {
     backgroundColor: "#E5D7F7",
-    marginLeft: 10,
     height: 50,
     borderRadius: 24,
     width: "80%",
@@ -270,7 +287,7 @@ const styles = StyleSheet.create({
   avt: {},
   name: {
     color: "white",
-    fontSize: 35,
+    fontSize: 21,
     fontWeight: "bold",
   },
   itempost: {
