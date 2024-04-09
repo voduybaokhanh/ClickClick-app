@@ -277,6 +277,7 @@ const Home = () => {
           data={posts}
           refreshing={reload}
           onRefresh={fetchPosts}
+          keyboardShouldPersistTaps='handled' 
           // Trong FlatList renderItem:
           renderItem={({ item }) => (
             <View style={styles.itempost}>
