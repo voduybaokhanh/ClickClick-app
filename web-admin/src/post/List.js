@@ -50,9 +50,9 @@ const List = ({ saveUser }) => {
             }
         });
     }
-    
+
     const handleCancelReport = async (ID) => {
-        
+
         try {
             const axiosInstance = await AxiosInstance();
             const response = await axiosInstance.get(`/cancel.php?postid=${ID}`); // Thay đổi phương thức từ post sang get và truyền postid qua URL
@@ -91,7 +91,10 @@ const List = ({ saveUser }) => {
                             <td>{item.ID}</td>
                             <td>{item.NAME}</td>
                             <td>{item.CONTENT}</td>
-                            <td>{item.IMAGE}</td>
+                            <td style={{ maxWidth: "15px", maxHeight: "15px" }}>
+                                <img src={item.IMAGE} style={{ maxWidth: "100%", height: "auto" }} /> {/* Điều chỉnh kích thước hình ảnh */}
+                            </td>
+
                             <td>{item.TIME}</td>
                             <td>
                                 <button className="btn btn-primary" onClick={() => handleCancelReport(item.ID)}>Cancel</button>

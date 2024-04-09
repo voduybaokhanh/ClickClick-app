@@ -18,6 +18,7 @@ const Home = () => {
   const [posts, setPosts] = useState([]);
   const [reload, setReload] = useState(false);
   const [isLikedMap, setIsLikedMap] = useState({});
+  const [isReportedMap, setIsReportedMap] = useState({});
   const [content, setContent] = useState("");
   const [friendID, setfriendID] = useState("");
   const navigation = useNavigation();
@@ -88,7 +89,6 @@ const Home = () => {
           value: friendship.FRIENDSHIPID.toString(),
         })
       );
-
       // Thêm người dùng hiện tại vào mảng datafriend
       const currentUser = { label: "Tôi", value: token };
       const updatedDataFriend = [currentUser, ...formattedData];
@@ -182,28 +182,42 @@ const Home = () => {
     }
   };
 
+  const handleBaocao = async (postid, userId) => {
+    try {
+      const token = await AsyncStorage.getItem("token");
+      if (!token) {
+        console.log("Token (userid) not found in AsyncStorage");
+        return;
+      }
+      const instance = await AxiosInstance();
+      const available = 0; // Action khi người dùng thích bài viết
+      const body = {
+        userid: parseInt(token),
+        available: available,
+        postid: postid,
+      };
+      const response = await instance.post("/report.php", body);
+      // Cập nhật trạng thái isReported
+      const newReportMap = { ...isReportedMap };
+      newReportMap[postid] = response.available === 0;
+      setIsReportedMap(newReportMap);
+      // Cập nhật trạng thái dữ liệu của bài viết trong post
+      const updatedPosts = posts.map((post) => {
+        if (post.postid === postid) {
+          return {
+            ...post,
+            isLiked: response.available === 0,
+            REPORT: response.REPORT, // Cập nhật số lượt thích mới
+          };
+        }
+        return post;
+      });
+      setPosts(updatedPosts);
 
-
-  // const handleBaocao = async (postid, userId) => {
-  //   try {
-  //     const axiosInstance = await AxiosInstance();
-  //     const response = await axiosInstance.get(`/report.php?postid=${ID}`); // Thay đổi phương thức từ post sang get và truyền postid qua URL
-  //     console.log(response);
-  //     if (response.status) {
-  //         swal('Báo cáo thành công');
-  //         // Refresh list after successful cancellation
-  //         const updatedPosts = posts.filter(posts => posts.ID !== ID);
-  //         setPosts(updatedPosts);
-  //     } else {
-  //         swal('Báo cáo thất bại');
-  //     }
-  // } catch (error) {
-  //     console.error('Error canceling report:', error);
-  // }
-   
-  // };
-
-
+    } catch (error) {
+      console.log("Lỗi ở đâu rồi đó");
+    }
+  };
 
   // Trong phần xử lý phản hồi từ API:
   const handleThatim = async (postid, userId) => {
@@ -289,83 +303,84 @@ const Home = () => {
             />
           </View>
           <View style={styles.viewSetting}>
-          <Image
-            style={styles.iconsetting}
-            source={require("../../Image/setting_icon.png")}
-          />
+            <Image
+              style={styles.iconsetting}
+              source={require("../../Image/setting_icon.png")}
+            />
           </View>
-        
+
         </View>
         <FlatList
           style={styles.FlatList}
-          data={posts.filter(post => post.available === 1)}
+          data={posts}
           refreshing={reload}
           onRefresh={fetchPosts}
+          keyboardShouldPersistTaps='handled'
           // Trong FlatList renderItem:
           renderItem={({ item, index }) => {
             return (
-            <View style={[styles.itempost,  
-              index + 1 === posts.length ? {marginBottom: 90} : {}]}>
-              <View style={styles.namepost}>
-                <Image source={{ uri: item.AVATAR }} style={styles.avt} />
-                <View style={{ flexDirection: "column", marginLeft: 10 }}>
-                  <Text style={styles.name}>{item.NAME}</Text>
-                  <Text style={styles.time}>{item.TIME}</Text>
-                </View>
-                <TouchableOpacity
-                  style={{ marginLeft: "auto" }}
-                  onPress={handleBaocao}
-                >
-                  <Image
-                    style={styles.iconmore}
-                    source={require("../../Image/more_icon.png")}
-                  />
-                </TouchableOpacity>
-              </View>
-              <View style={{ width: "90%", marginBottom: 20 }}>
-                <Image
-                  style={{ width: 300, height: 300 }}
-                  source={{ uri: item.IMAGE}}
-                />
-                <View style={{ width: "90%", alignSelf: "center" }}>
-                  <Text style={styles.status}>{item.CONTENT}</Text>
-                </View>
-                <View style={styles.tim_mes}>
+              <View style={[styles.itempost,
+              index + 1 === posts.length ? { marginBottom: 90 } : {}]}>
+                <View style={styles.namepost}>
+                  <Image source={{ uri: item.AVATAR }} style={styles.avt} />
+                  <View style={{ flexDirection: "column", marginLeft: 10 }}>
+                    <Text style={styles.name}>{item.NAME}</Text>
+                    <Text style={styles.time}>{item.TIME}</Text>
+                  </View>
                   <TouchableOpacity
-                    onPress={() => handleThatim(item.postid, item.USERID)}
+                    style={{ marginLeft: "auto" }}
+                    onPress={() => handleBaocao(item.postid, item.USERID)}
                   >
                     <Image
-                      style={{
-                        width: 38,
-                        height: 42
-                      }}
-                      source={
-                        isLikedMap[item.postid]
-                          ? require("../../Image/hearted.png") // Nếu đã like, hiển thị icon hearted
-                          : require("../../Image/heart.png") // Ngược lại, hiển thị icon heart
-                      }
-                    />
-                  </TouchableOpacity>
-                  <Text style={styles.postText}>{item.LIKES}</Text>
-                  <TextInput
-                    style={styles.mes}
-                    placeholder="Add a message"
-                    placeholderTextColor={"#635A8F"}
-                    value={content.toString()}
-                    onChangeText={(e) => setContent(e)}
-                  />
-                  <TouchableOpacity onPress={() => sendMessage(item.userid, item.ID)}>
-                    <Image
-                      style={{ height: 40, width: 40 , top:5, left:5}}
-                      source={require("../../Image/sent.png")}
+                      style={styles.iconmore}
+                      source={require("../../Image/more_icon.png")}
                     />
                   </TouchableOpacity>
                 </View>
+                <View style={{ width: "90%", marginBottom: 20 }}>
+                  <Image
+                    style={{ width: 300, height: 300 }}
+                    source={{ uri: item.IMAGE }}
+                  />
+                  <View style={{ width: "90%", alignSelf: "center" }}>
+                    <Text style={styles.status}>{item.CONTENT}</Text>
+                  </View>
+                  <View style={styles.tim_mes}>
+                    <TouchableOpacity
+                      onPress={() => handleThatim(item.postid, item.USERID)}
+                    >
+                      <Image
+                        style={{
+                          width: 38,
+                          height: 42
+                        }}
+                        source={
+                          isLikedMap[item.postid]
+                            ? require("../../Image/hearted.png") // Nếu đã like, hiển thị icon hearted
+                            : require("../../Image/heart.png") // Ngược lại, hiển thị icon heart
+                        }
+                      />
+                    </TouchableOpacity>
+                    <Text style={styles.postText}>{item.LIKES}</Text>
+                    <TextInput
+                      style={styles.mes}
+                      placeholder="Add a message"
+                      placeholderTextColor={"#635A8F"}
+                      value={content.toString()}
+                      onChangeText={(e) => setContent(e)}
+                    />
+                    <TouchableOpacity onPress={() => sendMessage(item.userid, item.ID)}>
+                      <Image
+                        style={{ height: 40, width: 40, top: 5, left: 5 }}
+                        source={require("../../Image/sent.png")}
+                      />
+                    </TouchableOpacity>
+                  </View>
+                </View>
               </View>
-            </View>
             )
           }
-        }
+          }
           keyExtractor={(item, index) => index.toString()}
         />
       </LinearGradient>
@@ -492,7 +507,7 @@ const styles = StyleSheet.create({
     flex: 1,
     width: "100%",
   },
-  viewSetting:{
+  viewSetting: {
     width: 70,
     alignItems: 'flex-end'
   },
