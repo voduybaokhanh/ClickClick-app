@@ -9,21 +9,18 @@ include_once './connection.php';
 
 try {
     // Đọc dữ liệu từ database
-    $sqlQuery = "SELECT AVATAR, TIME, NAME, CONTENT, LIKES FROM posts";
+    $sqlQuery = "SELECT AVATAR, TIME, NAME, CONTENT, LIKES, IMAGE FROM posts";
     $stmt = $dbConn->prepare($sqlQuery);
     $stmt->execute();
     // Lấy tất cả dữ liệu từ câu lệnh PDO
     $posts = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    // Đếm số lượng bài đăng
-    $postCount = count($posts);
+   
 
     // Trả về dữ liệu dạng JSON
     echo json_encode(
         array(
             "status" => true,
-            "postCount" => $postCount,
-            "all-posts" => $posts
         )
     );
 } catch (Exception $e) {
