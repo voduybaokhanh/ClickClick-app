@@ -5,18 +5,22 @@ import {
   View,
   Image,
   ScrollView,
-  TouchableOpacity
+  TouchableOpacity,
+  FlatList,
+  Dimensions
 } from "react-native";
 import AxiosInstance from "../../helper/Axiostance";
 import { LinearGradient } from "expo-linear-gradient";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useNavigation } from '@react-navigation/native';
-
+import { useNavigation } from "@react-navigation/native";
+import MasonryList from '@react-native-seoul/masonry-list';
 
 const Profile = () => {
   const navigation = useNavigation();
   const [user, setUser] = useState(null); // State to hold user data
+  const [posts, setposts] = useState([]);
+  const [friends, setfriends] = useState([]);
 
   useEffect(() => {
     fetchProfile(); // Call fetchProfile when the component mounts
@@ -24,18 +28,20 @@ const Profile = () => {
 
   const fetchProfile = async () => {
     try {
-      const token = await AsyncStorage.getItem("token");
-      const body = { userid: parseInt(token)};
+      const userid = await AsyncStorage.getItem("token");
       const instance = await AxiosInstance();
-      const result = await instance.post("/get-userid.php", body);
-      console.log(user);
+      const result = await instance.get("/get-profile.php", {
+        params: { userid: parseInt(userid) },
+      });
       setUser(result.user); // Set the fetched user data into state
+      setposts(result.posts);
+      setfriends(result.friends);
+      console.log(">>Pro5 : " + JSON.stringify(result));
     } catch (error) {
       console.error("Error fetching profile: ", error);
     }
-  }
-  
-  
+  };
+
   return (
     <LinearGradient
       locations={[0.05, 0.4, 0.8, 1]}
@@ -43,44 +49,41 @@ const Profile = () => {
       style={styles.linearGradient}
     >
       <SafeAreaView style={styles.container}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Image source={require("../../Image/arrow-left.png")} />
-        </TouchableOpacity>
-        <ScrollView showsVerticalScrollIndicator={false}>
-          {/* Check if user state is null before rendering user data */}
+        <View style={styles.head}>
+          <TouchableOpacity onPress={() => navigation.goBack()}>
+            <Image source={require("../../Image/Vector.png")} />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => navigation.goBack()}>
+            <Image source={require("../../Image/edit.png")} />
+          </TouchableOpacity>
+        </View>
           {user && (
             <View style={{ alignSelf: "center" }}>
               <View style={styles.profileImage}>
-                <Image
-                  source={{ uri: user.AVATAR }}
-                  style={styles.image1}
-                />
+                <Image source={{ uri: user.AVATAR }} style={styles.image1} />
               </View>
-  
+
               <View style={styles.infoContainer}>
                 <Text
-                  style={[
-                    styles.name,
-                    { fontWeight: "500", fontSize: 21 },
-                  ]}
+                  style={[styles.name, { fontWeight: "500", fontSize: 21 }]}
                 >
                   {user.NAME}
                 </Text>
                 <Text
-                  style={[
-                    styles.text10,
-                    { color: "#4F39B4", fontSize: 20 },
-                  ]}
+                  style={[styles.text10, { color: "#4F39B4", fontSize: 20 }]}
                 >
                   {user.EMAIL}
                 </Text>
               </View>
-  
+
               <View style={styles.statsContainer}>
                 <View style={styles.statsBox}>
+                  <Text style={[styles.text, styles.subText]}>
+                    {posts.length}
+                  </Text>
                   <Text style={[styles.text, styles.subText]}>Posts</Text>
                 </View>
-  
+
                 <View
                   style={[
                     styles.statsBox,
@@ -90,11 +93,30 @@ const Profile = () => {
                     },
                   ]}
                 >
-                  <Text style={[styles.text, styles.subText]}>Friend</Text>
+                  <View style={styles.statsBox}>
+                    <Text style={[styles.text, styles.subText]}>
+                      {friends.length}
+                    </Text>
+                    <Text style={[styles.text, styles.subText]}>Friend</Text>
+                  </View>
                 </View>
               </View>
 
-              <Text style={styles.status}>{user.TEXT || "No status available"}</Text>
+              <Text style={styles.status}>
+                {user.TEXT || "No status available"}
+              </Text>
+
+              <MasonryList
+                style={styles.flatList}
+                data={posts}
+                numColumns={2}
+                renderItem={({ item, i }) => {
+                  return (
+                    <Image source={{ uri: item.IMAGE }} style={[styles.itemPost, i % 3 === 0 ? {height:240} : {}]} />
+                  );
+                }}
+                keyExtractor={(item, index) => index.toString()}
+              />
             </View>
           )}
           {!user && (
@@ -102,7 +124,6 @@ const Profile = () => {
               <Text>Loading...</Text>
             </View>
           )}
-        </ScrollView>
       </SafeAreaView>
     </LinearGradient>
   );
@@ -111,40 +132,40 @@ const Profile = () => {
 export default Profile;
 
 const styles = StyleSheet.create({
-  name:{
-      fontFamily: "HelveticaNeue",
-      color: "#3B21B2",
-      fontWeight:"bold"         
+  head: {
+    flexDirection: "row",
+    justifyContent: "space-between",
   },
-  image1:{
-   height:100,
-   width:100,
+  name: {
+    color: "#3B21B2",
+    fontWeight: "bold",
+  },
+  image1: {
+    height: 80,
+    width: 80,
     borderRadius: 75,
     //overflow: "hidden",
     paddingTop: 2,
   },
   iconback: {
-    flexDirection : 'row',
-    justifyContent : 'space-between',
-    marginTop : 10,
-    marginHorizontal : 16,
-    color : '#FFFFFF'
-    
-   
-     
-   },
-
-  pic:{
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    flexDirection:'row',
-    marginBottom:1,
-    marginTop:5
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginTop: 10,
+    marginHorizontal: 16,
+    color: "#FFFFFF",
   },
 
-  row:{
-    flexDirection: 'row',
+  pic: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    flexDirection: "row",
+    marginBottom: 1,
+    marginTop: 5,
+  },
+
+  row: {
+    flexDirection: "row",
   },
 
   status: {
@@ -166,10 +187,9 @@ const styles = StyleSheet.create({
   },
 
   subText: {
-    fontSize: 12,
-    color: "#FFFFFF",
-    textTransform: "uppercase",
-    fontWeight: "500",
+    fontSize: 20,
+    color: "#EFEFEF",
+    fontWeight: "400",
   },
 
   linearGradient: {
@@ -180,24 +200,18 @@ const styles = StyleSheet.create({
     width: "100 %",
   },
   text10: {
-    fontFamily: "HelveticaNeue",
     color: "#3B21B2",
-    fontSize:22,
-    fontSize:"300"
+    fontSize: 22,
+    fontSize: "300",
   },
-  text: {
-    fontFamily: "HelveticaNeue",
-    color: "#ffffff",
-    fontWeight:"bold",
-    fontSize:22
-  },
+
   image: {
-    flex:1,
-    height:undefined,
-    width:undefined
+    flex: 1,
+    height: undefined,
+    width: undefined,
   },
   profileImage: {
-    alignItems:'center'
+    alignItems: "center",
   },
 
   infoContainer: {
@@ -214,4 +228,18 @@ const styles = StyleSheet.create({
     marginHorizontal: 1,
     padding: 1,
   },
+  flatList: {
+    flex: 1,
+    marginTop: 10,
+    marginBottom: 160
+  },
+  itemPost:{
+    width: Dimensions.get('window').width/2 - 30,
+    height: 150,
+    resizeMode: 'cover',
+    margin: 5,
+    overflow: 'hidden',
+    position: 'relative',
+    borderRadius: 10
+  }
 });
