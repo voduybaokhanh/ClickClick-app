@@ -171,57 +171,54 @@ return (
               <Text style={styles.name}>You</Text>
             </View>
           </View>
-          <View style={{ width: "100%" ,height:"100%", backgroundColor:'red'}}>
-            <Camera
+      <View style={styles.viewCam}>
+            {
+              !capturedImageUri ? 
+              <Camera
               style={styles.camera}
               ref={cameraRef}
               type={cameraType}
             />
-            {capturedImageUri && (
-              <Image
-                source={{ uri: capturedImageUri }}
-                style={styles.capturedImage}
-              />
-            )}
+            :
+            <Image
+            source={{ uri: capturedImageUri }}
+            style={styles.capturedImage}
+          />
+            }
+        
           </View>
-          <View style={{ flexDirection:"row",alignItems:"center", backgroundColor:'red',
-                       marginTop:20
-                      }}>
-      
-         {!capturedImageUri ? (
-           <View style={styles.cam}>
-           <TouchableOpacity style={styles.button} onPress={takePicture}>
-             <Image
-               style={{ width: 80, height: 80 }}
-               source={require("../../Image/camera_icon.png")}
-             />
-           </TouchableOpacity>
-           </View>
-           
-         ) : (
-           <View style={styles.cam}>
-             <TouchableOpacity style={styles.button} onPress={retakePicture}>
-               <Image
-                 style={{ width: 80, height: 80 }}
-                 source={require("../../Image/delete_icon.png")}
-               />
-             </TouchableOpacity>
-           </View>
-         )}
+          <View style={{flexDirection:"row",justifyContent:"space-between", width:"90%", marginTop:15}}>
           <View style={styles.change_cam}>
-             <TouchableOpacity style={styles.button} onPress={switchCameraType}>
-               <Image
-                 style={{ width: 60, height: 60, right:15}}
-                 source={require("../../Image/change_camera.png")}
-               />
-             </TouchableOpacity>
+          
+     </View>
+          {!capturedImageUri ? (
+        <View style={styles.cam}>
+        <TouchableOpacity  onPress={takePicture}>
+          <Image
+            source={require("../../Image/camera_icon.png")}
+          />
+        </TouchableOpacity>
         </View>
         
-       </View>
+      ) : (
+        <View style={styles.cam}>
+          <TouchableOpacity onPress={retakePicture}>
+            <Image
+              source={require("../../Image/delete_icon.png")}
+            />
+          </TouchableOpacity>
         </View>
-        
-       
-        
+      )}
+       <View style={styles.change_cam}>
+          <TouchableOpacity style={styles.button} onPress={switchCameraType}>
+            <Image
+              style={{ width: 60, height: 60}}
+              source={require("../../Image/change_camera.png")}
+            />
+          </TouchableOpacity>
+     </View>
+     </View>
+        </View>
         {/* <View style={{ marginTop: 10, alignItems: "center"}}>
           <TextInput
             style={styles.mes}
@@ -231,7 +228,6 @@ return (
             onChangeText={setContent} // Cập nhật nội dung bài viết khi người dùng nhập
           />
         </View> */}
-       
       </ScrollView>
     </LinearGradient>
   </View>
@@ -240,19 +236,19 @@ return (
 
 
 const styles = StyleSheet.create({
-  sent:{
-    width:"100%",
-    alignItems:"flex-start"
-     },
- change_cam:{
-width:"100%",
-alignItems:"flex-end"
- },
-  cam:{
-  width:'100%',
-  alignItems:"center",
-  position:"absolute",
+  change_cam:{
+    justifyContent:"center",
+    width: 60, height: 60,
+    marginTop:5
   },
+  cam:{
+   
+  },
+  viewCam:{
+width:"90%",
+height:"62%"
+  },
+  
   text1: {
     fontSize: 20,
   },
@@ -272,11 +268,12 @@ alignItems:"flex-end"
     top: 12,
     width: "90%",
     marginBottom: 20,
+    height:"8%"
   },
   iconmore: {
     marginLeft: "auto",
   },
-  avt: {},
+  
   name: {
     color: "white",
     fontSize: 21,
@@ -284,7 +281,7 @@ alignItems:"flex-end"
   },
   itempost: {
     width: "auto",
-    height: 400,
+    height:400,
     backgroundColor: "#BFA7FF",
     top: 30,
     borderRadius: 20,
@@ -319,14 +316,10 @@ alignItems:"flex-end"
     width: "100%",
   },
   camera: {
-    width: "100%",
-    height: "100%",
+  width:"100%",height:"100%"
   },
   capturedImage: {
-    width: "100%",
-    height: "100%",
-    position: "absolute",
-    zIndex: 1,
+    width:"100%",height:"100%"
   },
 });
 
