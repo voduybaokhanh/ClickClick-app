@@ -190,7 +190,7 @@ const Home = () => {
         return;
       }
       const instance = await AxiosInstance();
-      const available = 0; // Action khi người dùng thích bài viết
+      const available = 0; // Action khi người báo cáo bài viết
       const body = {
         userid: parseInt(token),
         available: available,
@@ -207,15 +207,44 @@ const Home = () => {
           return {
             ...post,
             isLiked: response.available === 0,
-            REPORT: response.REPORT, // Cập nhật số lượt thích mới
+            REPORT: response.REPORT, // Cập nhật báo cáo
           };
         }
         return post;
       });
       setPosts(updatedPosts);
-
+      // Hiển thị thông báo báo cáo thành công
+      Alert.alert("Success", "Báo cáo thành công");
     } catch (error) {
       console.log("Lỗi ở đâu rồi đó");
+    }
+  };
+
+  const handleDeletePost = async (postid) => {
+    try {
+      const token = await AsyncStorage.getItem("token");
+      if (!token) {
+        console.log("Token (userid) not found in AsyncStorage");
+        return;
+      }
+      const instance = await AxiosInstance();
+      const body = {
+        userid: parseInt(token),
+        postid: postid,
+      };
+      const response = await instance.post("/delete-post.php", body);
+      if (response.status) {
+        // Xóa bài viết khỏi danh sách hiện tại
+        const updatedPosts = posts.filter(post => post.postid !== postid);
+        setPosts(updatedPosts);
+        // Hiển thị thông báo xóa bài viết thành công
+        Alert.alert("Success", "Bài viết đã được xóa thành công");
+      } else {
+        // Hiển thị thông báo nếu xóa bài viết không thành công
+        Alert.alert("Error", "Đã có lỗi xảy ra. Vui lòng thử lại sau");
+      }
+    } catch (error) {
+      console.error("Error deleting post:", error);
     }
   };
 
@@ -331,12 +360,14 @@ const Home = () => {
                     style={{ marginLeft: "auto" }}
                     onPress={() => handleBaocao(item.postid, item.USERID)}
                   >
-                    <Image
-                      style={styles.iconmore}
-                      source={require("../../Image/more_icon.png")}
-                    />
                   </TouchableOpacity>
+                  <Button style={styles.iconmore}
+                    source={require("../../Image/more_icon.png")}>
+
+                  </Button>
                 </View>
+
+
                 <View style={{ width: "90%", marginBottom: 20 }}>
                   <Image
                     style={{ width: 300, height: 300 }}
