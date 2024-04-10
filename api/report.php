@@ -20,19 +20,23 @@ try {
     $userid = $data->userid;
     $postid = $data->postid;
 
-    // Thêm bản ghi vào bảng reports
-    $addReportQuery = "INSERT INTO reports (userid, postid, time) VALUES (:userid, :postid, NOW())";
-    $addReportStmt = $dbConn->prepare($addReportQuery);
-    $addReportStmt->bindParam(':userid', $userid, PDO::PARAM_INT);
-    $addReportStmt->bindParam(':postid', $postid, PDO::PARAM_INT);
-    $addReportStmt->execute();
+    // Kiểm tra xem bài viết có tồn tại không
+    $checkPostQuery = "SELECT * FROM posts WHERE id = :postid";
+    $checkPostStmt = $dbConn->prepare($checkPostQuery);
+    $checkPostStmt->bindParam(':postid', $postid, PDO::PARAM_INT);
+    $checkPostStmt->execute();
+    $post = $checkPostStmt->fetch(PDO::FETCH_ASSOC);
 
-    // Ẩn bài viết cho người dùng đó
-    $hidePostQuery = "UPDATE posts SET available = 0 WHERE id = :postid AND userid != :userid";
-    $hidePostStmt = $dbConn->prepare($hidePostQuery);
-    $hidePostStmt->bindParam(':postid', $postid, PDO::PARAM_INT);
-    $hidePostStmt->bindParam(':userid', $userid, PDO::PARAM_INT);
-    $hidePostStmt->execute();
+    if (!$post) {
+        http_response_code(404);
+        echo json_encode(array('status' => false, 'message' => 'Bài viết không tồn tại'));
+        exit;
+    }
+    // Cập nhật cột AVAILABLE trong bảng POSTS
+    $updateAvailableQuery = "UPDATE posts SET available = 0 WHERE id = :postid";
+    $updateAvailableStmt = $dbConn->prepare($updateAvailableQuery);
+    $updateAvailableStmt->bindParam(':postid', $postid, PDO::PARAM_INT);
+    $updateAvailableStmt->execute();
 
     echo json_encode(array('status' => true, 'message' => 'Báo cáo thành công'));
 } catch (Exception $e) {
