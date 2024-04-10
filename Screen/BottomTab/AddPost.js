@@ -171,7 +171,7 @@ return (
               <Text style={styles.name}>You</Text>
             </View>
           </View>
-          <View style={{ width: "90%" }}>
+          <View style={{ width: "100%" ,height:"100%", backgroundColor:'red'}}>
             <Camera
               style={styles.camera}
               ref={cameraRef}
@@ -184,41 +184,45 @@ return (
               />
             )}
           </View>
+          <View style={{ flexDirection:"row",alignItems:"center", backgroundColor:'red',
+                       marginTop:20
+                      }}>
+      
+         {!capturedImageUri ? (
+           <View style={styles.cam}>
+           <TouchableOpacity style={styles.button} onPress={takePicture}>
+             <Image
+               style={{ width: 80, height: 80 }}
+               source={require("../../Image/camera_icon.png")}
+             />
+           </TouchableOpacity>
+           </View>
+           
+         ) : (
+           <View style={styles.cam}>
+             <TouchableOpacity style={styles.button} onPress={retakePicture}>
+               <Image
+                 style={{ width: 80, height: 80 }}
+                 source={require("../../Image/delete_icon.png")}
+               />
+             </TouchableOpacity>
+           </View>
+         )}
+          <View style={styles.change_cam}>
+             <TouchableOpacity style={styles.button} onPress={switchCameraType}>
+               <Image
+                 style={{ width: 60, height: 60, right:15}}
+                 source={require("../../Image/change_camera.png")}
+               />
+             </TouchableOpacity>
         </View>
         
-        <View style={{ flexDirection:"row",alignItems:"center" }}>
+       </View>
+        </View>
+        
        
-          {!capturedImageUri ? (
-            <View style={styles.cam}>
-            <TouchableOpacity style={styles.button} onPress={takePicture}>
-              <Image
-                style={{ width: 80, height: 80 }}
-                source={require("../../Image/camera_icon.png")}
-              />
-            </TouchableOpacity>
-            </View>
-            
-          ) : (
-            <View style={styles.cam}>
-              <TouchableOpacity style={styles.button} onPress={retakePicture}>
-                <Image
-                  style={{ width: 80, height: 80 }}
-                  source={require("../../Image/delete_icon.png")}
-                />
-              </TouchableOpacity>
-            </View>
-          )}
-           <View style={styles.change_cam}>
-              <TouchableOpacity style={styles.button} onPress={switchCameraType}>
-                <Image
-                  style={{ width: 60, height: 60, right:15}}
-                  source={require("../../Image/change_camera.png")}
-                />
-              </TouchableOpacity>
-         </View>
-        </View>
         
-        <View style={{ marginTop: 10, alignItems: "center"}}>
+        {/* <View style={{ marginTop: 10, alignItems: "center"}}>
           <TextInput
             style={styles.mes}
             placeholder="Add a message"
@@ -226,20 +230,8 @@ return (
             value={content}
             onChangeText={setContent} // Cập nhật nội dung bài viết khi người dùng nhập
           />
-        </View>
-        {capturedImageUri && ( // Chỉ render khi có ảnh được chụp
-          <View style={styles.sent}>
-          <TouchableOpacity
-            style={{ alignItems: "center", bottom: 110 }}
-            onPress={sendPost} // Gọi hàm sendPost khi ấn
-          >
-             <Image
-                style={{ width: 80, height: 80}}
-                source={require("../../Image/icon_sent.png")}
-              />
-          </TouchableOpacity>
-          </View>
-        )}
+        </View> */}
+       
       </ScrollView>
     </LinearGradient>
   </View>
@@ -292,7 +284,7 @@ alignItems:"flex-end"
   },
   itempost: {
     width: "auto",
-    height: 500,
+    height: 400,
     backgroundColor: "#BFA7FF",
     top: 30,
     borderRadius: 20,
@@ -328,7 +320,7 @@ alignItems:"flex-end"
   },
   camera: {
     width: "100%",
-    height: 350,
+    height: "100%",
   },
   capturedImage: {
     width: "100%",
