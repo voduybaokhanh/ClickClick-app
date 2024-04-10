@@ -13,7 +13,7 @@ try {
     $data = json_decode(file_get_contents("php://input"));
 
     // Kiểm tra đăng nhập
-    if (!isset($data->userid)) {
+    if (!isset($data->SENDERID)) {
         echo json_encode(array('status' => false, 'message' => 'Vui lòng đăng nhập.'));
         exit;
     }
@@ -25,7 +25,7 @@ try {
         exit;
     }
 
-    $SENDERID = $data->userid;
+    $SENDERID = $data->SENDERID;
     $RECEIVERID = $data->RECEIVERID;
     $content = $data->content;
 

@@ -5,22 +5,40 @@ header("Access-Control-Allow-Origin: *");
 header("Access-Control-Max-Age: 3600");
 header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
 
-//http://127.0.0.1:8686/get-post-detail.php?id=1
-// lấy chi tiết 1 bản tin
 include_once './connection.php';
-$data = json_decode(file_get_contents("php://input"));
-$id = $data->id;
-// đọc dữ liệu từ database 
-// Lấy thông tin bài viết mới thêm vào
-$postQuery = "SELECT * FROM posts WHERE id = :id";
-$postStmt = $dbConn->prepare($postQuery);
-$postStmt->bindParam(':id', $id, PDO::PARAM_INT);
-$postStmt->execute();
-$post = $postStmt->fetch(PDO::FETCH_ASSOC);
 
-echo json_encode(
-    array(
-        "status" => true,
-        "post" => $post
-    )
-);
+try {
+    // Lấy danh sách các bài viết bị report
+    $getReportedPostsQuery = "SELECT * FROM posts WHERE id IN (SELECT postid FROM reports)";
+    $getReportedPostsStmt = $dbConn->prepare($getReportedPostsQuery);
+    $getReportedPostsStmt->execute();
+    $reportedPosts = $getReportedPostsStmt->fetchAll(PDO::FETCH_ASSOC);
+
+    // Kiểm tra xem có bài viết bị report không
+    if (!$reportedPosts) {
+        http_response_code(404);
+        echo json_encode(array('status' => false, 'message' => 'Không có bài viết nào bị report'));
+        exit;
+    }
+
+    // Chuẩn bị phản hồi
+    $response = array();
+    foreach ($reportedPosts as $post) {
+        // Tạo thông tin chi tiết của bài viết
+        $postDetail = array(
+            'id' => $post['id'],
+            'content' => $post['content'],
+            'likes' => $post['likes'],
+            'reported' => true // Đánh dấu là bài viết đã bị report
+        );
+
+        // Thêm thông tin chi tiết vào phản hồi
+        $response[] = $postDetail;
+    }
+
+    // Trả về phản hồi JSON
+    echo json_encode(array('status' => true, 'reported_posts' => $response));
+} catch (Exception $e) {
+    // Xử lý ngoại lệ và trả về thông báo lỗi
+    echo json_encode(array('status' => false, 'message' => $e->getMessage()));
+}

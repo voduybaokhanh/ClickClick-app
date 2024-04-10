@@ -13,22 +13,22 @@ try {
 
     $id = $data->id;
 
-        // Kiểm tra xem người dùng có tồn tại không
-        $sqlQuery = "SELECT * FROM users WHERE id = :id";
-        $stmt = $dbConn->prepare($sqlQuery);
-        $stmt->bindParam(':id', $id, PDO::PARAM_STR);
-        $stmt->execute();
-        $user = $stmt->fetch(PDO::FETCH_ASSOC);
+    // Kiểm tra xem người dùng có tồn tại không
+    $sqlQuery = "SELECT * FROM users WHERE id = :id";
+    $stmt = $dbConn->prepare($sqlQuery);
+    $stmt->bindParam(':id', $id, PDO::PARAM_STR);
+    $stmt->execute();
+    $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        if (!$user) {
-            echo json_encode(
-                array(
-                    "status" => false,
-                    "message" => "Người dùng không tồn tại"
-                )
-            );
-            exit;
-        }
+    if (!$user) {
+        echo json_encode(
+            array(
+                "status" => false,
+                "message" => "Người dùng không tồn tại"
+            )
+        );
+        exit;
+    }
 
     // Lưu trữ dữ liệu ban đầu
     $originalName = isset($user['name']) ? $user['name'] : null;
