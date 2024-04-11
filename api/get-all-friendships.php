@@ -20,7 +20,7 @@ try {
     $userid = $data->userid;
 
     // Truy vấn để lấy danh sách người đã gửi lời mời kết bạn
-    $invitationQuery = "SELECT users.* FROM friendships 
+    $invitationQuery = "SELECT * FROM friendships 
                         INNER JOIN users ON friendships.userid = users.ID 
                         WHERE friendships.friendshipid = :userid 
                         AND friendships.status = 'pending'";

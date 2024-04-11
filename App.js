@@ -2,21 +2,43 @@ import * as React from 'react';
 import { View, Text,StyleSheet } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import Register from './Screen/Register';
+import Register from './Screen/user/Register';
 import Login from './Screen/user/Login';
 import Hello from './Screen/Hello';
-import Post from './Screen/Post';
+import Post from './Screen/BottomTab/AddPost';
+import Home from './Screen/BottomTab/Home';
+import BottomTab from './Screen/BottomTab/BottomTab';
+import Forgetpassword from './Screen/user/ForgotpasswordOTP';
+import RegisterOtp from './Screen/user/RegisterOtp';
+import Resetpassword from './Screen/user/Resetpassword';
+import MessageListScreen from './Screen/user/MessageListScreen';
+import MessProps from './Screen/MessProps';
+import Notifications from './Screen/user/Notifications';
+import Profile  from './Screen/BottomTab/Profile';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 const Stack = createNativeStackNavigator();
 
-export default function App() {
+export default function App(navigation) {
   return (
-      <NavigationContainer styles={styles.container}>
-      <Stack.Navigator>
+    <SafeAreaProvider styles={styles.container}>
+      <NavigationContainer >
+      <Stack.Navigator screenOptions={{headerShown: false}}>
         <Stack.Screen name="Hello" component={Hello} />
-        <Stack.Screen options={{headerShown: false}} name="Login" component={Login} />
+        <Stack.Screen name="Login" component={Login} />
+        <Stack.Screen name="Home" component={Home} />
+        <Stack.Screen name="BottomTab" component={BottomTab} />
         <Stack.Screen name="Post" component={Post} />
-      </Stack.Navigator>
+        <Stack.Screen name="Profile" component={Profile} />
+        <Stack.Screen name="forgot" component={Forgetpassword} />
+        <Stack.Screen name="register" component={Register} />
+        <Stack.Screen name="registerOTP" component={RegisterOtp} /> 
+        <Stack.Screen name="resetPass" component={Resetpassword} /> 
+        <Stack.Screen name="messlistscreen" component={MessageListScreen} />
+        <Stack.Screen name="Notifications" component={Notifications} />  
+        <Stack.Screen name="MessProps" component={MessProps} /> 
+      </Stack.Navigator>   
     </NavigationContainer>
+    </SafeAreaProvider>
 
   );
 }
@@ -24,7 +46,6 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
   },

@@ -11,30 +11,28 @@ try {
     $data = json_decode(file_get_contents("php://input"));
 
     // Kiểm tra đăng nhập
-    if (!isset($data->userid)) {
+    if (!isset ($data->userid)) {
         echo json_encode(array('status' => false, 'message' => 'Vui lòng đăng nhập.'));
         exit;
     }
 
     // Kiểm tra xem có postid và action được gửi hay không
-    if (!isset($data->postid) || !isset($data->action)) {
+    if (!isset ($data->postid) || !isset ($data->action)) {
         http_response_code(400);
         echo json_encode(array('status' => false, 'message' => 'Thiếu tham số postid hoặc action'));
         exit;
     }
 
-    $postid = $data->postid;
-    $action = $data->action; // Có thể là 'like' hoặc 'unlike'
     $userid = $data->userid;
+    $action = $data->action; // Có thể là 'like' hoặc 'unlike'
+    $postid = $data->postid;
 
     // Kiểm tra action hợp lệ
-    if ($action != 'like' && $action != 'unlike') {
+    if ($action != 1 && $action != 0) {
         http_response_code(400);
         echo json_encode(array('status' => false, 'message' => 'Hành động không hợp lệ.'));
         exit;
     }
-
-   
 
     // Kiểm tra xem postid có tồn tại trong cơ sở dữ liệu hay không
     $checkPostQuery = "SELECT * FROM posts WHERE ID = :postid";
@@ -56,55 +54,83 @@ try {
     $checkLikeStmt->execute();
     $existingLike = $checkLikeStmt->fetch(PDO::FETCH_ASSOC);
 
-    // Lấy trường likes của bài đăng trong bảng posts
-    $getPostLikesQuery = "SELECT likes FROM posts WHERE ID = :postid";
-    $getPostLikesStmt = $dbConn->prepare($getPostLikesQuery);
-    $getPostLikesStmt->bindParam(':postid', $postid, PDO::PARAM_INT);
-    $getPostLikesStmt->execute();
-    $postLikes = $getPostLikesStmt->fetch(PDO::FETCH_ASSOC);
-
-    // Lấy số lượng likes từ kết quả truy vấn
-    $likes = $postLikes['likes'];
-
-    if ($action == 'like') {
+    if ($action == '1') {
         if ($existingLike) {
-            echo json_encode(array('status' => false, 'message' => 'Bạn đã like bài đăng này trước đó.'));
-            exit;
-        }
+            // Xóa "like" từ cơ sở dữ liệu
+            $deleteLikeQuery = "DELETE FROM likes WHERE userid = :userid AND postid = :postid";
+            $deleteLikeStmt = $dbConn->prepare($deleteLikeQuery);
+            $deleteLikeStmt->bindParam(':userid', $userid, PDO::PARAM_INT);
+            $deleteLikeStmt->bindParam(':postid', $postid, PDO::PARAM_INT);
+            $deleteLikeStmt->execute();
 
+            // Cập nhật số lượt "like" của bài đăng
+            $updateLikesCountQuery = "UPDATE posts SET likes = likes - 1 WHERE ID = :postid";
+            $updateLikesCountStmt = $dbConn->prepare($updateLikesCountQuery);
+            $updateLikesCountStmt->bindParam(':postid', $postid, PDO::PARAM_INT);
+            $updateLikesCountStmt->execute();
+
+            // Truy vấn SQL để lấy số lượt thích dựa trên postid
+            $getLikesCountQuery = "SELECT likes FROM posts WHERE ID = :postid"; // Sửa tên cột thành 'likes'
+            $getLikesCountStmt = $dbConn->prepare($getLikesCountQuery);
+            $getLikesCountStmt->bindParam(':postid', $postid, PDO::PARAM_INT);
+            $getLikesCountStmt->execute();
+            $likesCount = $getLikesCountStmt->fetch(PDO::FETCH_ASSOC)['likes'];
+
+
+            echo json_encode(array('status' => true, 'message' => 'Unlike bài đăng thành công.', 'action' => 0, 'LIKES' => $likesCount));
+            exit; // Kết thúc xử lý "unlike"
+        }
         // Thêm "like" mới vào cơ sở dữ liệu
-        $addLikeQuery = "INSERT INTO likes (userid, postid,time) VALUES (:userid, :postid,now())";
+        $addLikeQuery = "INSERT INTO likes (userid, postid, time) VALUES (:userid, :postid, now())";
         $addLikeStmt = $dbConn->prepare($addLikeQuery);
         $addLikeStmt->bindParam(':userid', $userid, PDO::PARAM_INT);
         $addLikeStmt->bindParam(':postid', $postid, PDO::PARAM_INT);
         $addLikeStmt->execute();
 
-        echo json_encode(array('status' => true, 'message' => 'Like bài đăng thành công.'));
-
-        // cập nhật post
+        // Cập nhật số lượt "like" của bài đăng
         $updateLikesCountQuery = "UPDATE posts SET likes = likes + 1 WHERE ID = :postid";
         $updateLikesCountStmt = $dbConn->prepare($updateLikesCountQuery);
         $updateLikesCountStmt->bindParam(':postid', $postid, PDO::PARAM_INT);
         $updateLikesCountStmt->execute();
-    } elseif ($action == 'unlike') {
-        if (!$existingLike) {
-            echo json_encode(array('status' => false, 'message' => 'Bạn chưa like bài đăng này.'));
-            exit;
+
+        // Lấy userid từ postid
+        $getUserIdFromPostIdQuery = "SELECT userid FROM posts WHERE ID = :postid";
+        $getUserIdFromPostIdStmt = $dbConn->prepare($getUserIdFromPostIdQuery);
+        $getUserIdFromPostIdStmt->bindParam(':postid', $postid, PDO::PARAM_INT);
+        $getUserIdFromPostIdStmt->execute();
+        $postUserId = $getUserIdFromPostIdStmt->fetch(PDO::FETCH_COLUMN);
+        $RECEIVERID = $postUserId;
+
+        // Lấy tên người dùng từ userid
+        $getUserNameQuery = "SELECT NAME FROM users WHERE ID = :userid";
+        $getUserNameStmt = $dbConn->prepare($getUserNameQuery);
+        $getUserNameStmt->bindParam(':userid', $userid, PDO::PARAM_INT);
+        $getUserNameStmt->execute();
+        $userName = $getUserNameStmt->fetch(PDO::FETCH_COLUMN);
+
+        if ($userName) {
+            // Thêm thông báo vào cơ sở dữ liệu
+            $notificationContent = "$userName đã thích bài đăng của bạn.";
+            $addNotificationQuery = "INSERT INTO notifications (userid, content, time, RECEIVERID) VALUES (:userid, :content, now(), :RECEIVERID)";
+            $addNotificationStmt = $dbConn->prepare($addNotificationQuery);
+            $addNotificationStmt->bindParam(':userid', $userid, PDO::PARAM_INT);
+            $addNotificationStmt->bindParam(':content', $notificationContent, PDO::PARAM_STR);
+            $addNotificationStmt->bindParam(':RECEIVERID', $RECEIVERID, PDO::PARAM_INT);
+            $addNotificationStmt->execute();
+
+            // Truy vấn SQL để lấy số lượt thích dựa trên postid
+            $getLikesCountQuery = "SELECT likes FROM posts WHERE ID = :postid"; // Sửa tên cột thành 'likes'
+            $getLikesCountStmt = $dbConn->prepare($getLikesCountQuery);
+            $getLikesCountStmt->bindParam(':postid', $postid, PDO::PARAM_INT);
+            $getLikesCountStmt->execute();
+            $likesCount = $getLikesCountStmt->fetch(PDO::FETCH_ASSOC)['likes'];
+
+
+            echo json_encode(array('status' => true, 'message' => $userName . ' đã like bài đăng của bạn.', 'action' => 1, 'LIKES' => $likesCount));
+        } else {
+            echo json_encode(array('status' => true, 'message' => 'Người dùng đã thích bài đăng thành công.'));
         }
-
-        // Xóa "like" từ cơ sở dữ liệu
-        $deleteLikeQuery = "DELETE FROM likes WHERE userid = :userid AND postid = :postid";
-        $deleteLikeStmt = $dbConn->prepare($deleteLikeQuery);
-        $deleteLikeStmt->bindParam(':userid', $userid, PDO::PARAM_INT);
-        $deleteLikeStmt->bindParam(':postid', $postid, PDO::PARAM_INT);
-        $deleteLikeStmt->execute();
-
-        echo json_encode(array('status' => true, 'message' => 'Unlike bài đăng thành công.'));
-
-        $updateLikesCountQuery = "UPDATE posts SET likes = likes - 1 WHERE ID = :postid";
-        $updateLikesCountStmt = $dbConn->prepare($updateLikesCountQuery);
-        $updateLikesCountStmt->bindParam(':postid', $postid, PDO::PARAM_INT);
-        $updateLikesCountStmt->execute();
+        exit; // Kết thúc xử lý khi thêm "like" mới
     }
 } catch (Exception $e) {
     echo json_encode(array('status' => false, 'message' => $e->getMessage()));

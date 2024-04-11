@@ -4,9 +4,11 @@ include_once './connection.php';
 include_once $_SERVER['DOCUMENT_ROOT'] . '/helpers/PHPMailer-master/src/PHPMailer.php';
 include_once $_SERVER['DOCUMENT_ROOT'] . '/helpers/PHPMailer-master/src/SMTP.php';
 include_once $_SERVER['DOCUMENT_ROOT'] . '/helpers/PHPMailer-master/src/Exception.php';
+
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 use PHPMailer\PHPMailer\SMTP;
+
 // lấy otp
 function generateOTP()
 {
@@ -22,19 +24,12 @@ try {
     $stmt = $dbConn->prepare($sqlQuery); // Thêm dòng này để khai báo $stmt
     $stmt->execute();
     $user = $stmt->fetch(PDO::FETCH_ASSOC);
-    if ($user) {
-        // Nếu email đã tồn tại, bạn có thể cập nhật OTP hiện tại hoặc tạo một OTP mới tùy thuộc vào yêu cầu cụ thể của bạn.
-        $otp = generateOTP();
-        $expirationTime = time() + 300; // Mã OTP hết hạn sau 5 phút
-        // Cập nhật thông tin OTP của người dùng hiện tại trong cơ sở dữ liệu
-        // (bạn cần thêm mã cho phần này)
-    } else {
-        // Nếu email chưa tồn tại, tiếp tục với việc tạo mới OTP và đăng ký
-        $otp = generateOTP();
-        $expirationTime = time() + 300; // Mã OTP hết hạn sau 5 phút
-        // Lưu thông tin mới của người dùng và OTP vào cơ sở dữ liệu
-        // (bạn cần thêm mã cho phần này)
-    }
+    // Nếu email đã tồn tại, bạn có thể cập nhật OTP hiện tại hoặc tạo một OTP mới tùy thuộc vào yêu cầu cụ thể của bạn.
+    $otp = generateOTP();
+    $expirationTime = time() + 300; // Mã OTP hết hạn sau 5 phút
+    // Cập nhật thông tin OTP của người dùng hiện tại trong cơ sở dữ liệu
+    // (bạn cần thêm mã cho phần này)
+
     // Đăng ký thành công
 
     // Gửi email với mã OTP
@@ -55,13 +50,12 @@ try {
 
         $mail->addAddress($email, "hello");
         $mail->Subject = 'Xác nhận đăng ký - Mã OTP';
+        $otp = generateOTP();
         $mail->Body = 'Mã OTP của bạn là: ' . $otp;
-
         $mail->send();
 
-        $otp = generateOTP();
         $expirationTime = time() + 300; // Mã OTP hết hạn sau 5 phút
-        
+
         if ($user) {
             // Nếu email đã tồn tại, cập nhật mã OTP và thời gian hết hạn
             $updateQuery = "UPDATE users SET otp = :otp, otp_expiration = :expiration WHERE email = :email";
@@ -71,7 +65,7 @@ try {
             $updateStmt->bindParam(':email', $email, PDO::PARAM_STR);
             $updateStmt->execute();
             echo json_encode(
-                array(  
+                array(
                     "status" => true,
                     "message" => "email đã tồn tại cập nhật otp gửi mã thành công!",
                     "otp" => $otp
@@ -79,11 +73,11 @@ try {
             );
         } else {
             // Nếu email chưa tồn tại, thêm mới người dùng với mã OTP và thời gian hết hạn
-            $insertQuery = "INSERT INTO users (email, otp, otp_expiration) VALUES (:email, :otp, :expiration)";
+            $insertQuery = "INSERT INTO users (EMAIL, OTP, OTP_EXPIRATION) VALUES (:email, :otp, :otp_expiration)";
             $insertStmt = $dbConn->prepare($insertQuery);
             $insertStmt->bindParam(':email', $email, PDO::PARAM_STR);
             $insertStmt->bindParam(':otp', $otp, PDO::PARAM_STR);
-            $insertStmt->bindParam(':expiration', $expirationTime, PDO::PARAM_INT);
+            $insertStmt->bindParam(':otp_expiration', $expirationTime, PDO::PARAM_INT);
             $insertStmt->execute();
             echo json_encode(
                 array(
@@ -110,4 +104,3 @@ try {
         )
     );
 }
-?>

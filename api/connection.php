@@ -1,6 +1,6 @@
 <?php
 $databaseHost = '127.0.0.1:3306';
-$databaseName = 'duandemo';
+$databaseName = 'duandemo2';
 $databaseUsername = 'root';
 $databasePassword = '90852';
 

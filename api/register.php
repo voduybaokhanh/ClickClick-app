@@ -12,7 +12,7 @@ try {
     $decodedData = stripslashes(file_get_contents("php://input"));
     $data = json_decode($decodedData);
 
-    if ($data === null  || !isset($data->name) || !isset($data->password) || !isset($data->password_confirm)) {
+    if ($data === null  || !isset($data->email) || !isset($data->password) || !isset($data->password_confirm)) {
         echo json_encode(
             // || !isset($data->email)
             array(
@@ -23,10 +23,10 @@ try {
         exit;
     }
 
-    // kiểm tra name đã tồn tại chưa
-    $sqlQuery = "SELECT * FROM users WHERE name = :name";
+    // kiểm tra email đã tồn tại chưa
+    $sqlQuery = "SELECT * FROM users WHERE email = :email";
     $stmt = $dbConn->prepare($sqlQuery);
-    $stmt->bindParam(':name', $name, PDO::PARAM_STR);
+    $stmt->bindParam(':email', $email, PDO::PARAM_STR);
     $stmt->execute();
     $user = $stmt->fetch(PDO::FETCH_ASSOC);
     if ($user) {
@@ -41,7 +41,7 @@ try {
 
     // thêm dữ liệu vào db
     // $email = $data->email;
-    $name = $data->name;
+    $email = $data->email;
     $password = $data->password;
     $password_confirm = $data->password_confirm;
     $otp = $data->otp;
@@ -68,11 +68,11 @@ try {
 
     if ($user) {
         // Nếu đã xác nhận, tiếp tục với cập nhật thông tin
-        $sqlUpdate = "UPDATE users SET password = :password, name = :name WHERE otp = :otp";
+        $sqlUpdate = "UPDATE users SET password = :password, email = :email WHERE otp = :otp";
         // email = :email AND 
         $stmtUpdate = $dbConn->prepare($sqlUpdate);
         $stmtUpdate->bindParam(':password', $data->password, PDO::PARAM_STR);
-        $stmtUpdate->bindParam(':name', $data->name, PDO::PARAM_STR);
+        $stmtUpdate->bindParam(':email', $data->email, PDO::PARAM_STR);
         // $stmtUpdate->bindParam(':email', $data->email, PDO::PARAM_STR);
         $stmtUpdate->bindParam(':otp', $data->otp, PDO::PARAM_STR);
         $stmtUpdate->execute();
@@ -92,7 +92,6 @@ try {
             )
         );
     }
-
 } catch (Exception $e) {
     echo json_encode(
         array(
@@ -101,4 +100,3 @@ try {
         )
     );
 }
-?>
