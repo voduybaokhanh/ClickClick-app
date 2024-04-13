@@ -1,52 +1,111 @@
 import React, { useState, useEffect } from "react";
-import AxiosInstance from "../helper/Axiostance";
+import AxiosInstance from "../../../web-admin/src/helper/Axiostance"; // Đảm bảo rằng đường dẫn và tên file đúng
+import swal from 'sweetalert';
 
-const List = (props) => {
+const List = ({ saveUser }) => {
     const [posts, setPosts] = useState([]);
 
     useEffect(() => {
         const fetchData = async () => {
-            const result = await (await AxiosInstance()).get("/get-all-posts.php")
-            console.log(result);
-            setPosts(result);
+            try {
+                const axiosInstance = await AxiosInstance();
+                const response = await axiosInstance.get('/get-all-report.php');
+                if (response.status) {
+                    setPosts(response.posts);
+                } else {
+                    throw new Error(response.message);
+                }
+            } catch (error) {
+                console.error('Error fetching data:', error);
+                swal("Oops!", "Something went wrong while fetching data", "error");
+            }
         }
         fetchData();
     }, []);
 
+    const handleDelete = async (ID) => { // Thay đổi tham số từ ID thành postid
+        swal({
+            title: "Xác nhận xóa?",
+            text: "Xóa dữ liệu khỏi hệ thống!",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+        }).then(async (willDelete) => {
+            if (willDelete) {
+                try {
+                    const axiosInstance = await AxiosInstance();
+                    const response = await axiosInstance.delete(`/delete-post-admin.php?postid=${ID}`); // Sử dụng postid thay vì ID
+                    console.log(response);
+                    if (response.status) {
+                        swal('Xóa thành công');
+                        // Update the state after successful deletion
+                        setPosts(posts.filter(posts => posts.ID !== ID)); // Sử dụng postid thay vì ID
+                    } else {
+                        swal('Xóa thất bại');
+                    }
+                } catch (error) {
+                    console.error('Error deleting post:', error);
+                    swal('Lỗi khi xóa dữ liệu');
+                }
+            }
+        });
+    }
+
+    const handleCancelReport = async (ID) => {
+
+        try {
+            const axiosInstance = await AxiosInstance();
+            const response = await axiosInstance.get(`/cancel.php?postid=${ID}`); // Thay đổi phương thức từ post sang get và truyền postid qua URL
+            console.log(response);
+            if (response.status) {
+                swal('Hủy báo cáo thành công');
+                // Refresh list after successful cancellation
+                const updatedPosts = posts.filter(posts => posts.ID !== ID);
+                setPosts(updatedPosts);
+            } else {
+                swal('Hủy báo cáo thất bại');
+            }
+        } catch (error) {
+            console.error('Error canceling report:', error);
+        }
+    }
+
     return (
         <div>
-            <h2>Post List</h2>
+            <h1>Danh sách bài viết bị báo cáo</h1>
+            <button className="btn btn-primary" onClick={() => saveUser(null)}>Đăng xuất</button>
             <table className="table">
                 <thead>
                     <tr>
                         <th>ID</th>
-                        <th>UserID</th>
-                        <th>Content</th>
-                        <th>Available</th>
-                        <th>Image</th>
-                        <th>Time</th>
+                        <th>Name</th>
+                        <th>Nội dung</th>
+                        <th>Ảnh</th>
+                        <th>Thời gian</th>
+                        <th>Thao tác</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {
-                        posts.length > 0 && posts.map((item, index) => (
-                            <tr key={index}>
-                                <td>{index + 1}</td>
-                                <td>{item.user_id}</td>
-                                <td>{item.content}</td>
-                                <td>{item.available}</td>
-                                <td>{item.image}</td>
-                                <td>{item.time}</td>
-                                <td>
-                                    <a className="btn btn-primary">Look</a>
-                                    <button className="btn btn-danger">Xoa</button>
-                                </td>
-                            </tr>
-                        ))
-                    }
+                    {posts.map((item, index) => (
+                        <tr key={item.ID}>
+                            <td>{item.ID}</td>
+                            <td>{item.NAME}</td>
+                            <td>{item.CONTENT}</td>
+                            <td style={{ maxWidth: "15px", maxHeight: "15px" }}>
+                                <img src={item.IMAGE} style={{ maxWidth: "100%", height: "auto" }} /> {/* Điều chỉnh kích thước hình ảnh */}
+                            </td>
+
+                            <td>{item.TIME}</td>
+                            <td>
+                                <button className="btn btn-primary" onClick={() => handleCancelReport(item.ID)}>Cancel</button>
+                                <button className="btn btn-danger" onClick={() => handleDelete(item.ID)}>Xóa</button>
+                            </td>
+                        </tr>
+                    ))}
                 </tbody>
             </table>
         </div>
-    )
+    );
 }
+
 export default List;
