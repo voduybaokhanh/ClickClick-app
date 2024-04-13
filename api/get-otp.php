@@ -4,7 +4,6 @@ include_once './connection.php';
 include_once $_SERVER['DOCUMENT_ROOT'] . '/helpers/PHPMailer-master/src/PHPMailer.php';
 include_once $_SERVER['DOCUMENT_ROOT'] . '/helpers/PHPMailer-master/src/SMTP.php';
 include_once $_SERVER['DOCUMENT_ROOT'] . '/helpers/PHPMailer-master/src/Exception.php';
-
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 use PHPMailer\PHPMailer\SMTP;
@@ -73,11 +72,11 @@ try {
             );
         } else {
             // Nếu email chưa tồn tại, thêm mới người dùng với mã OTP và thời gian hết hạn
-            $insertQuery = "INSERT INTO users (EMAIL, OTP, OTP_EXPIRATION) VALUES (:email, :otp, :otp_expiration)";
+            $insertQuery = "INSERT INTO users (email, otp, otp_expiration) VALUES (:email, :otp, :expiration)";
             $insertStmt = $dbConn->prepare($insertQuery);
             $insertStmt->bindParam(':email', $email, PDO::PARAM_STR);
             $insertStmt->bindParam(':otp', $otp, PDO::PARAM_STR);
-            $insertStmt->bindParam(':otp_expiration', $expirationTime, PDO::PARAM_INT);
+            $insertStmt->bindParam(':expiration', $expirationTime, PDO::PARAM_INT);
             $insertStmt->execute();
             echo json_encode(
                 array(
@@ -104,3 +103,4 @@ try {
         )
     );
 }
+?>

@@ -26,6 +26,7 @@ const Login = ({navigation}) => {
       const body = { email, password };
       const instance = await AxiosInstance();
       const result = await instance.post("/login.php", body);
+      console.log('>>>>>>>>: ' + result.data)
       const token = await AsyncStorage.getItem("token");
       if (result.status) {
         await AsyncStorage.setItem("token", result.user.id.toString());
