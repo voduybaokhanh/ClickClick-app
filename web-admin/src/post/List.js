@@ -82,6 +82,7 @@ const List = ({ saveUser }) => {
                         <th>Nội dung</th>
                         <th>Ảnh</th>
                         <th>Thời gian</th>
+                        <th>Lý do tố cáo</th>
                         <th>Thao tác</th>
                     </tr>
                 </thead>
@@ -96,6 +97,7 @@ const List = ({ saveUser }) => {
                             </td>
 
                             <td>{item.TIME}</td>
+                            <td>{item.REASON}</td>
                             <td>
                                 <button className="btn btn-primary" onClick={() => handleCancelReport(item.ID)}>Cancel</button>
                                 <button className="btn btn-danger" onClick={() => handleDelete(item.ID)}>Xóa</button>
