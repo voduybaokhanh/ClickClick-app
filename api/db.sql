@@ -16,6 +16,7 @@ CREATE TABLE
     `OTP` VARCHAR(10),
     `otp_expiration` INT,
     `TEXT` VARCHAR(255),
+    `REASON` VARCHAR(255),
     PRIMARY KEY (`ID`)
   );
 
