@@ -90,10 +90,10 @@ function Mess({route}) {
   
     return (
       <View style={{ alignItems: isReceiver ? 'flex-start' : 'flex-end', marginVertical: 5 }}>
-        {item.POSTID && (
+        {item.postid && (
           <Image
             style={{ borderRadius: 20, width: 200, height: 150, marginBottom: 5 }}
-            source={{ uri: item.POSTID }}
+            source={{ uri: item.postid }}
           />
         )}
         {item.CONTENT && (
@@ -160,7 +160,7 @@ function Mess({route}) {
         </View>
         <FlatList
         ref={messageRef}
-          style={{ paddingHorizontal: 10,  marginTop: -10 }}
+          style={{ paddingHorizontal: 10 }}
           data={chatData}
           renderItem={renderItem}
           keyExtractor={(item) => item.ID.toString()}

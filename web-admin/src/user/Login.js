@@ -37,7 +37,7 @@ const Login = (props) => {
         </div>
         <button onClick={actionLogin} type="button" className="btn btn-primary btn-block">Submit</button>
         <button>
-          <Link to="/Register">Dang ky admin</Link>
+          <Link type="button" className="btn btn-primary btn-block" to="/Register">Dang ky admin</Link>
         </button>
 
       </form>

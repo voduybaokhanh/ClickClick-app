@@ -19,8 +19,11 @@ try {
     }
     $userid = $data->userid;
 
-    // Truy vấn thông báo dựa trên RECEIVERID
-    $getNotificationsQuery = "SELECT * FROM notifications WHERE RECEIVERID = :userid";
+    // Truy vấn thông báo dựa trên RECEIVERID và kết hợp thông tin người gửi
+    $getNotificationsQuery = "SELECT notifications.*, users.avatar 
+                               FROM notifications 
+                               LEFT JOIN users ON notifications.RECEIVERID = users.id
+                               WHERE notifications.RECEIVERID = :userid";
     $getNotificationsStmt = $dbConn->prepare($getNotificationsQuery);
     $getNotificationsStmt->bindParam(':userid', $userid, PDO::PARAM_INT);
     $getNotificationsStmt->execute();

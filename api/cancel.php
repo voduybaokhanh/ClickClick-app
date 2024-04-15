@@ -17,6 +17,13 @@ try {
 
     $postid = $_GET['postid'];
 
+    // Cập nhật cột REASON trong bảng POSTS thành NULL
+    $updateReasonQuery = "UPDATE posts SET reason = NULL WHERE id = :postid";
+    $updateReasonStmt = $dbConn->prepare($updateReasonQuery);
+    $updateReasonStmt->bindParam(':postid', $postid, PDO::PARAM_INT);
+    $updateReasonStmt->execute();
+
+
     // Cập nhật cột AVAILABLE trong bảng POSTS thành 1
     $updateAvailableQuery = "UPDATE posts SET available = 1 WHERE id = :postid";
     $updateAvailableStmt = $dbConn->prepare($updateAvailableQuery);

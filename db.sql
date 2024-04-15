@@ -1,7 +1,7 @@
--- Active: 1704532009105@@127.0.0.1@3306@duandemo2
+-- Active: 1710772527824@@127.0.0.1@3306@duandemo
 CREATE DATABASE DUANDEMO;
 
-USE `DUANDEMO`;
+USE `DUANDEMO2`;
 
 -- tạo bảng USERS
 CREATE TABLE
@@ -9,10 +9,11 @@ CREATE TABLE
     `ID` INT NOT NULL AUTO_INCREMENT,
     `EMAIL` VARCHAR(255) UNIQUE NOT NULL,
     `PASSWORD` VARCHAR(255),
-    `NAME` VARCHAR(255) DEFAULT NULL,
+    `NAME` VARCHAR(255),
     `ROLE` VARCHAR(255),
-    `AVATAR` VARCHAR(255) DEFAULT NULL,
-    `SDT` INT DEFAULT NULL,
+    `AVATAR` VARCHAR(255),
+    `SDT` INT,
+    `AVAILABLE` TINYINT (1) DEFAULT 0,
     `OTP` VARCHAR(10),
     `otp_expiration` INT,
     `TEXT` VARCHAR(255),
@@ -52,7 +53,7 @@ CREATE TABLE
     `USERID` INT NOT NULL,
     `CONTENT` VARCHAR(255),
     `LIKES` INT DEFAULT 0,
-    `AVAILABLE`   
+    `AVAILABLE` TINYINT (1) DEFAULT 1,
     `IMAGE` VARCHAR(255),
     `TIME` TIMESTAMP,
     `NAME` VARCHAR(255),
@@ -87,3 +88,15 @@ CREATE TABLE
     FOREIGN KEY (`USERID`) REFERENCES `USERS` (`ID`),
     FOREIGN KEY (`POSTID`) REFERENCES `POSTS` (`ID`)
   );
+-- Thêm người dùng vào bảng USERS
+INSERT INTO `USERS` (`EMAIL`, `PASSWORD`, `NAME`, `ROLE`, `AVATAR`, `SDT`, `AVAILABLE`, `OTP`, `otp_expiration`, `TEXT`)
+VALUES
+('user1@example.com', 'password1', 'User 1', 'normal', 'avatar1.jpg', 123456789, 1, '123456', UNIX_TIMESTAMP() + 3600, 'Text 1'),
+('user2@example.com', 'password2', 'User 2', 'admin', 'avatar2.jpg', 987654321, 1, '654321', UNIX_TIMESTAMP() + 3600, 'Text 2');
+
+-- Thêm bài viết cho người dùng trong bảng POSTS
+INSERT INTO `POSTS` (`USERID`, `CONTENT`, `IMAGE`, `TIME`, `NAME`, `AVATAR`)
+VALUES
+(1, 'Nội dung của bài viết 1', 'image1.jpg', NOW(), 'User 1', 'avatar1.jpg'),
+(2, 'Nội dung của bài viết 2', 'image2.jpg', NOW(), 'User 2', 'avatar2.jpg');
+

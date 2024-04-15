@@ -13,22 +13,22 @@ try {
 
     $id = $data->id;
 
-        // Kiểm tra xem người dùng có tồn tại không
-        $sqlQuery = "SELECT * FROM users WHERE id = :id";
-        $stmt = $dbConn->prepare($sqlQuery);
-        $stmt->bindParam(':id', $id, PDO::PARAM_STR);
-        $stmt->execute();
-        $user = $stmt->fetch(PDO::FETCH_ASSOC);
+    // Kiểm tra xem người dùng có tồn tại không
+    $sqlQuery = "SELECT * FROM users WHERE id = :id";
+    $stmt = $dbConn->prepare($sqlQuery);
+    $stmt->bindParam(':id', $id, PDO::PARAM_STR);
+    $stmt->execute();
+    $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        if (!$user) {
-            echo json_encode(
-                array(
-                    "status" => false,
-                    "message" => "Người dùng không tồn tại"
-                )
-            );
-            exit;
-        }
+    if (!$user) {
+        echo json_encode(
+            array(
+                "status" => false,
+                "message" => "Người dùng không tồn tại"
+            )
+        );
+        exit;
+    }
 
     // Lưu trữ dữ liệu ban đầu
     $originalName = isset($user['name']) ? $user['name'] : null;
@@ -89,7 +89,38 @@ try {
 
         $stmt->execute();
     }
+     // Cập nhật các bài viết của người dùng sau khi cập nhật hồ sơ
+$sqlUpdatePosts = "UPDATE posts SET ";
+$updatesPosts = array();
 
+// Cập nhật các trường thông tin bài viết mà bạn muốn cập nhật, bao gồm cả avatar
+if (isset($data->name)) {
+    $updatesPosts[] = "name = :name";
+}
+if (isset($data->avatar)) {
+    $updatesPosts[] = "avatar = :avatar";
+}
+
+// Thêm các cập nhật khác nếu cần thiết
+
+if (!empty($updatesPosts)) {
+    $sqlUpdatePosts .= implode(', ', $updatesPosts);
+    $sqlUpdatePosts .= " WHERE userid = :id";
+
+    $stmtPosts = $dbConn->prepare($sqlUpdatePosts);
+    $stmtPosts->bindParam(':id', $id, PDO::PARAM_STR);
+
+    // Bind các giá trị cập nhật nếu có
+    if (isset($data->name)) {
+        $stmtPosts->bindParam(':name', $name, PDO::PARAM_STR);
+    }
+    if (isset($data->avatar)) {
+        $stmtPosts->bindParam(':avatar', $avatar, PDO::PARAM_STR);
+    }
+
+    // Thực thi truy vấn cập nhật bài viết
+    $stmtPosts->execute();
+} 
     echo json_encode(
         array(
             "status" => true,
@@ -105,4 +136,4 @@ try {
         )
     );
 }
-?>
+
