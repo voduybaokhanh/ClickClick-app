@@ -1,8 +1,8 @@
 <?php
 $databaseHost = '127.0.0.1:3306'; 
-$databaseName = 'duan';
+$databaseName = 'duandemo2';
 $databaseUsername = 'root';
-$databasePassword = 'Thanhbinh2300';
+$databasePassword = '90852';
 
 try {
 	$dbConn = new PDO("mysql:host={$databaseHost};dbname={$databaseName}", 
