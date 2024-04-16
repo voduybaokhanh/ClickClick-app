@@ -183,13 +183,12 @@ const Home = () => {
     }
   };
 
-  const handleMore = async (postId, userId) => {
+  const handleMore = async (postid, userId) => {
     const token = await AsyncStorage.getItem("token");
     if (!token) {
       console.log("Token (userid) not found in AsyncStorage");
       return;
     }
-
     if (parseInt(token) === userId) {
       // Người dùng đang xem bài viết của mình
       Alert.alert(
@@ -202,7 +201,7 @@ const Home = () => {
           },
           {
             text: "Xóa",
-            onPress: () => handleDelete(postId), // Gọi hàm xóa bài viết khi người dùng xác nhận
+            onPress: () => handleDelete(postid), // Gọi hàm xóa bài viết khi người dùng xác nhận
           },
         ]
       );
@@ -221,7 +220,7 @@ const Home = () => {
             onPress: (reason) => {
               // Kiểm tra lý do nhập và gọi hàm xử lý báo cáo bài viết
               if (reason && reason.trim() !== "") {
-                handleBaocao(postId, reason);
+                handleBaocao(postid, reason);
               } else {
                 Alert.alert("Lỗi", "Vui lòng nhập lý do báo cáo bài viết");
               }
@@ -233,13 +232,26 @@ const Home = () => {
     }
   };
 
-  const handleDelete = async (postId) => {
+  const handleDelete = async (postid) => {
     try {
-      // Gọi API để xóa bài viết với postId cụ thể
-      // Code xử lý xóa bài viết ở đây
-      // Sau khi xóa, cập nhật lại danh sách bài viết bằng cách gọi hàm fetchPosts hoặc fetchPostsFriend
+      const token = await AsyncStorage.getItem("token");
+      if (!token) {
+        console.log("Token (userid) not found in AsyncStorage");
+        return;
+      }
+      const instance = await AxiosInstance();
+      const body = {
+        postid: postid,
+      };
+
+      const response = await instance.post("/delete-post.php", body);
+      if (response.status) {
+        alert("xóa bài viết thành công");
+      } else {
+        alert("xóa bài viết không thành công: ");
+      }
     } catch (error) {
-      console.error("Error deleting post:", error);
+      console.error("Error reporting post:", error);
     }
   };
 
@@ -364,6 +376,7 @@ const Home = () => {
           refreshing={reload}
           onRefresh={fetchPosts}
           keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator = {false}
           // Trong FlatList renderItem:
           renderItem={({ item, index }) => {
             return (
@@ -381,7 +394,7 @@ const Home = () => {
                   </View>
                   <TouchableOpacity
                     style={{ marginLeft: "auto" }}
-                    onPress={() => handleMore(item.postid, item.USERID)}
+                    onPress={() => handleMore(item.postid, item.userid)}
                   >
                     <Image
                       style={styles.iconmore}
@@ -399,7 +412,7 @@ const Home = () => {
                   </View>
                   <View style={styles.tim_mes}>
                     <TouchableOpacity
-                      onPress={() => handleThatim(item.postid, item.USERID)}
+                      onPress={() => handleThatim(item.postid, item.userid)}
                     >
                       <Image
                         style={{
