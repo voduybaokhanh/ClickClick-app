@@ -10,14 +10,17 @@ import {
   View,
   Text,
   Keyboard,
+  TouchableOpacity
 } from "react-native";
 
 import Feather from "react-native-vector-icons/Feather";
 import Icon from "react-native-vector-icons/Ionicons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Axiostance from "../helper/Axiostance";
+import { useNavigation } from "@react-navigation/native";
 
 function Mess({route}) {
+  const navigation = useNavigation();
   const [content, setcontent] = useState("");
   const [chatData, setChatData] = useState([]);
   const { avatar, name, friendshipid } = route.params || {};
@@ -100,7 +103,7 @@ function Mess({route}) {
           <View
             style={[
               {
-                backgroundColor: isReceiver ? "#635A8F" : "#3E8A85",
+                backgroundColor: isReceiver ? "#635A8F" : "#C79BE7",
                 borderRadius: 15,
                 marginHorizontal: 10,
                 marginVertical: 5,
@@ -136,9 +139,11 @@ function Mess({route}) {
             paddingTop: 30,
           }}
         >
-          <Icon name="chevron-back" color={"#635A8F"} size={35} />
+          <TouchableOpacity onPress={() => navigation.goBack()}>
+            <Image style={{marginLeft:10}} source={require("../Image/Vector.png")} />
+          </TouchableOpacity>
           <Image
-            style={{ height: 60, width: 60,borderRadius:30 }}
+            style={{ height: 55, width: 55,borderRadius:30, marginLeft:10 }}
             source={{uri:avatar}}
           />
           <Text
@@ -146,7 +151,9 @@ function Mess({route}) {
               fontSize: 20,
               fontWeight: "500",
               color: "white",
-              marginLeft: 20,
+              marginLeft: 10,
+              fontWeight:"bold",
+              top:5
             }}
           >
             {name}
@@ -171,33 +178,37 @@ function Mess({route}) {
             columnGap: 10,
             // position: "absolute",
             // bottom: 0,
-            height: 100,
+            height: 90,
             width: "100%",
             backgroundColor: "#CBB6EE",
             justifyContent: "center",
             alignItems: "center",
-            borderRadius: 30,
+            borderEndEndRadius: 30,
+            
           }}
         >
           <TextInput
             style={{
-              width: "60%",
-              height: "40%",
+              width: "75%",
+              height: "50%",
               paddingHorizontal: 10,
-              borderRadius: 20,
+              borderRadius: 30,
               backgroundColor: "#635A8F",
               padding: 0,
               color: "white",
               fontSize: 17,
+              paddingHorizontal:20
             }}
+            placeholder="Tin nhắn"
+            placeholderTextColor={'#CBB6EE'}
             value={content.toString()}
             onChangeText={(e) => setcontent(e)}
           />
           <Pressable onPress={sendMessage}>
             <Image
             
-              style={{ height: 50, width: 100 }}
-              source={require("../Image/send.png")}
+              style={{ height: 45, width: 45 }}
+              source={require("../Image/sent.png")}
             />
             
           </Pressable>

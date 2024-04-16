@@ -394,7 +394,7 @@ const styles = StyleSheet.create({
     height: 45,
     borderRadius: 24,
     width: "75%",
-    paddingHorizontal: 10,
+    paddingHorizontal: 15,
     top: 5,
   },
   tim_mes: {
