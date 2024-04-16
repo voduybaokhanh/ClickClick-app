@@ -7,7 +7,7 @@ import {
   Image,
   TextInput,
   TouchableOpacity,
-  Alert
+  Alert,
 } from "react-native";
 import AxiosInstance from "../../helper/Axiostance";
 import { LinearGradient } from "expo-linear-gradient";
@@ -183,8 +183,67 @@ const Home = () => {
     }
   };
 
-  const handleBaocao = async (userId) => {
-    // Lấy userId của người đăng bài từ tham số
+  const handleMore = async (postId, userId) => {
+    const token = await AsyncStorage.getItem("token");
+    if (!token) {
+      console.log("Token (userid) not found in AsyncStorage");
+      return;
+    }
+
+    if (parseInt(token) === userId) {
+      // Người dùng đang xem bài viết của mình
+      Alert.alert(
+        "Xác nhận xóa bài viết",
+        "Bạn có chắc chắn muốn xóa bài viết này?",
+        [
+          {
+            text: "Hủy",
+            style: "cancel",
+          },
+          {
+            text: "Xóa",
+            onPress: () => handleDelete(postId), // Gọi hàm xóa bài viết khi người dùng xác nhận
+          },
+        ]
+      );
+    } else {
+      // Người dùng đang xem bài viết của người khác
+      Alert.prompt(
+        "Xác nhận báo cáo bài viết",
+        "Nhập lý do của bạn:",
+        [
+          {
+            text: "Hủy",
+            style: "cancel",
+          },
+          {
+            text: "Báo cáo",
+            onPress: (reason) => {
+              // Kiểm tra lý do nhập và gọi hàm xử lý báo cáo bài viết
+              if (reason && reason.trim() !== "") {
+                handleBaocao(postId, reason);
+              } else {
+                Alert.alert("Lỗi", "Vui lòng nhập lý do báo cáo bài viết");
+              }
+            },
+          },
+        ],
+        "plain-text"
+      );
+    }
+  };
+
+  const handleDelete = async (postId) => {
+    try {
+      // Gọi API để xóa bài viết với postId cụ thể
+      // Code xử lý xóa bài viết ở đây
+      // Sau khi xóa, cập nhật lại danh sách bài viết bằng cách gọi hàm fetchPosts hoặc fetchPostsFriend
+    } catch (error) {
+      console.error("Error deleting post:", error);
+    }
+  };
+
+  const handleBaocao = async (postid, reason) => {
     try {
       const token = await AsyncStorage.getItem("token");
       if (!token) {
@@ -192,47 +251,23 @@ const Home = () => {
         return;
       }
 
-      // So sánh userId của người đăng bài với userId của người đang đăng nhập
-      if (userId === token) {
-        // Nếu userId của người đăng bài trùng với userId của người đang đăng nhập
-        // Hiển thị thông báo yêu cầu xác nhận xóa bài viết
-        Alert.alert(
-          "Xác nhận xóa bài viết",
-          "Bạn có chắc chắn muốn xóa bài viết này?",
-          [
-            {
-              text: "Hủy",
-              style: "cancel",
-            },
-            {
-              text: "Xóa",
-              onPress: () => {
-                // Gọi hàm xóa bài viết ở đây
-                deletePost(); // Thay deletePost() bằng hàm xóa bài viết thực tế
-              },
-            },
-          ]
-        );
-      } else {
-        // Nếu userId của người đăng bài khác với userId của người đang đăng nhập
-        // Hiển thị thông báo báo cáo bài viết
-        Alert.alert("Báo cáo bài viết", "Bạn có muốn báo cáo bài viết này?", [
-          {
-            text: "Hủy",
-            style: "cancel",
-          },
-          {
-            text: "Báo cáo",
-            onPress: () => {
-              // Gọi hàm báo cáo bài viết ở đây
-              reportPost(); // Thay reportPost() bằng hàm báo cáo bài viết thực tế
-            },
-          },
-        ]);
-      }
-    } catch (error) {}
-  };
+      const instance = await AxiosInstance();
+      const body = {
+        userid: parseInt(token),
+        postid: postid,
+        reason: reason, // Thay bằng lý do thực tế từ người dùng
+      };
 
+      const response = await instance.post("/report.php", body);
+      if (response.status) {
+        alert("Báo cáo bài viết thành công");
+      } else {
+        alert("Báo cáo bài viết không thành công: " + response.data.message);
+      }
+    } catch (error) {
+      console.error("Error reporting post:", error);
+    }
+  };
   // Trong phần xử lý phản hồi từ API:
   const handleThatim = async (postid, userId) => {
     try {
@@ -346,7 +381,7 @@ const Home = () => {
                   </View>
                   <TouchableOpacity
                     style={{ marginLeft: "auto" }}
-                    onPress={()=>handleBaocao(item.USERID)}
+                    onPress={() => handleMore(item.postid, item.USERID)}
                   >
                     <Image
                       style={styles.iconmore}
