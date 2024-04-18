@@ -9,12 +9,12 @@ header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers
 include_once './connection.php';
 
 try {
-    // Đọc dữ liệu từ cơ sở dữ liệu
+    // Đọc dữ liệu từ cơ sở dữ liệu, sắp xếp từ mới nhất
     $query = "SELECT * FROM POSTS WHERE AVAILABLE = 0";
     $stmt = $dbConn->prepare($query);
     $stmt->execute();
 
-    // Lấy tất cả các bài viết đã bị báo cáo
+    // Lấy tất cả các bài viết đã bị báo cáo, đã sắp xếp theo thời gian từ mới nhất
     $reportedPosts = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     // Trả về dữ liệu dưới dạng JSON

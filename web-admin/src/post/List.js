@@ -11,6 +11,9 @@ const List = ({ saveUser }) => {
                 const axiosInstance = await AxiosInstance();
                 const response = await axiosInstance.get('/get-all-report.php');
                 if (response.status) {
+                    // sắp xếp theo thời gian mới nhất
+                    const sortedPosts = response.posts.sort((a, b) => new Date(b.TIME) - new Date(a.TIME));
+                    setPosts(sortedPosts);
                     setPosts(response.posts);
                 } else {
                     throw new Error(response.message);
@@ -79,7 +82,7 @@ const List = ({ saveUser }) => {
                     <tr>
                         <th>ID</th>
                         <th>Name</th>
-                        <th>Nội dung</th>
+                        <th>Nội dung bài viết</th>
                         <th>Ảnh</th>
                         <th>Thời gian</th>
                         <th>Lý do tố cáo</th>
@@ -99,7 +102,7 @@ const List = ({ saveUser }) => {
                             <td>{item.TIME}</td>
                             <td>{item.REASON}</td>
                             <td>
-                                <button className="btn btn-primary" onClick={() => handleCancelReport(item.ID)}>Cancel</button>
+                                <button className="btn btn-primary" onClick={() => handleCancelReport(item.ID)}>Hủy</button>
                                 <button className="btn btn-danger" onClick={() => handleDelete(item.ID)}>Xóa</button>
                             </td>
                         </tr>
