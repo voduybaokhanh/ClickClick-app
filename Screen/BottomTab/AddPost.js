@@ -81,7 +81,7 @@ const sendPost = async () => {
     } else {
       const uploadedImageUrl = await uploadImage();
       // Nếu không có nội dung được nhập, gửi bài viết chỉ với ảnh
-      const instance = await AxiosInstance();
+const instance = await AxiosInstance();
       const body = {
         userid: parseInt(token),
         content: "", // Đặt content là rỗng khi gửi bài viết chỉ với ảnh
@@ -177,7 +177,7 @@ return (
               <Camera
               style={styles.camera}
               ref={cameraRef}
-              type={cameraType}
+type={cameraType}
             />
             :
             <Image
@@ -303,8 +303,8 @@ height:"62%"
     fontWeight: "bold",
   },
   itempost: {
-    width: "auto",
-    height:400,
+width: "auto",
+    height:500,
     backgroundColor: "#BFA7FF",
     top: 30,
     borderRadius: 20,
