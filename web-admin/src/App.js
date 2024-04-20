@@ -4,8 +4,8 @@ import { BrowserRouter as Router, Route, Routes, Navigate, Outlet } from 'react-
 import Login from './user/Login';
 import Register from './user/Register';
 import List from './post/List';
+import Block from './post/Block';
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
 function App() {
 
 
@@ -56,6 +56,7 @@ function App() {
           </Route>
           <Route element={<ProtectedRoute />}>
             <Route path="/" element={<List user={user} saveUser={saveUserToLocalStorgae} />} />
+            <Route path="/block" element={<Block user={user} saveUser={saveUserToLocalStorgae} />} />
           </Route>
         </Routes>
       </Router>

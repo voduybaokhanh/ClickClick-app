@@ -19,23 +19,23 @@ if (!isset($data->userid)) {
 // Lấy id từ URL
 $userid = $data->userid;
 
-// Kiểm tra xem người dùng có phải là quản trị viên không
-$sqlQuery = "SELECT role FROM users WHERE ID = :userid";
-$stmt = $dbConn->prepare($sqlQuery);
-$stmt->bindParam(':userid', $userid, PDO::PARAM_INT);
-$stmt->execute();
-$user = $stmt->fetch(PDO::FETCH_ASSOC);
+// Kiểm tra trạng thái của tài khoản trước khi mở khóa
+$userStatusQuery = "SELECT AVAILABLE FROM users WHERE ID = :userid";
+$userStatusStmt = $dbConn->prepare($userStatusQuery);
+$userStatusStmt->bindParam(':userid', $userid, PDO::PARAM_INT);
+$userStatusStmt->execute();
+$userStatus = $userStatusStmt->fetch(PDO::FETCH_ASSOC);
 
-if ($user && $user['role'] === 'admin') {
-    // Nếu người dùng là quản trị viên, trả về thông báo lỗi
-    http_response_code(403); // Forbidden
-    echo json_encode(array("status" => false, "message" => "Không thể khóa tài khoản quản trị viên"));
+if (!$userStatus || $userStatus['AVAILABLE'] == 1) {
+    // Nếu tài khoản không tồn tại hoặc đã có sẵn và không bị khóa, trả về thông báo lỗi
+    http_response_code(403);
+    echo json_encode(array("status" => false, "message" => "Tài khoản không bị khóa hoặc không tồn tại"));
     exit;
 }
 
 try {
     // Update user's availability in the database
-    $userQuery = "UPDATE users SET AVAILABLE = 0 WHERE ID = :userid";
+    $userQuery = "UPDATE users SET AVAILABLE = 1 WHERE ID = :userid";
     $userStmt = $dbConn->prepare($userQuery);
     $userStmt->bindParam(':userid', $userid, PDO::PARAM_INT);
     $userStmt->execute();
@@ -43,7 +43,7 @@ try {
 
     // Check if any rows were affected
 
-    echo json_encode(array("status" => true, "message" => "Khóa tài khoản người dùng thành công"));
+    echo json_encode(array("status" => true, "message" => "Mở khóa tài khoản người dùng thành công"));
 } catch (PDOException $e) {
     http_response_code(404);
     echo json_encode(array("status" => false, "message" => "Không tìm thấy người dùng" . $e->getMessage()));
