@@ -304,7 +304,7 @@ height:"62%"
   },
   itempost: {
     width: "auto",
-    height:400,
+    height:500,
     backgroundColor: "#BFA7FF",
     top: 30,
     borderRadius: 20,

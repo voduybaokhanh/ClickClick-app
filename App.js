@@ -15,6 +15,7 @@ import MessageListScreen from './Screen/user/MessageListScreen';
 import MessProps from './Screen/MessProps';
 import Notifications from './Screen/user/Notifications';
 import Profile  from './Screen/BottomTab/Profile';
+import Search_Addfriend from './Screen/user/Search_Addfriend';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 const Stack = createNativeStackNavigator();
 
@@ -23,6 +24,7 @@ export default function App(navigation) {
     <SafeAreaProvider styles={styles.container}>
       <NavigationContainer >
       <Stack.Navigator screenOptions={{headerShown: false}}>
+        <Stack.Screen name="Search_Addfriend" component={Search_Addfriend} />
         <Stack.Screen name="Hello" component={Hello} />
         <Stack.Screen name="Login" component={Login} />
         <Stack.Screen name="Home" component={Home} />
