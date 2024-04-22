@@ -13,7 +13,8 @@ import {
 const Setting = ({navigation}) => {
 
     const handledEditProfile = () =>{
-        console.log("nut EditProfile");
+      navigation.navigate('EditProfile')
+
     }
     const handledChange = () =>{
         navigation.navigate('resetPass')

@@ -364,10 +364,12 @@ const Home = () => {
             />
           </View>
           <View style={styles.viewSetting}>
-            <Image
-              style={styles.iconsetting}
-              source={require("../../Image/setting_icon.png")}
-            />
+            <TouchableOpacity onPress={() => navigation.navigate("Setting")}>
+              <Image
+                style={styles.iconsetting}
+                source={require("../../Image/setting_icon.png")}
+              />
+            </TouchableOpacity>
           </View>
         </View>
         <FlatList
@@ -376,7 +378,7 @@ const Home = () => {
           refreshing={reload}
           onRefresh={fetchPosts}
           keyboardShouldPersistTaps="handled"
-          showsVerticalScrollIndicator = {false}
+          showsVerticalScrollIndicator={false}
           // Trong FlatList renderItem:
           renderItem={({ item, index }) => {
             return (

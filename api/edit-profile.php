@@ -33,7 +33,6 @@ try {
     // Lưu trữ dữ liệu ban đầu
     $originalName = isset($user['name']) ? $user['name'] : null;
     $originalAvatar = isset($user['avatar']) ? $user['avatar'] : null;
-    $originalSdt = isset($user['sdt']) ? $user['sdt'] : null;
     $originalText = isset($user['text']) ? $user['text'] : null;
 
     // Cập nhật hồ sơ người dùng
@@ -53,14 +52,6 @@ try {
     } else {
         $avatar = $originalAvatar;
     }
-
-    if (isset($data->sdt)) {
-        $updates[] = "sdt = :sdt";
-        $sdt = $data->sdt;
-    } else {
-        $sdt = $originalSdt;
-    }
-
     if (isset($data->text)) {
         $updates[] = "text = :text";
         $text = $data->text;
@@ -79,9 +70,6 @@ try {
         }
         if (isset($data->avatar)) {
             $stmt->bindParam(':avatar', $avatar, PDO::PARAM_STR);
-        }
-        if (isset($data->sdt)) {
-            $stmt->bindParam(':sdt', $sdt, PDO::PARAM_STR);
         }
         if (isset($data->text)) {
             $stmt->bindParam(':text', $text, PDO::PARAM_STR);
