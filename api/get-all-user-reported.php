@@ -14,15 +14,13 @@ try {
     $query = "
         SELECT 
             USERID, 
-            NAME, 
-            AVATAR, 
             COUNT(*) AS reported_count
         FROM 
             POSTS
         WHERE 
             AVAILABLE = 0
         GROUP BY 
-            USERID, NAME, AVATAR
+            USERID
         ORDER BY 
             reported_count DESC
     ";
