@@ -203,7 +203,9 @@ const Notifications = () => {
         <FlatList
           data={listFriendStatus.flat()}
           renderItem={renderItemFriend}
-          keyExtractor={(item, index) => index.toString()}
+          refreshing={reload}
+          keyboardShouldPersistTaps="handled"
+          onRefresh={fetchNotifications}
         />
       </View>
     </LinearGradient>
