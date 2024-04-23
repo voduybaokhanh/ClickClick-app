@@ -65,7 +65,7 @@ const sendPost = async () => {
       // Upload ảnh lên Cloudinary và lấy đường dẫn ảnh từ phản hồi của Cloudinary
       const uploadedImageUrl = await uploadImage();
 
-      const instance = await AxiosInstance();
+      const instance = await AxiosInstance(); 
       const body = {
         userid: parseInt(token),
         content: content,

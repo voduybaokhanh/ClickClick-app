@@ -17,7 +17,7 @@ const Setting = ({navigation}) => {
 
     }
     const handledChange = () =>{
-        navigation.navigate('resetPass')
+        navigation.navigate('registerOTP')
     }
     const handledDelete = () =>{
         console.log("nut delete");

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import {
   StyleSheet,
   Text,
@@ -6,88 +6,43 @@ import {
   Image,
   TextInput,
   TouchableOpacity,
-  ScrollView,
+  Alert,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
-import AxiosInstance from "../../helper/Axiostance";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { Camera, CameraType } from "expo-camera";
-import { useNavigation } from "@react-navigation/native";
-import moment from "moment";
+import AxiosInstance from "../../helper/Axiostance";
+import * as ImagePicker from 'expo-image-picker';
 import axios from "axios";
 
-const EditProfile = ({ navigation }) => {
+const EditProfile = ({navigation}) => {
   const [name, setName] = useState("");
   const [text, setText] = useState("");
-  const [avatarIndex, setAvatarIndex] = useState(0);
   const [imageUri, setImageUri] = useState(null);
-  const avatarImages = [
-    "../../Image/avata1.jpg",
-    "../../Image/avata2.jpg",
-    "../../Image/avata3.jpg",
-    "../../Image/avata4.jpg",
-    "../../Image/avata5.jpg",
-    "../../Image/avata6.jpg",
-    "../../Image/avata7.jpg",
-    "../../Image/avata8.jpg",
-    "../../Image/avata9.jpg",
-    "../../Image/avata10.jpg",
-    "../../Image/avata11.jpg",
-    "../../Image/avata12.jpg",
-    "../../Image/avata13.jpg",
-    "../../Image/avata14.jpg",
-    "../../Image/avata15.jpg",
-    "../../Image/avata16.jpg",
-    "../../Image/avata17.jpg",
-    "../../Image/avata18.jpg",
-    "../../Image/avata19.jpg",
-    "../../Image/avata20.jpg",
-    "../../Image/avata21.jpg",
-    "../../Image/avata22.jpg",
-    // Thêm các đường dẫn hình ảnh khác vào đây
-  ];
-  const getImageUri = (path) => {
-    return `file:///${path}`;
-  };
-  const handleSaveProfile = async () => {
+  
+  const selectImage = async () => {
     try {
-      const token = await AsyncStorage.getItem("token");
-      if (!token) {
-        console.log("Token (userid) not found in AsyncStorage");
-        return;
+      const pickerResult = await ImagePicker.launchImageLibraryAsync();
+      console.log("Kết quả chọn ảnh:", pickerResult.assets[0].uri);
+  
+      if (!pickerResult.canceled) {
+        // Nếu người dùng chọn ảnh thành công, set imageUri
+        setImageUri(pickerResult.assets[0].uri);
       }
-
-      // Chỉ thực hiện upload ảnh nếu capturedImageUri đã được gán giá trị
-
-      // Upload ảnh lên Cloudinary và lấy đường dẫn ảnh từ phản hồi của Cloudinary
-      const uploadedImageUrl = await uploadImage();
-
-      const instance = await AxiosInstance();
-      const body = {
-        id: parseInt(token),
-        name: name,
-        text: text,
-        avatar: uploadedImageUrl, // Sử dụng đường dẫn ảnh đã được upload lên Cloudinary
-      };
-
-      const response = await instance.post("/add-posts.php", body);
     } catch (error) {
-      console.error("Error adding post:", error);
+      console.error("Lỗi khi chọn ảnh:", error);
     }
   };
 
-  // Hàm upload ảnh
+  const resetImageUri = () => {
+    setTimeout(() => {
+      setImageUri(null);
+    }, 1000); // Adjust the delay as needed
+  };
+
+  // Hàm tải ảnh lên máy chủ
   const uploadImage = async () => {
     try {
-      // Check if imageUri has a value
-      if (!imageUri) {
-        throw new Error("No image to upload");
-      }
-
-      // Tạo tên ảnh dựa trên timestamp
       const imageName = `photo_${Date.now()}.jpg`;
-
-      // Upload ảnh lên Cloudinary
       const data = new FormData();
       data.append("file", {
         name: imageName,
@@ -95,29 +50,64 @@ const EditProfile = ({ navigation }) => {
         uri: imageUri,
       });
       data.append("upload_preset", "ml_default");
-
-      const result = await axios.post(
-        "https://api.cloudinary.com/v1_1/dffuzgy5h/image/upload",
+  
+      const response = await axios.post(
+        'https://api.cloudinary.com/v1_1/dffuzgy5h/image/upload',
         data,
         {
           headers: {
             "Content-Type": "multipart/form-data",
           },
         }
-      );
-      setImageUri(result.data.secure_url);
-      return result.data.secure_url;
+      );        
+  
+      // Trích xuất thông tin URL từ kết quả trả về của Cloudinary
+      const publicId = response.data.public_id;
+      const version = response.data.version;
+      const format = response.data.format;
+      const cloudName = "dffuzgy5h"; // Cloud name của bạn
+      const baseUrl = `https://res.cloudinary.com/${cloudName}/image/upload`;
+      const imageUrl = `${baseUrl}/v${version}/${publicId}.${format}`;
+      console.log(imageUrl);
+      return imageUrl; // Trả về URL đầy đủ của hình ảnh đã tải lên
     } catch (error) {
-      console.error("Error uploading image:", error);
+      console.error("Lỗi khi tải ảnh lên máy chủ:", error);
       throw error;
     }
   };
 
-  const handleChangeAvatar = () => {
-    const nextIndex = (avatarIndex + 1) % avatarImages.length;
-    setAvatarIndex(nextIndex);
-    setImageUri(getImageUri(avatarImages[nextIndex]));
+  // Hàm lưu thông tin hồ sơ đã chỉnh sửa
+  const handleSaveProfile = async () => {
+    try {
+
+      const token = await AsyncStorage.getItem("token");
+      if (!token) {
+        console.log("Token (userid) not found in AsyncStorage");
+        return;
+      }
+  
+      const imageUrl = await uploadImage();
+      const instance = await AxiosInstance();
+
+      const body = {
+        userid: parseInt(token),
+        name: name,
+        avatar: imageUrl,
+        text: text
+      };
+      const response = await instance.post("/edit-profile.php", body);
+      console.log(imageUrl);
+      Alert.alert("Thông Báo", "Cập nhật hồ sơ thành công")
+      setName("");
+      setText("");
+      resetImageUri(); // Reset imageUri after saving profile
+      navigation.navigate('Profile');
+
+    } catch (error) {
+      console.error("Lỗi khi lưu hồ sơ:", error);
+    }
   };
+
   return (
     <View style={styles.container}>
       <LinearGradient
@@ -125,73 +115,40 @@ const EditProfile = ({ navigation }) => {
         colors={["#3B21B7", "#8B64DA", "#D195EE", "#CECBD3"]}
         style={styles.linearGradient}
       >
-        <View style={styles.DIV}>
+        <View style={styles.div}>
           <Text style={styles.text1}>Edit Profile</Text>
         </View>
-        <View style={styles.DIV}>
-        <Image style={styles.AVATAR} source={avatarImages[avatarIndex]} />
-
-          <TouchableOpacity
-            onPress={handleChangeAvatar}
-            style={{
-              width: "80%",
-              height: 60,
-              flexDirection: "row",
-              alignItems: "center",
-              backgroundColor: "#ffffff",
-              borderRadius: 20,
-              borderWidth: 2,
-              marginBottom: 10,
-              marginTop: 10,
-            }}
-          >
-            <Image
-              style={{ marginRight: 20, marginLeft: 10, width: 50, height: 45 }}
-              source={require("../../Image/iconChange.jpg")}
-            />
-            <Text
-              style={{ color: "#635A8F", fontSize: 20, fontWeight: "bold" }}
-            >
-              Change Avatar
-            </Text>
+        <View style={styles.div}>
+          <TouchableOpacity onPress={selectImage}>
+            {imageUri ? (
+              <Image
+                style={styles.avatar}
+                source={{ uri: imageUri }}
+              />
+            ) : (
+              <Image
+                style={styles.avatar}
+                source={require('../../Image/iconadd.png')}
+              />
+            )}
           </TouchableOpacity>
           <TextInput
-            style={styles.TextInput}
+            style={styles.textInput}
             placeholder="Name"
             value={name}
             onChangeText={setName}
           />
           <TextInput
-            style={styles.TextInput}
-            placeholder="Introduce yourself"
+            style={styles.textInput}
+            placeholder="introduce yourself"
             value={text}
             onChangeText={setText}
           />
           <TouchableOpacity
-            style={{
-              width: "80%",
-              height: 60,
-              flexDirection: "column",
-              alignItems: "center",
-              backgroundColor: "#ffffff",
-              borderRadius: 20,
-              borderWidth: 2,
-              marginBottom: 10,
-              marginTop: 10,
-            }}
+            style={styles.button}
             onPress={handleSaveProfile}
           >
-            <Text
-              style={{
-                color: "#635A8F",
-                fontSize: 20,
-                fontWeight: "bold",
-                textAlign: "center",
-                lineHeight: 50,
-              }}
-            >
-              SEND
-            </Text>
+            <Text style={styles.buttonText}>GỬI</Text>
           </TouchableOpacity>
         </View>
       </LinearGradient>
@@ -202,7 +159,7 @@ const EditProfile = ({ navigation }) => {
 export default EditProfile;
 
 const styles = StyleSheet.create({
-  TextInput: {
+  textInput: {
     fontSize: 20,
     paddingStart: 20,
     width: "80%",
@@ -214,18 +171,15 @@ const styles = StyleSheet.create({
     padding: 5,
     marginBottom: 10,
   },
-  AVATAR: {
-    width: 140,
-    height: 140,
-    borderRadius: 70,
+  avatar: {
+    width: 200,
+    height: 200,
+    borderRadius: 100,
+    borderWidth: 2,
+    marginBottom: 10,
+    marginTop: 10,
   },
-  AVATAR2: {
-    position: "absolute",
-    top: 30,
-    width: 50,
-    height: 50,
-  },
-  DIV: {
+  div: {
     top: 80,
     alignItems: "center",
   },
@@ -235,7 +189,24 @@ const styles = StyleSheet.create({
     color: "#ffffff",
     marginBottom: 30,
   },
-
+  button: {
+    width: "80%",
+    height: 60,
+    flexDirection: "column",
+    alignItems: "center",
+    backgroundColor: "#ffffff",
+    borderRadius: 20,
+    borderWidth: 2,
+    marginBottom: 10,
+    marginTop: 10,
+  },
+  buttonText: {
+    color: "#635A8F",
+    fontSize: 20,
+    fontWeight: "bold",
+    textAlign: "center",
+    lineHeight: 50,
+  },
   container: {
     flex: 1,
     backgroundColor: "#fff",
