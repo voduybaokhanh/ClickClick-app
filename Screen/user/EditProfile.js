@@ -1,50 +1,123 @@
+import React, { useState, useEffect, useRef } from "react";
 import {
   StyleSheet,
+  Text,
   View,
   Image,
-  ActivityIndicator,
-  Text,
-  TouchableOpacity,
   TextInput,
+  TouchableOpacity,
+  ScrollView,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
-import React, { useEffect } from "react";
-import { SpaceComponent } from "../../components";
+import AxiosInstance from "../../helper/Axiostance";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Camera, CameraType } from "expo-camera";
+import { useNavigation } from "@react-navigation/native";
+import moment from "moment";
+import axios from "axios";
 
 const EditProfile = ({ navigation }) => {
+  const [name, setName] = useState("");
+  const [text, setText] = useState("");
+  const [avatarIndex, setAvatarIndex] = useState(0);
+  const [imageUri, setImageUri] = useState(null);
   const avatarImages = [
-    require("../../Image/avata1.jpg"),
-    require("../../Image/avata2.jpg"),
-    require("../../Image/avata3.jpg"),
-    require("../../Image/avata4.jpg"),
-    require("../../Image/avata5.jpg"),
-    require("../../Image/avata6.jpg"),
-    require("../../Image/avata7.jpg"),
-    require("../../Image/avata8.jpg"),
-    require("../../Image/avata9.jpg"),
-    require("../../Image/avata10.jpg"),
-    require("../../Image/avata11.jpg"),
-    require("../../Image/avata12.jpg"),
-    require("../../Image/avata13.jpg"),
-    require("../../Image/avata14.jpg"),
-    require("../../Image/avata15.jpg"),
-    require("../../Image/avata16.jpg"),
-    require("../../Image/avata17.jpg"),
-    require("../../Image/avata18.jpg"),
-    require("../../Image/avata19.jpg"),
-    require("../../Image/avata20.jpg"),
-    require("../../Image/avata21.jpg"),
-    require("../../Image/avata22.jpg"),
-
+    "../../Image/avata1.jpg",
+    "../../Image/avata2.jpg",
+    "../../Image/avata3.jpg",
+    "../../Image/avata4.jpg",
+    "../../Image/avata5.jpg",
+    "../../Image/avata6.jpg",
+    "../../Image/avata7.jpg",
+    "../../Image/avata8.jpg",
+    "../../Image/avata9.jpg",
+    "../../Image/avata10.jpg",
+    "../../Image/avata11.jpg",
+    "../../Image/avata12.jpg",
+    "../../Image/avata13.jpg",
+    "../../Image/avata14.jpg",
+    "../../Image/avata15.jpg",
+    "../../Image/avata16.jpg",
+    "../../Image/avata17.jpg",
+    "../../Image/avata18.jpg",
+    "../../Image/avata19.jpg",
+    "../../Image/avata20.jpg",
+    "../../Image/avata21.jpg",
+    "../../Image/avata22.jpg",
     // Thêm các đường dẫn hình ảnh khác vào đây
   ];
-  const [currentAvatarIndex, setCurrentAvatarIndex] = React.useState(0);
+  const getImageUri = (path) => {
+    return `file:///${path}`;
+  };
+  const handleSaveProfile = async () => {
+    try {
+      const token = await AsyncStorage.getItem("token");
+      if (!token) {
+        console.log("Token (userid) not found in AsyncStorage");
+        return;
+      }
 
-  const handledEditAvatar = () => {
-    console.log("nut handledEditAvatar");
-    setCurrentAvatarIndex((currentAvatarIndex + 1) % avatarImages.length);
+      // Chỉ thực hiện upload ảnh nếu capturedImageUri đã được gán giá trị
+
+      // Upload ảnh lên Cloudinary và lấy đường dẫn ảnh từ phản hồi của Cloudinary
+      const uploadedImageUrl = await uploadImage();
+
+      const instance = await AxiosInstance();
+      const body = {
+        id: parseInt(token),
+        name: name,
+        text: text,
+        avatar: uploadedImageUrl, // Sử dụng đường dẫn ảnh đã được upload lên Cloudinary
+      };
+
+      const response = await instance.post("/add-posts.php", body);
+    } catch (error) {
+      console.error("Error adding post:", error);
+    }
   };
 
+  // Hàm upload ảnh
+  const uploadImage = async () => {
+    try {
+      // Check if imageUri has a value
+      if (!imageUri) {
+        throw new Error("No image to upload");
+      }
+
+      // Tạo tên ảnh dựa trên timestamp
+      const imageName = `photo_${Date.now()}.jpg`;
+
+      // Upload ảnh lên Cloudinary
+      const data = new FormData();
+      data.append("file", {
+        name: imageName,
+        type: "image/jpeg",
+        uri: imageUri,
+      });
+      data.append("upload_preset", "ml_default");
+
+      const result = await axios.post(
+        "https://api.cloudinary.com/v1_1/dffuzgy5h/image/upload",
+        data,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+      setImageUri(result.data.secure_url);
+      return result.data.secure_url;
+    } catch (error) {
+      console.error("Error uploading image:", error);
+      throw error;
+    }
+  };
+
+  const handleChangeAvatar = () => {
+    const nextIndex = (avatarIndex + 1) % avatarImages.length;
+    setAvatarIndex(nextIndex);
+    setImageUri(getImageUri(avatarImages[nextIndex]));
+  };
   return (
     <View style={styles.container}>
       <LinearGradient
@@ -55,13 +128,11 @@ const EditProfile = ({ navigation }) => {
         <View style={styles.DIV}>
           <Text style={styles.text1}>Edit Profile</Text>
         </View>
-        <View onPress={handledEditAvatar} style={styles.DIV}>
-          <Image
-            style={styles.AVATAR}
-            source={avatarImages[currentAvatarIndex]}
-          />
+        <View style={styles.DIV}>
+        <Image style={styles.AVATAR} source={avatarImages[avatarIndex]} />
+
           <TouchableOpacity
-            onPress={handledEditAvatar}
+            onPress={handleChangeAvatar}
             style={{
               width: "80%",
               height: 60,
@@ -85,19 +156,43 @@ const EditProfile = ({ navigation }) => {
             </Text>
           </TouchableOpacity>
           <TextInput
-              placeholder="Name"
-              placeholderTextColor="#FFFFFF"
-              style={styles.TextInput}
-              // value={}
-              // onChangeText={(text) => setEmail(text)}
-            />
-             <TextInput
-              placeholder="introduce yourself"
-              placeholderTextColor="#FFFFFF"
-              style={styles.TextInput}
-              // value={}
-              // onChangeText={(text) => setEmail(text)}
-            />
+            style={styles.TextInput}
+            placeholder="Name"
+            value={name}
+            onChangeText={setName}
+          />
+          <TextInput
+            style={styles.TextInput}
+            placeholder="Introduce yourself"
+            value={text}
+            onChangeText={setText}
+          />
+          <TouchableOpacity
+            style={{
+              width: "80%",
+              height: 60,
+              flexDirection: "column",
+              alignItems: "center",
+              backgroundColor: "#ffffff",
+              borderRadius: 20,
+              borderWidth: 2,
+              marginBottom: 10,
+              marginTop: 10,
+            }}
+            onPress={handleSaveProfile}
+          >
+            <Text
+              style={{
+                color: "#635A8F",
+                fontSize: 20,
+                fontWeight: "bold",
+                textAlign: "center",
+                lineHeight: 50,
+              }}
+            >
+              SEND
+            </Text>
+          </TouchableOpacity>
         </View>
       </LinearGradient>
     </View>
@@ -107,7 +202,7 @@ const EditProfile = ({ navigation }) => {
 export default EditProfile;
 
 const styles = StyleSheet.create({
-  TextInput:{
+  TextInput: {
     fontSize: 20,
     paddingStart: 20,
     width: "80%",
@@ -117,7 +212,7 @@ const styles = StyleSheet.create({
     borderRadius: 25,
     margin: 10,
     padding: 5,
-    marginBottom:10,
+    marginBottom: 10,
   },
   AVATAR: {
     width: 140,
