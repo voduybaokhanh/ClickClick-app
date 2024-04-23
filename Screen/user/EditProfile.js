@@ -148,7 +148,7 @@ const EditProfile = ({navigation}) => {
             style={styles.button}
             onPress={handleSaveProfile}
           >
-            <Text style={styles.buttonText}>GỬI</Text>
+            <Text style={styles.buttonText}>SEND</Text>
           </TouchableOpacity>
         </View>
       </LinearGradient>
