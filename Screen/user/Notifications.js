@@ -37,16 +37,16 @@ const Notifications = () => {
         "/get-all-friendships.php",
         { userid: idUser }
       );
-      if (responseFriendStatus?.status) {
+      if (responseFriendStatus.status) {
         console.log(responseFriendStatus.invitations);
         setlistFriendStatus([...responseFriendStatus.invitations]);
       }
       // Thay thế 'URL_API' và 'ID_NGUOI_DUNG' bằng URL và ID người dùng thực tế
-      if (responseNoti?.status) {
+      if (responseNoti.status) {
         // Nếu lấy dữ liệu thành công
-        setNotifications(responseNoti?.notifications); // Cập nhật state với danh sách thông báo từ API
+        setNotifications(responseNoti.notifications); // Cập nhật state với danh sách thông báo từ API
       } else {
-        console.error("Error fetching notifications:", responseNoti.message);
+        console.error("Error fetching notifications:", responseNoti);
       }
     } catch (error) {
       console.error("Error fetching notifications:", error);
@@ -219,9 +219,10 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   title: {
-    fontSize: 20,
+    fontSize: 25,
     fontWeight: "bold",
     marginBottom: 10,
+    color:"white",
   },
   notificationItem: {
     flexDirection: "row",
