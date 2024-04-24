@@ -101,7 +101,7 @@ const EditProfile = ({navigation}) => {
       setName("");
       setText("");
       resetImageUri(); // Reset imageUri after saving profile
-      navigation.navigate('Profile');
+      navigation.navigate('Home');
 
     } catch (error) {
       console.error("Lỗi khi lưu hồ sơ:", error);

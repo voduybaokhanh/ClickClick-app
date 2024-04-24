@@ -64,7 +64,7 @@ const Notifications = () => {
               borderRadius: 50,
               backgroundColor: "white",
             }}
-            source={{uri: item.avatar}}
+            source={{uri: item.AVATAR}}
           />
         <View style={{ flexDirection: "column" }}>
           <Text
@@ -100,7 +100,7 @@ const Notifications = () => {
               borderRadius: 50,
               backgroundColor: "white",
             }}
-            source={{uri: item.avatar}}
+            source={{uri: item.AVATAR}}
           />
           {item.STATUS == "pending" && (
             <View>

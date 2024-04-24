@@ -85,7 +85,7 @@ const Setting = ({navigation}) => {
                 <Image style={{marginRight:20,marginLeft:10}} source={require('../../Image/logoChange.png')}/>
                 <Text style={{color:'#635A8F',fontSize:20,fontWeight:'bold'}}>Change password</Text>
             </TouchableOpacity>
-            <TouchableOpacity onPress={handleDelete} style={{ width: "100%", height: 60, flexDirection: 'row', alignItems: 'center',backgroundColor:'#ffffff',borderRadius:20,borderWidth:2,marginBottom:320}}>
+            <TouchableOpacity onPress={handleDelete} style={{ width: "100%", height: 60, flexDirection: 'row', alignItems: 'center',backgroundColor:'#ffffff',borderRadius:20,borderWidth:2,marginBottom:280}}>
                 <Image style={{marginRight:20,marginLeft:10}} source={require('../../Image/logoDelete.png')}/>
                 <Text style={{color:'#635A8F',fontSize:20,fontWeight:'bold'}}>Delete account</Text>
             </TouchableOpacity>
