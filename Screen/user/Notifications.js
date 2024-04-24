@@ -16,6 +16,7 @@ import { LinearGradient } from "expo-linear-gradient";
 const Notifications = () => {
   const [notifications, setNotifications] = useState([]);
   const [listFriendStatus, setlistFriendStatus] = useState([]);
+  const [reload, setReload] = useState(false);
 
   useEffect(() => {
     fetchNotifications();
@@ -63,7 +64,7 @@ const Notifications = () => {
               borderRadius: 50,
               backgroundColor: "white",
             }}
-            source={{uri: 'https://i.pinimg.com/originals/bc/43/98/bc439871417621836a0eeea768d60944.jpg'}}
+            source={{uri: item.avatar}}
           />
         <View style={{ flexDirection: "column" }}>
           <Text
@@ -99,7 +100,7 @@ const Notifications = () => {
               borderRadius: 50,
               backgroundColor: "white",
             }}
-            source={{uri: 'https://i.pinimg.com/originals/bc/43/98/bc439871417621836a0eeea768d60944.jpg'}}
+            source={{uri: item.avatar}}
           />
           {item.STATUS == "pending" && (
             <View>
@@ -191,6 +192,10 @@ const Notifications = () => {
           data={notifications}
           renderItem={renderItem}
           keyExtractor={(item, index) => index.toString()} // Sử dụng trường ID làm key
+          refreshing={reload}
+          keyboardShouldPersistTaps="handled"
+          onRefresh={fetchNotifications}
+
         />
       </SafeAreaView>
       <View style={{ flex: 1 }}>
@@ -198,7 +203,9 @@ const Notifications = () => {
         <FlatList
           data={listFriendStatus.flat()}
           renderItem={renderItemFriend}
-          keyExtractor={(item, index) => index.toString()}
+          refreshing={reload}
+          keyboardShouldPersistTaps="handled"
+          onRefresh={fetchNotifications}
         />
       </View>
     </LinearGradient>
