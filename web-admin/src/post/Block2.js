@@ -14,7 +14,16 @@ const Block = ({ saveUser }) => {
             const axiosInstance = await AxiosInstance();
             const response = await axiosInstance.get('/get-all-user-reported.php');
             if (response.status) {
-                setPosts(response.reported_users);
+                const updatedUsers = response.reported_users.map(user => {
+                    return {
+                        ...user,
+                        userid_available: user.userid_available ? 0 : 1
+                    };
+                }).sort((a, b) => {
+                    // Sắp xếp người dùng khóa lên đầu
+                    return a.userid_available - b.userid_available || a.USERID - b.USERID;
+                });
+                setPosts(updatedUsers);
             } else {
                 throw new Error(response.msg);
             }
@@ -25,7 +34,7 @@ const Block = ({ saveUser }) => {
     }
 
     const toggleBlockStatus = async (userid, currentStatus) => {
-        const action = currentStatus ? 'unblock' : 'block';
+        const action = currentStatus ? 'Mở khóa' : 'Khóa';
         const url = currentStatus ? '/unblock.php' : '/block.php';
 
         const confirmationMessage = currentStatus ? 'Xác nhận mở khóa tài khoản?' : 'Xác nhận khóa tài khoản?';
@@ -44,14 +53,18 @@ const Block = ({ saveUser }) => {
                     const response = await axiosInstance.post(url, { userid });
                     if (response.status) {
                         swal(successMessage);
-                        // Cập nhật trạng thái của người dùng sau khi thành công
-                        const updatedPosts = posts.map(item => {
-                            if (item.USERID === userid) {
-                                return { ...item, userid_available: currentStatus ? 1 : 0 }; // Đảo ngược trạng thái
-                            }
-                            return item;
+                        // Cập nhật trạng thái của người dùng trong mảng `posts`
+                        setPosts(prevPosts => {
+                            return prevPosts.map(item => {
+                                if (item.USERID === userid) {
+                                    return { ...item, userid_available: currentStatus ? 1 : 0 };
+                                }
+                                return item;
+                            }).sort((a, b) => {
+                                // Sắp xếp người dùng khóa lên đầu
+                                return a.userid_available - b.userid_available || a.USERID - b.USERID;
+                            });
                         });
-                        setPosts(updatedPosts);
                     } else {
                         swal(`Thất bại khi ${action} tài khoản`);
                     }
@@ -66,7 +79,7 @@ const Block = ({ saveUser }) => {
     return (
         <div>
             <h1>Danh sách người dùng bị báo cáo</h1>
-            <button className="btn btn-primary" onClick={() => saveUser(null)}>Đăng xuất</button>
+            <button className="btn btn-primary" onClick={() => { saveUser(null); fetchData(); }}>Đăng xuất và cập nhật</button>
             <a href="/block" className="btn btn-warning">Chuyển đến block1</a>
             <table className="table">
                 <thead>
@@ -82,9 +95,15 @@ const Block = ({ saveUser }) => {
                             <td>{item.USERID}</td>
                             <td>{item.reported_count}</td>
                             <td>
-                                <button className={`btn ${item.userid_available === 0 ? 'btn-primary' : 'btn-danger'}`} onClick={() => toggleBlockStatus(item.USERID, item.userid_available === 0)}>
-                                    {item.userid_available === 0 ? 'Mở khóa' : 'Khóa'}
-                                </button>
+                                {item.userid_available === 0 ? (
+                                    <button className="btn btn-primary" onClick={() => toggleBlockStatus(item.USERID, true)}>
+                                        Mở khóa
+                                    </button>
+                                ) : (
+                                    <button className="btn btn-danger" onClick={() => toggleBlockStatus(item.USERID, false)}>
+                                        Khóa
+                                    </button>
+                                )}
                             </td>
                         </tr>
                     ))}
