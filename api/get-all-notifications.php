@@ -20,9 +20,9 @@ try {
     $userid = $data->userid;
 
     // Truy vấn thông báo dựa trên RECEIVERID và kết hợp thông tin người gửi
-    $getNotificationsQuery = "SELECT notifications.*, users.avatar 
+    $getNotificationsQuery = "SELECT notifications.*, users.avatar AS AVATAR
     FROM notifications 
-    LEFT JOIN users ON notifications.RECEIVERID = users.id
+    LEFT JOIN users ON notifications.USERID = users.id
     WHERE notifications.RECEIVERID = :userid
     ORDER BY notifications.TIME DESC"; // Sắp xếp theo thời gian giảm dần
     $getNotificationsStmt = $dbConn->prepare($getNotificationsQuery);
