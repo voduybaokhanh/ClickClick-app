@@ -14,16 +14,7 @@ const Block = ({ saveUser }) => {
             const axiosInstance = await AxiosInstance();
             const response = await axiosInstance.get('/get-all-user-reported.php');
             if (response.status) {
-                const updatedUsers = response.reported_users.map(user => {
-                    return {
-                        ...user,
-                        userid_available: user.userid_available ? 0 : 1
-                    };
-                }).sort((a, b) => {
-                    // Sắp xếp người dùng khóa lên đầu
-                    return a.userid_available - b.userid_available || a.USERID - b.USERID;
-                });
-                setPosts(updatedUsers);
+                setPosts(response.reported_users);
             } else {
                 throw new Error(response.msg);
             }
@@ -57,12 +48,12 @@ const Block = ({ saveUser }) => {
                         setPosts(prevPosts => {
                             return prevPosts.map(item => {
                                 if (item.USERID === userid) {
-                                    return { ...item, userid_available: currentStatus ? 1 : 0 };
+                                    return { ...item, Available: currentStatus ? 1 : 0 };
                                 }
                                 return item;
                             }).sort((a, b) => {
                                 // Sắp xếp người dùng khóa lên đầu
-                                return a.userid_available - b.userid_available || a.USERID - b.USERID;
+                                return a.Available - b.Available || a.USERID - b.USERID;
                             });
                         });
                     } else {
@@ -95,7 +86,7 @@ const Block = ({ saveUser }) => {
                             <td>{item.USERID}</td>
                             <td>{item.reported_count}</td>
                             <td>
-                                {item.userid_available === 0 ? (
+                                {item.Available === 0 ? (
                                     <button className="btn btn-primary" onClick={() => toggleBlockStatus(item.USERID, true)}>
                                         Mở khóa
                                     </button>
