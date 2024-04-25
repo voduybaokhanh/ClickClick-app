@@ -30,6 +30,8 @@ const Login = ({navigation}) => {
       if (result.status) {
         await AsyncStorage.setItem("token", result.user.id.toString());
         alert("Đăng nhập thành công");
+        setEmail("");
+        setPassword("");
         navigation.navigate('BottomTab')
 
         // Token đã được lưu trữ thành công, thực hiện các thao tác tiếp theo nếu cần

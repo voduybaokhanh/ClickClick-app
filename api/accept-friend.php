@@ -1,5 +1,4 @@
 <?php
-// accept-friend-request.php
 header("Content-Type: application/json; charset=UTF-8");
 header("Access-Control-Allow-Methods: POST");
 header("Access-Control-Allow-Origin: *");
@@ -23,7 +22,7 @@ try {
 
     $userid = $data->userid;
     $friendshipid = $data->friendshipid;
-    
+
     // Kiểm tra xem người bạn đã tồn tại hay chưa
     $checkFriendQuery = "SELECT * FROM users WHERE ID = :friendshipid";
     $checkFriendStmt = $dbConn->prepare($checkFriendQuery);
@@ -68,11 +67,18 @@ try {
     }
 
     // Cập nhật trạng thái yêu cầu kết bạn thành "friend" trong cơ sở dữ liệu
-    $acceptFriendshipQuery = "UPDATE friendships SET status = 'friend' WHERE friendshipid = :friendshipid AND userid = :userid";
-    $acceptFriendshipStmt = $dbConn->prepare($acceptFriendshipQuery);
-    $acceptFriendshipStmt->bindParam(':friendshipid', $friendshipid, PDO::PARAM_INT);
-    $acceptFriendshipStmt->bindParam(':userid', $userid, PDO::PARAM_INT);
-    $acceptFriendshipStmt->execute();
+    $acceptFriendshipQuery = "UPDATE friendships SET status = 'friend' WHERE friendshipid = :userid AND userid = :friendshipid";
+$acceptFriendshipStmt = $dbConn->prepare($acceptFriendshipQuery); // Khởi tạo biến
+$acceptFriendshipStmt->bindParam(':userid', $userid, PDO::PARAM_INT);
+$acceptFriendshipStmt->bindParam(':friendshipid', $friendshipid, PDO::PARAM_INT);
+$acceptFriendshipStmt->execute();
+
+    // Thêm yêu cầu kết bạn vào cơ sở dữ liệu
+    $insertFriendshipQuery = "INSERT INTO friendships (userid, friendshipid, status, time) VALUES (:userid, :friendshipid, 'friend', NOW())";
+    $insertFriendshipStmt = $dbConn->prepare($insertFriendshipQuery);
+    $insertFriendshipStmt->bindParam(':userid', $userid, PDO::PARAM_INT);
+    $insertFriendshipStmt->bindParam(':friendshipid', $friendshipid, PDO::PARAM_INT);
+    $insertFriendshipStmt->execute();
 
     echo json_encode(array('status' => true, 'message' => 'Đã chấp nhận yêu cầu kết bạn.'));
 } catch (Exception $e) {

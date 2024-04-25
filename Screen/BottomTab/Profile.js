@@ -36,7 +36,6 @@ const Profile = () => {
       setUser(result.user); // Set the fetched user data into state
       setposts(result.posts);
       setfriends(result.friends);
-      console.log(">>Pro5 : " + JSON.stringify(result));
     } catch (error) {
       console.error("Error fetching profile: ", error);
     }
@@ -53,7 +52,7 @@ const Profile = () => {
           <TouchableOpacity onPress={() => navigation.goBack()}>
             <Image source={require("../../Image/Vector.png")} />
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => navigation.goBack()}>
+          <TouchableOpacity onPress={() => navigation.navigate('Setting')}>
             <Image source={require("../../Image/edit.png")} />
           </TouchableOpacity>
         </View>
