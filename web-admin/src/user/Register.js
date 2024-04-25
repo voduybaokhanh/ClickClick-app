@@ -46,26 +46,26 @@ const Register = () => {
 
     return (
         <div>
-            <h2>Register</h2>
+            <h2>Đăng Ký</h2>
             <form onSubmit={handleRegister}>
                 <div className="form-group">
                     <label>Email</label>
-                    <input type="email" className="form-control" placeholder="Enter email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+                    <input type="email" className="form-control" placeholder="Nhập email" value={email} onChange={(e) => setEmail(e.target.value)} required />
                 </div>
                 <div className="form-group">
-                    <label>Password</label>
-                    <input type="password" className="form-control" placeholder="Enter password" value={password} onChange={(e) => setPassword(e.target.value)} required />
+                    <label>Mật khẩu</label>
+                    <input type="password" className="form-control" placeholder="Nhập mật khẩu" value={password} onChange={(e) => setPassword(e.target.value)} required />
                 </div>
                 <div className="form-group">
-                    <label>Confirm Password</label>
-                    <input type="password" className="form-control" placeholder="Confirm password" value={passwordConfirm} onChange={(e) => setPasswordConfirm(e.target.value)} required />
+                    <label>Nhập lại mật khẩu</label>
+                    <input type="password" className="form-control" placeholder="Nhập lại mật khẩt" value={passwordConfirm} onChange={(e) => setPasswordConfirm(e.target.value)} required />
                 </div>
                 <div className="form-group">
-                    <label>Role</label>
+                    <label>Vai trò</label>
                     <select className="form-control" value={role} onChange={(e) => setRole(e.target.value)} required>
-                        <option value="">Select Role</option>
-                        <option value="admin">Admin</option>
-                        <option value="user">User</option>
+                        <option value="">Lựa chọn vai tròn</option>
+                        <option value="admin">Quản trị viên</option>
+                        <option value="user">Người dùng</option>
                     </select>
                 </div>
                 <button type="submit" className="btn btn-primary btn-block">Đăng Ký</button>

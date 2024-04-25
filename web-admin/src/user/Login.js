@@ -25,19 +25,19 @@ const Login = (props) => {
 
   return (
     <div>
-      <h2>Login</h2>
+      <h2>Đăng nhập</h2>
       <form>
         <div className="form-group">
           <label>Email</label>
-          <input type="email" className="form-control" placeholder="Enter email" value={email} onChange={(e) => setEmail(e.target.value)} />
+          <input type="email" className="form-control" placeholder="Nhập email" value={email} onChange={(e) => setEmail(e.target.value)} />
         </div>
         <div className="form-group">
-          <label>Password</label>
-          <input type="password" className="form-control" placeholder="Enter password" value={password} onChange={(e) => setPassword(e.target.value)} />
+          <label>Mật khẩu</label>
+          <input type="password" className="form-control" placeholder="Nhập mật khẩu" value={password} onChange={(e) => setPassword(e.target.value)} />
         </div>
-        <button onClick={actionLogin} type="button" className="btn btn-primary btn-block">Submit</button>
+        <button onClick={actionLogin} type="button" className="btn btn-primary btn-block">Xác nhận</button>
         <button>
-          <Link type="button" className="btn btn-primary btn-block" to="/Register">Dang ky admin</Link>
+          <Link type="button" className="btn btn-primary btn-block" to="/Register">Đăng ký</Link>
         </button>
 
       </form>

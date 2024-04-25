@@ -76,8 +76,7 @@ const List = ({ saveUser }) => {
         <div>
             <h1>Danh sách bài viết bị báo cáo</h1>
             <button className="btn btn-primary" onClick={() => saveUser(null)}>Đăng xuất</button>
-            <a href="/block" className="btn btn-warning">Chuyển đến trang quản lý người dùng</a>
-            <a href="/block2" className="btn btn-warning">Chuyển đến block2</a>
+            <a href="/block2" className="btn btn-warning">Chuyển đến trang quản lý người dùng</a>
             <table className="table">
                 <thead>
                     <tr>
@@ -113,4 +112,6 @@ const List = ({ saveUser }) => {
     );
 }
 
+
 export default List;
+
