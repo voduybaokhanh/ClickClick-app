@@ -25,7 +25,6 @@ export default function App(navigation) {
     <SafeAreaProvider styles={styles.container}>
       <NavigationContainer >
       <Stack.Navigator screenOptions={{headerShown: false}}>
-        <Stack.Screen name="Search_Addfriend" component={Search_Addfriend} />
         <Stack.Screen name="Hello" component={Hello} />
         <Stack.Screen name="Login" component={Login} />
         <Stack.Screen name="Home" component={Home} />

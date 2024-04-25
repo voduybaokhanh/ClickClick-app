@@ -13,7 +13,7 @@ import AxiosInstance from "../../helper/Axiostance";
 import { LinearGradient } from "expo-linear-gradient";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useFocusEffect } from "@react-navigation/native"; // Import useFocusEffect
 import MasonryList from '@react-native-seoul/masonry-list';
 
 const Profile = () => {
@@ -21,10 +21,6 @@ const Profile = () => {
   const [user, setUser] = useState(null); // State to hold user data
   const [posts, setposts] = useState([]);
   const [friends, setfriends] = useState([]);
-
-  useEffect(() => {
-    fetchProfile(); // Call fetchProfile when the component mounts
-  }, []);
 
   const fetchProfile = async () => {
     try {
@@ -40,6 +36,12 @@ const Profile = () => {
       console.error("Error fetching profile: ", error);
     }
   };
+
+  useFocusEffect(
+    React.useCallback(() => {
+      fetchProfile();
+    }, [])
+  );
 
   return (
     <LinearGradient
