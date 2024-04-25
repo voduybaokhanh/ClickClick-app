@@ -68,10 +68,10 @@ try {
 
     // Cập nhật trạng thái yêu cầu kết bạn thành "friend" trong cơ sở dữ liệu
     $acceptFriendshipQuery = "UPDATE friendships SET status = 'friend' WHERE friendshipid = :userid AND userid = :friendshipid";
-$acceptFriendshipStmt = $dbConn->prepare($acceptFriendshipQuery); // Khởi tạo biến
-$acceptFriendshipStmt->bindParam(':userid', $userid, PDO::PARAM_INT);
-$acceptFriendshipStmt->bindParam(':friendshipid', $friendshipid, PDO::PARAM_INT);
-$acceptFriendshipStmt->execute();
+    $acceptFriendshipStmt = $dbConn->prepare($acceptFriendshipQuery); // Khởi tạo biến
+    $acceptFriendshipStmt->bindParam(':userid', $userid, PDO::PARAM_INT);
+    $acceptFriendshipStmt->bindParam(':friendshipid', $friendshipid, PDO::PARAM_INT);
+    $acceptFriendshipStmt->execute();
 
     // Thêm yêu cầu kết bạn vào cơ sở dữ liệu
     $insertFriendshipQuery = "INSERT INTO friendships (userid, friendshipid, status, time) VALUES (:userid, :friendshipid, 'friend', NOW())";
