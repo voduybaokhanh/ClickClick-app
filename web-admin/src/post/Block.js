@@ -97,7 +97,6 @@ const Block = ({ saveUser }) => {
         <div>
             <h1>Danh sách người dùng bị báo cáo</h1>
             <button className="btn btn-primary" onClick={() => saveUser(null)}>Đăng xuất</button>
-            <a href="/block2" className="btn btn-warning">Chuyển đến block2</a>
             <table className="table">
                 <thead>
                     <tr>
