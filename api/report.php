@@ -11,7 +11,7 @@ try {
     $data = json_decode(file_get_contents("php://input"));
 
     // Kiểm tra xem có userid và postid được gửi hay không
-    if (!isset($data->userid) || !isset($data->postid)) {
+    if (!isset($data->userid) || !isset($data->postid) || !isset($data->reason)) {
         http_response_code(400);
         echo json_encode(array('status' => false, 'message' => 'Thiếu tham số userid hoặc postid'));
         exit;
@@ -19,20 +19,27 @@ try {
 
     $userid = $data->userid;
     $postid = $data->postid;
+    $reason = $data->reason;
 
-    // Thêm bản ghi vào bảng reports
-    $addReportQuery = "INSERT INTO reports (userid, postid, time) VALUES (:userid, :postid, NOW())";
-    $addReportStmt = $dbConn->prepare($addReportQuery);
-    $addReportStmt->bindParam(':userid', $userid, PDO::PARAM_INT);
-    $addReportStmt->bindParam(':postid', $postid, PDO::PARAM_INT);
-    $addReportStmt->execute();
+    // Kiểm tra xem bài viết có tồn tại không
+    $checkPostQuery = "SELECT * FROM posts WHERE id = :postid";
+    $checkPostStmt = $dbConn->prepare($checkPostQuery);
+    $checkPostStmt->bindParam(':postid', $postid, PDO::PARAM_INT);
+    $checkPostStmt->execute();
+    $post = $checkPostStmt->fetch(PDO::FETCH_ASSOC);
 
-    // Ẩn bài viết cho người dùng đó
-    $hidePostQuery = "UPDATE posts SET available = 0 WHERE id = :postid AND userid != :userid";
-    $hidePostStmt = $dbConn->prepare($hidePostQuery);
-    $hidePostStmt->bindParam(':postid', $postid, PDO::PARAM_INT);
-    $hidePostStmt->bindParam(':userid', $userid, PDO::PARAM_INT);
-    $hidePostStmt->execute();
+    if (!$post) {
+        http_response_code(404);
+        echo json_encode(array('status' => false, 'message' => 'Bài viết không tồn tại'));
+        exit;
+    }
+    
+    // Cập nhật cột AVAILABLE và REASON trong bảng POSTS
+    $updatePostQuery = "UPDATE posts SET available = 0, reason = :reason WHERE id = :postid";
+    $updatePostStmt = $dbConn->prepare($updatePostQuery);
+    $updatePostStmt->bindParam(':postid', $postid, PDO::PARAM_INT);
+    $updatePostStmt->bindParam(':reason', $reason, PDO::PARAM_STR);
+    $updatePostStmt->execute();
 
     echo json_encode(array('status' => true, 'message' => 'Báo cáo thành công'));
 } catch (Exception $e) {

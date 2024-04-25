@@ -12,6 +12,7 @@
     StyleSheet,
     Text,
     View,
+    TouchableOpacity
   } from "react-native";
   import { useState, useEffect } from "react";
 
@@ -53,6 +54,9 @@
               paddingHorizontal: 10,
             }}
           >
+            <TouchableOpacity onPress={() => navigation.goBack()}>
+            <Image source={require("../../Image/arrow-left.png")} />
+          </TouchableOpacity>
             <Text style={styles.textMessage}>Message</Text>
             <Image
               style={styles.iconSetting}
@@ -71,10 +75,11 @@
                   alignItems: "center",
                   marginBottom: 10,
                   paddingHorizontal: 20,
+                  marginTop:10
                 }}
               >
                   <Image
-                    style={{ width: 70, height: 70, borderRadius: 50 }}
+                    style={{ width: 60, height: 60, borderRadius: 50 }}
                     source={{ uri: item.avatar }}
                   />
                   <View
@@ -85,15 +90,15 @@
                   >
                     <Text style={styles.textName}>{item.name}</Text>
                     {item.lastMessage ? (
-                      <Text style={{fontSize:17,color: "white"}} >{item.lastMessage.CONTENT}</Text>
+                      <Text style={{fontSize:17,color: "white",bottom:7}} >{item.lastMessage.CONTENT}</Text>
                     ) : (
-                      <Text style={{fontSize:17,color: "white"}}>No messages</Text>
+                      <Text style={{fontSize:17,color: "white",bottom:7}}>No messages</Text>
                     )}
                   </View>
                   <Text style={{ alignSelf: "flex-end" }}>
                     {item.lastMessage ? item.lastMessageDate : ''}
                   </Text>
-                  <Image source={require("../../Image/Vector.png")} />
+                  <Image source={require("../../Image/more.png")} />
                 </Pressable>
               );
             }}
@@ -124,8 +129,9 @@
     textName: {
       flex: 1,
       color: "white",
-      fontSize: 22,
+      fontSize: 18,
       fontWeight: "bold",
       paddingTop: 20,
+      bottom:10
     },
   });

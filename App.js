@@ -14,17 +14,23 @@ import Resetpassword from './Screen/user/Resetpassword';
 import MessageListScreen from './Screen/user/MessageListScreen';
 import MessProps from './Screen/MessProps';
 import Notifications from './Screen/user/Notifications';
+import Profile  from './Screen/BottomTab/Profile';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+import Setting from './Screen/user/Setting';
+import EditProfile from './Screen/user/EditProfile';
 const Stack = createNativeStackNavigator();
 
 export default function App(navigation) {
   return (
-      <NavigationContainer styles={styles.container}>
+    <SafeAreaProvider styles={styles.container}>
+      <NavigationContainer >
       <Stack.Navigator screenOptions={{headerShown: false}}>
         <Stack.Screen name="Hello" component={Hello} />
         <Stack.Screen name="Login" component={Login} />
         <Stack.Screen name="Home" component={Home} />
         <Stack.Screen name="BottomTab" component={BottomTab} />
         <Stack.Screen name="Post" component={Post} />
+        <Stack.Screen name="Profile" component={Profile} />
         <Stack.Screen name="forgot" component={Forgetpassword} />
         <Stack.Screen name="register" component={Register} />
         <Stack.Screen name="registerOTP" component={RegisterOtp} /> 
@@ -32,9 +38,12 @@ export default function App(navigation) {
         <Stack.Screen name="messlistscreen" component={MessageListScreen} />
         <Stack.Screen name="Notifications" component={Notifications} />  
         <Stack.Screen name="MessProps" component={MessProps} /> 
+        <Stack.Screen name="Setting" component={Setting} /> 
+        <Stack.Screen name="EditProfile" component={EditProfile} /> 
 
       </Stack.Navigator>   
     </NavigationContainer>
+    </SafeAreaProvider>
 
   );
 }
@@ -42,7 +51,6 @@ export default function App(navigation) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
   },

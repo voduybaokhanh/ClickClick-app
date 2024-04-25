@@ -65,7 +65,7 @@ const sendPost = async () => {
       // Upload ảnh lên Cloudinary và lấy đường dẫn ảnh từ phản hồi của Cloudinary
       const uploadedImageUrl = await uploadImage();
 
-      const instance = await AxiosInstance();
+      const instance = await AxiosInstance(); 
       const body = {
         userid: parseInt(token),
         content: content,
@@ -81,7 +81,7 @@ const sendPost = async () => {
     } else {
       const uploadedImageUrl = await uploadImage();
       // Nếu không có nội dung được nhập, gửi bài viết chỉ với ảnh
-      const instance = await AxiosInstance();
+const instance = await AxiosInstance();
       const body = {
         userid: parseInt(token),
         content: "", // Đặt content là rỗng khi gửi bài viết chỉ với ảnh
@@ -167,73 +167,84 @@ return (
         </View>
         <View style={styles.itempost}>
           <View style={styles.namepost}>
-            <View style={{ flexDirection: "column", marginLeft: 10 }}>
+            <View style={{ marginLeft: 10,flexDirection:"row" }}>
               <Text style={styles.name}>You</Text>
             </View>
           </View>
-          <View style={{ width: "90%" }}>
-            <Camera
+      <View style={styles.viewCam}>
+            {
+              !capturedImageUri ? 
+              <Camera
               style={styles.camera}
               ref={cameraRef}
-              type={cameraType}
+type={cameraType}
             />
-            {capturedImageUri && (
-              <Image
-                source={{ uri: capturedImageUri }}
-                style={styles.capturedImage}
-              />
-            )}
+            :
+            <Image
+            source={{ uri: capturedImageUri }}
+            style={styles.capturedImage}
+          />
+            }
+        
           </View>
-        </View>
         
-        <View style={{ justifyContent:"space-evenly",flexDirection:"row",alignItems:"center",bottom:47 }}>
-        <View>
-              <TouchableOpacity style={styles.button} onPress={switchCameraType}>
-                <Image
-                  style={{ width: 80, height: 80 }}
-                  source={require("../../Image/camerasau.png")}
-                />
-              </TouchableOpacity>
-            </View>
           {!capturedImageUri ? (
-            <TouchableOpacity style={styles.button} onPress={takePicture}>
-              <Image
-                style={{ width: 80, height: 80 }}
-                source={require("../../Image/camera_icon.png")}
-              />
-            </TouchableOpacity>
-          ) : (
-            <View>
-              <TouchableOpacity style={styles.button} onPress={retakePicture}>
+             <View style={{flexDirection:"row",justifyContent:"space-between", width:"90%", marginTop:15}}>
+              <View style={styles.change_cam}>
+          
+              </View>
+             <View style={styles.cam}>
+              <TouchableOpacity  onPress={takePicture}>
                 <Image
-                  style={{ width: 80, height: 80 }}
-                  source={require("../../Image/delete.png")}
+                  source={require("../../Image/camera_icon.png")}
                 />
               </TouchableOpacity>
-            </View>
-          )}
-        </View>
+              </View>
+              <View style={styles.change_cam}>
+          <TouchableOpacity style={styles.button} onPress={switchCameraType}>
+            <Image
+              style={{ width: 60, height: 60}}
+              source={require("../../Image/change_camera.png")}
+            />
+          </TouchableOpacity>
+     </View>
+              </View>
         
-        <View style={{ marginTop: 10, alignItems: "center" }}>
+      ) : (
+        <View  style={{flexDirection:"row",justifyContent:"space-between", width:"90%", marginTop:15}}>
+           <View style={styles.change_cam}>
+          
+          </View>
+        <View style={styles.cam}>
+          <TouchableOpacity onPress={retakePicture}>
+            <Image
+              source={require("../../Image/delete_icon.png")}
+            />
+          </TouchableOpacity>
+        </View>
+         <View style={styles.sent}>
+         <TouchableOpacity onPress={sendPost}  >
+            <Image
+             style={{ width: 60, height: 60}}
+               source={require("../../Image/icon_sent.png")}
+             />
+         </TouchableOpacity>
+         </View>
+         </View>
+      )}
+         
+       
+     </View>
+        
+        <View style={{ alignItems: "center"}}>
           <TextInput
             style={styles.mes}
             placeholder="Add a message"
-            placeholderTextColor={"#635A8F"}
+            placeholderTextColor={"#FFFFFF"}
             value={content}
             onChangeText={setContent} // Cập nhật nội dung bài viết khi người dùng nhập
           />
         </View>
-        {capturedImageUri && ( // Chỉ render khi có ảnh được chụp
-          <TouchableOpacity
-            style={{ alignItems: "center", bottom: 110 }}
-            onPress={sendPost} // Gọi hàm sendPost khi ấn
-          >
-             <Image
-                style={{ width: 150, height: 80,borderRadius:70 }}
-                source={require("../../Image/send.png")}
-              />
-          </TouchableOpacity>
-        )}
       </ScrollView>
     </LinearGradient>
   </View>
@@ -242,19 +253,36 @@ return (
 
 
 const styles = StyleSheet.create({
+  sent:{
+    justifyContent:"center",
+    width: 60, height: 60,
+    marginTop:5
+  },
+  change_cam:{
+    justifyContent:"center",
+    width: 60, height: 60,
+    marginTop:5
+  },
+  cam:{
+   
+  },
+  viewCam:{
+width:"90%",
+height:"62%"
+  },
   
   text1: {
     fontSize: 20,
   },
   mes: {
-    backgroundColor: "#E5D7F7",
-    marginLeft: 10,
+    backgroundColor: "#635A8F",
     height: 50,
     borderRadius: 24,
-    width: "80%",
+    width: "90%",
     paddingHorizontal: 20,
-    bottom: 200,
-    fontSize: 17, // Updated to a numeric value
+    fontSize: 17,
+    marginTop:40,
+    color:"white"// Updated to a numeric value
   },
 
   namepost: {
@@ -263,19 +291,20 @@ const styles = StyleSheet.create({
     top: 12,
     width: "90%",
     marginBottom: 20,
+    height:"8%"
   },
   iconmore: {
     marginLeft: "auto",
   },
-  avt: {},
+  
   name: {
     color: "white",
-    fontSize: 35,
+    fontSize: 21,
     fontWeight: "bold",
   },
   itempost: {
-    width: "auto",
-    height: 500,
+width: "auto",
+    height:500,
     backgroundColor: "#BFA7FF",
     top: 30,
     borderRadius: 20,
@@ -310,14 +339,10 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   camera: {
-    width: "100%",
-    height: 350,
+  width:"100%",height:"100%"
   },
   capturedImage: {
-    width: "100%",
-    height: "100%",
-    position: "absolute",
-    zIndex: 1,
+    width:"100%",height:"100%"
   },
 });
 

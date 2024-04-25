@@ -5,90 +5,60 @@ header("Access-Control-Allow-Origin: *");
 header("Access-Control-Max-Age: 3600");
 header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
 
+// Import connection.php và JWT
 include_once './connection.php';
+include_once './helpers/jwt.php';
 
 try {
-    $decodedData = stripslashes(file_get_contents("php://input"));
-    $data = json_decode($decodedData);
+    $data = json_decode(file_get_contents("php://input"));
 
-    $id = $data->id;
-
-    // Kiểm tra xem người dùng có tồn tại không
-    $sqlQuery = "SELECT * FROM users WHERE id = :id";
-    $stmt = $dbConn->prepare($sqlQuery);
-    $stmt->bindParam(':id', $id, PDO::PARAM_STR);
-    $stmt->execute();
-    $user = $stmt->fetch(PDO::FETCH_ASSOC);
-
-    if (!$user) {
-        echo json_encode(
-            array(
-                "status" => false,
-                "message" => "Người dùng không tồn tại"
-            )
-        );
+    // Kiểm tra xem người dùng có tồn tại hay không
+    if (!isset($data->userid)) {
+        echo json_encode(array('error' => 'Người dùng không tồn tại'));
         exit;
     }
 
-    // Lưu trữ dữ liệu ban đầu
-    $originalName = isset($user['name']) ? $user['name'] : null;
-    $originalAvatar = isset($user['avatar']) ? $user['avatar'] : null;
-    $originalSdt = isset($user['sdt']) ? $user['sdt'] : null;
-    $originalText = isset($user['text']) ? $user['text'] : null;
+    // Kiểm tra xem dữ liệu có tồn tại hay không
+    if (!$data || !isset($data->avatar) || !isset($data->name)) {
+        echo json_encode(array('error' => 'Dữ liệu không hợp lệ'));
+        exit;
+    }
+
+    // Lấy dữ liệu từ yêu cầu
+    $name = $data->name;
+    $avatar = $data->avatar;
+    $userid = $data->userid;
 
     // Cập nhật hồ sơ người dùng
-    $sqlUpdate = "UPDATE users SET ";
-    $updates = array();
-
-    if (isset($data->name)) {
-        $updates[] = "name = :name";
-        $name = $data->name;
-    } else {
-        $name = $originalName;
-    }
-
-    if (isset($data->avatar)) {
-        $updates[] = "avatar = :avatar";
-        $avatar = $data->avatar;
-    } else {
-        $avatar = $originalAvatar;
-    }
-
-    if (isset($data->sdt)) {
-        $updates[] = "sdt = :sdt";
-        $sdt = $data->sdt;
-    } else {
-        $sdt = $originalSdt;
-    }
-
+    $sqlUpdateUser = "UPDATE users SET name = :name, avatar = :avatar";
     if (isset($data->text)) {
-        $updates[] = "text = :text";
+        $sqlUpdateUser .= ", text = :text";
         $text = $data->text;
-    } else {
-        $text = $originalText;
     }
-
-    if (!empty($updates)) {
-        $sqlUpdate .= implode(', ', $updates);
-        $sqlUpdate .= " WHERE id = :id";
-
-        $stmt = $dbConn->prepare($sqlUpdate);
-        $stmt->bindParam(':id', $id, PDO::PARAM_STR);
-        if (isset($data->name)) {
-            $stmt->bindParam(':name', $name, PDO::PARAM_STR);
-        }
-        if (isset($data->avatar)) {
-            $stmt->bindParam(':avatar', $avatar, PDO::PARAM_STR);
-        }
-        if (isset($data->sdt)) {
-            $stmt->bindParam(':sdt', $sdt, PDO::PARAM_STR);
-        }
-        if (isset($data->text)) {
-            $stmt->bindParam(':text', $text, PDO::PARAM_STR);
-        }
-
-        $stmt->execute();
+    $sqlUpdateUser .= " WHERE id = :userid";
+    $stmtUser = $dbConn->prepare($sqlUpdateUser);
+    $stmtUser->bindParam(':userid', $userid, PDO::PARAM_INT);
+    $stmtUser->bindParam(':name', $name, PDO::PARAM_STR);
+    $stmtUser->bindParam(':avatar', $avatar, PDO::PARAM_STR);
+    if (isset($text)) {
+        $stmtUser->bindParam(':text', $text, PDO::PARAM_STR);
     }
+    $stmtUser->execute();
+
+    // Cập nhật các bài viết của người dùng sau khi cập nhật hồ sơ
+    $sqlUpdatePosts = "UPDATE posts SET name = :name, avatar = :avatar";
+    if (isset($text)) {
+        $sqlUpdatePosts .= ", text = :text";
+    }
+    $sqlUpdatePosts .= " WHERE userid = :userid";
+    $stmtPosts = $dbConn->prepare($sqlUpdatePosts);
+    $stmtPosts->bindParam(':userid', $userid, PDO::PARAM_INT);
+    $stmtPosts->bindParam(':name', $name, PDO::PARAM_STR);
+    $insertStmt->bindParam(':avatar', $avatar, PDO::PARAM_STR);
+    if (isset($text)) {
+        $stmtPosts->bindParam(':text', $text, PDO::PARAM_STR);
+    }
+    $stmtPosts->execute();
 
     echo json_encode(
         array(

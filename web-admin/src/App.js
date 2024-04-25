@@ -1,10 +1,12 @@
-import logo from './logo.svg';
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { BrowserRouter as Router, Route, Routes, Navigate, Outlet } from 'react-router-dom'
 import Login from './user/Login';
+import Register from './user/Register';
 import List from './post/List';
-import { useState } from 'react';
+import Block from './post/Block';
+import Block2 from './post/Block2';
+import React, { useState } from 'react';
 function App() {
 
 
@@ -51,14 +53,18 @@ function App() {
         <Routes>
           <Route element={<PublicRoute />}>
             <Route path="/login" element={<Login saveUser={saveUserToLocalStorgae} />} />
+            <Route path="/register" element={<Register />} />
           </Route>
           <Route element={<ProtectedRoute />}>
-            <Route path="/" element={<List />} />
+            <Route path="/" element={<List user={user} saveUser={saveUserToLocalStorgae} />} />
+            <Route path="/block" element={<Block user={user} saveUser={saveUserToLocalStorgae} />} />
+            <Route path="/block2" element={<Block2 user={user} saveUser={saveUserToLocalStorgae} />} />
           </Route>
         </Routes>
       </Router>
     </div >
   );
 }
+
 
 export default App;
