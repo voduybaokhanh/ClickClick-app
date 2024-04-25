@@ -7,6 +7,7 @@ import {
   Image,
   TextInput,
   TouchableOpacity,
+  Alert,
 } from "react-native";
 import AxiosInstance from "../../helper/Axiostance";
 import { LinearGradient } from "expo-linear-gradient";
@@ -182,12 +183,103 @@ const Home = () => {
     }
   };
 
-  const handleBaocao = () => {
-    // Xử lý khi icon được ấn
-    console.log("Icon đã được ấn");
-    // Thêm mã xử lý bạn muốn thực hiện khi icon được ấn
+  const handleMore = async (postid, userId) => {
+    const token = await AsyncStorage.getItem("token");
+    if (!token) {
+      console.log("Token (userid) not found in AsyncStorage");
+      return;
+    }
+    if (parseInt(token) === userId) {
+      // Người dùng đang xem bài viết của mình
+      Alert.alert(
+        "Xác nhận xóa bài viết",
+        "Bạn có chắc chắn muốn xóa bài viết này?",
+        [
+          {
+            text: "Hủy",
+            style: "cancel",
+          },
+          {
+            text: "Xóa",
+            onPress: () => handleDelete(postid), // Gọi hàm xóa bài viết khi người dùng xác nhận
+          },
+        ]
+      );
+    } else {
+      // Người dùng đang xem bài viết của người khác
+      Alert.prompt(
+        "Xác nhận báo cáo bài viết",
+        "Nhập lý do của bạn:",
+        [
+          {
+            text: "Hủy",
+            style: "cancel",
+          },
+          {
+            text: "Báo cáo",
+            onPress: (reason) => {
+              // Kiểm tra lý do nhập và gọi hàm xử lý báo cáo bài viết
+              if (reason && reason.trim() !== "") {
+                handleBaocao(postid, reason);
+              } else {
+                Alert.alert("Lỗi", "Vui lòng nhập lý do báo cáo bài viết");
+              }
+            },
+          },
+        ],
+        "plain-text"
+      );
+    }
   };
 
+  const handleDelete = async (postid) => {
+    try {
+      const token = await AsyncStorage.getItem("token");
+      if (!token) {
+        console.log("Token (userid) not found in AsyncStorage");
+        return;
+      }
+      const instance = await AxiosInstance();
+      const body = {
+        postid: postid,
+      };
+
+      const response = await instance.post("/delete-post.php", body);
+      if (response.status) {
+        alert("xóa bài viết thành công");
+      } else {
+        alert("xóa bài viết không thành công: ");
+      }
+    } catch (error) {
+      console.error("Error reporting post:", error);
+    }
+  };
+
+  const handleBaocao = async (postid, reason) => {
+    try {
+      const token = await AsyncStorage.getItem("token");
+      if (!token) {
+        console.log("Token (userid) not found in AsyncStorage");
+        return;
+      }
+
+      const instance = await AxiosInstance();
+      const body = {
+        userid: parseInt(token),
+        postid: postid,
+        reason: reason, // Thay bằng lý do thực tế từ người dùng
+      };
+
+      const response = await instance.post("/report.php", body);
+      if (response.status) {
+        alert("Báo cáo bài viết thành công");
+      } else {
+        alert("Báo cáo bài viết không thành công: " + response.data.message);
+      }
+    } catch (error) {
+      console.error("Error reporting post:", error);
+    }
+  };
   // Trong phần xử lý phản hồi từ API:
   const handleThatim = async (postid, userId) => {
     try {
@@ -251,7 +343,7 @@ const Home = () => {
             style={styles.iconsetting}
             source={require("../../Image/chu_click.png")}
           />
-          <View >
+          <View>
             <Dropdown
               style={styles.search}
               placeholder="Mọi người"
@@ -272,84 +364,91 @@ const Home = () => {
             />
           </View>
           <View style={styles.viewSetting}>
-          <Image
-            style={styles.iconsetting}
-            source={require("../../Image/setting_icon.png")}
-          />
+            <TouchableOpacity onPress={() => navigation.navigate("Setting")}>
+              <Image
+                style={styles.iconsetting}
+                source={require("../../Image/setting_icon.png")}
+              />
+            </TouchableOpacity>
           </View>
-        
         </View>
         <FlatList
           style={styles.FlatList}
           data={posts}
           refreshing={reload}
           onRefresh={fetchPosts}
-          keyboardShouldPersistTaps='handled' 
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
           // Trong FlatList renderItem:
           renderItem={({ item, index }) => {
             return (
-            <View style={[styles.itempost,  
-              index + 1 === posts.length ? {marginBottom: 90} : {}]}>
-              <View style={styles.namepost}>
-                <Image source={{ uri: item.AVATAR }} style={styles.avt} />
-                <View style={{ flexDirection: "column", marginLeft: 10 }}>
-                  <Text style={styles.name}>{item.NAME}</Text>
-                  <Text style={styles.time}>{item.TIME}</Text>
-                </View>
-                <TouchableOpacity
-                  style={{ marginLeft: "auto" }}
-                  onPress={handleBaocao}
-                >
-                  <Image
-                    style={styles.iconmore}
-                    source={require("../../Image/more_icon.png")}
-                  />
-                </TouchableOpacity>
-              </View>
-              <View style={{ width: "90%", marginBottom: 20 }}>
-                <Image
-                  style={{ width: 300, height: 300 }}
-                  source={{ uri: item.IMAGE}}
-                />
-                <View style={{ width: "90%", alignSelf: "center" }}>
-                  <Text style={styles.status}>{item.CONTENT}</Text>
-                </View>
-                <View style={styles.tim_mes}>
+              <View
+                style={[
+                  styles.itempost,
+                  index + 1 === posts.length ? { marginBottom: 90 } : {},
+                ]}
+              >
+                <View style={styles.namepost}>
+                  <Image source={{ uri: item.AVATAR }} style={styles.avt} />
+                  <View style={{ flexDirection: "column", marginLeft: 10 }}>
+                    <Text style={styles.name}>{item.NAME}</Text>
+                    <Text style={styles.time}>{item.TIME}</Text>
+                  </View>
                   <TouchableOpacity
-                    onPress={() => handleThatim(item.postid, item.USERID)}
+                    style={{ marginLeft: "auto" }}
+                    onPress={() => handleMore(item.postid, item.userid)}
                   >
                     <Image
-                      style={{
-                        width: 38,
-                        height: 42
-                      }}
-                      source={
-                        isLikedMap[item.postid]
-                          ? require("../../Image/hearted.png") // Nếu đã like, hiển thị icon hearted
-                          : require("../../Image/heart.png") // Ngược lại, hiển thị icon heart
-                      }
-                    />
-                  </TouchableOpacity>
-                  <Text style={styles.postText}>{item.LIKES}</Text>
-                  <TextInput
-                    style={styles.mes}
-                    placeholder="Add a message"
-                    placeholderTextColor={"#635A8F"}
-                    value={content.toString()}
-                    onChangeText={(e) => setContent(e)}
-                  />
-                  <TouchableOpacity onPress={() => sendMessage(item.userid, item.ID)}>
-                    <Image
-                      style={{ height: 40, width: 40 , top:5, left:5}}
-                      source={require("../../Image/sent.png")}
+                      style={styles.iconmore}
+                      source={require("../../Image/more_icon.png")}
                     />
                   </TouchableOpacity>
                 </View>
+                <View style={{ width: "90%", marginBottom: 20 }}>
+                  <Image
+                    style={{ width: 300, height: 300 }}
+                    source={{ uri: item.IMAGE }}
+                  />
+                  <View style={{ width: "90%", alignSelf: "center" }}>
+                    <Text style={styles.status}>{item.CONTENT}</Text>
+                  </View>
+                  <View style={styles.tim_mes}>
+                    <TouchableOpacity
+                      onPress={() => handleThatim(item.postid, item.userid)}
+                    >
+                      <Image
+                        style={{
+                          width: 38,
+                          height: 42,
+                        }}
+                        source={
+                          isLikedMap[item.postid]
+                            ? require("../../Image/hearted.png") // Nếu đã like, hiển thị icon hearted
+                            : require("../../Image/heart.png") // Ngược lại, hiển thị icon heart
+                        }
+                      />
+                    </TouchableOpacity>
+                    <Text style={styles.postText}>{item.LIKES}</Text>
+                    <TextInput
+                      style={styles.mes}
+                      placeholder="Add a message"
+                      placeholderTextColor={"#635A8F"}
+                      value={content.toString()}
+                      onChangeText={(e) => setContent(e)}
+                    />
+                    <TouchableOpacity
+                      onPress={() => sendMessage(item.userid, item.ID)}
+                    >
+                      <Image
+                        style={{ height: 40, width: 40, top: 5, left: 5 }}
+                        source={require("../../Image/sent.png")}
+                      />
+                    </TouchableOpacity>
+                  </View>
+                </View>
               </View>
-            </View>
-            )
-          }
-        }
+            );
+          }}
           keyExtractor={(item, index) => index.toString()}
         />
       </LinearGradient>
@@ -476,14 +575,14 @@ const styles = StyleSheet.create({
     flex: 1,
     width: "100%",
   },
-  viewSetting:{
+  viewSetting: {
     width: 70,
-    alignItems: 'flex-end'
+    alignItems: "flex-end",
   },
   dropdown: {
     marginTop: 5,
-    borderRadius: 24
-  }
+    borderRadius: 24,
+  },
 });
 
 export default Home;

@@ -10,7 +10,7 @@ include_once './connection.php';
 
 try {
     // Đọc dữ liệu từ cơ sở dữ liệu, sắp xếp từ mới nhất
-    $query = "SELECT * FROM POSTS WHERE AVAILABLE = 0";
+    $query = "SELECT * FROM POSTS WHERE AVAILABLE = 0 ";
     $stmt = $dbConn->prepare($query);
     $stmt->execute();
 

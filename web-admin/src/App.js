@@ -5,6 +5,7 @@ import Login from './user/Login';
 import Register from './user/Register';
 import List from './post/List';
 import Block from './post/Block';
+import Block2 from './post/Block2';
 import React, { useState } from 'react';
 function App() {
 
@@ -57,6 +58,7 @@ function App() {
           <Route element={<ProtectedRoute />}>
             <Route path="/" element={<List user={user} saveUser={saveUserToLocalStorgae} />} />
             <Route path="/block" element={<Block user={user} saveUser={saveUserToLocalStorgae} />} />
+            <Route path="/block2" element={<Block2 user={user} saveUser={saveUserToLocalStorgae} />} />
           </Route>
         </Routes>
       </Router>
