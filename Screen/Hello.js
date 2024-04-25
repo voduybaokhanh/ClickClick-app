@@ -18,8 +18,8 @@ const Hello = ({navigation}) => {
   return (
     <View style={styles.container}>
       <LinearGradient
-        locations={[0, 0.09, 0.29, 0.50,1]}
-        colors={["#3B21B7", "#8B64DA", "#FFFFFF", "#EFDAF9","#8B64DA"]}
+        locations={[0.05, 0.17, 0.8, 1]}
+        colors={["#3B21B7", "#8B64DA", "#D195EE", "#CECBD3"]}
         style={styles.linearGradient}
       >
         
@@ -28,14 +28,11 @@ const Hello = ({navigation}) => {
               style={styles.image}
               source={require("../Image/ClickClick.png")}
             /> 
-               <Image
-              style={styles.image}
-              source={require("../Image/camera_hello.png")}
-            /> 
-             <SpaceComponent height={16}/>
-          <ActivityIndicator color="#fff" size={22}/>
           </View> 
-          
+          <View style={styles.DIV2}>
+          <SpaceComponent height={16}/>
+          <ActivityIndicator color="#fff" size={22}/>
+          </View>
       </LinearGradient>
     
     </View>
@@ -56,11 +53,17 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   imgGG: {},
+  DIV2:{
+    
+    position: "relative",
+    top: 250,
+    
+  },
   DIV: {
     justifyContent:"center",
-    alignItems:"center", 
-    flexDirection:"column",
-    top:190
+    position: "absolute",
+    top: 155,
+    left: 40,
   },
  
   container: {
