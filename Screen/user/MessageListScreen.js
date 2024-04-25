@@ -12,6 +12,7 @@
     StyleSheet,
     Text,
     View,
+    TouchableOpacity
   } from "react-native";
   import { useState, useEffect } from "react";
 
@@ -53,6 +54,9 @@
               paddingHorizontal: 10,
             }}
           >
+            <TouchableOpacity onPress={() => navigation.goBack()}>
+            <Image source={require("../../Image/arrow-left.png")} />
+          </TouchableOpacity>
             <Text style={styles.textMessage}>Message</Text>
             <Image
               style={styles.iconSetting}
@@ -71,6 +75,7 @@
                   alignItems: "center",
                   marginBottom: 10,
                   paddingHorizontal: 20,
+                  marginTop:10
                 }}
               >
                   <Image

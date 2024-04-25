@@ -80,7 +80,7 @@ const Profile = () => {
                   <Text style={[styles.text, styles.subText]}>
                     {posts.length}
                   </Text>
-                  <Text style={[styles.text, styles.subText]}>Posts</Text>
+                  <Text style={[styles.text, styles.subText2]}>Posts</Text>
                 </View>
 
                 <View
@@ -96,13 +96,13 @@ const Profile = () => {
                     <Text style={[styles.text, styles.subText]}>
                       {friends.length}
                     </Text>
-                    <Text style={[styles.text, styles.subText]}>Friend</Text>
+                    <Text style={[styles.text, styles.subText2]}>Friend</Text>
                   </View>
                 </View>
               </View>
 
               <Text style={styles.status}>
-                {user.TEXT || "No status available"}
+                {"'' "+ user.TEXT + " ''" || "No status available"}
               </Text>
 
               <MasonryList
@@ -172,6 +172,8 @@ const styles = StyleSheet.create({
     marginTop: 15,
     fontSize: 20,
     textAlign: "center",
+    fontStyle:"italic",
+    fontWeight:"300"
   },
 
   statsContainer: {
@@ -188,7 +190,12 @@ const styles = StyleSheet.create({
   subText: {
     fontSize: 20,
     color: "#EFEFEF",
-    fontWeight: "400",
+    fontWeight: "bold",
+  },
+  subText2: {
+    fontSize: 20,
+    color: "white",
+    fontWeight: "300",
   },
 
   linearGradient: {
