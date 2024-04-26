@@ -16,7 +16,6 @@ import { LinearGradient } from "expo-linear-gradient";
 const Notifications = () => {
   const [notifications, setNotifications] = useState([]);
   const [listFriendStatus, setlistFriendStatus] = useState([]);
-  const [reload, setReload] = useState(false);
 
   useEffect(() => {
     fetchNotifications();
@@ -29,7 +28,7 @@ const Notifications = () => {
       const instance = await AxiosInstance();
       const idUser = await AsyncStorage.getItem("token");
       // Gọi API để lấy danh sách thông báo
-      //
+      
       const responseNoti = await instance.post("/get-all-notifications.php", {
         userid: idUser,
       });
@@ -37,16 +36,16 @@ const Notifications = () => {
         "/get-all-friendships.php",
         { userid: idUser }
       );
-      if (responseFriendStatus.status) {
+      if (responseFriendStatus?.status) {
         console.log(responseFriendStatus.invitations);
         setlistFriendStatus([...responseFriendStatus.invitations]);
       }
       // Thay thế 'URL_API' và 'ID_NGUOI_DUNG' bằng URL và ID người dùng thực tế
-      if (responseNoti.status) {
+      if (responseNoti?.status) {
         // Nếu lấy dữ liệu thành công
-        setNotifications(responseNoti.notifications); // Cập nhật state với danh sách thông báo từ API
+        setNotifications(responseNoti?.notifications); // Cập nhật state với danh sách thông báo từ API
       } else {
-        console.error("Error fetching notifications:", responseNoti);
+        console.error("Error fetching notifications:", responseNoti.message);
       }
     } catch (error) {
       console.error("Error fetching notifications:", error);
@@ -64,7 +63,7 @@ const Notifications = () => {
               borderRadius: 50,
               backgroundColor: "white",
             }}
-            source={{uri: item.AVATAR}}
+            source={{uri: 'https://i.pinimg.com/originals/bc/43/98/bc439871417621836a0eeea768d60944.jpg'}}
           />
         <View style={{ flexDirection: "column" }}>
           <Text
@@ -100,7 +99,7 @@ const Notifications = () => {
               borderRadius: 50,
               backgroundColor: "white",
             }}
-            source={{uri: item.AVATAR}}
+            source={{uri: 'https://i.pinimg.com/originals/bc/43/98/bc439871417621836a0eeea768d60944.jpg'}}
           />
           {item.STATUS == "pending" && (
             <View>
@@ -192,10 +191,6 @@ const Notifications = () => {
           data={notifications}
           renderItem={renderItem}
           keyExtractor={(item, index) => index.toString()} // Sử dụng trường ID làm key
-          refreshing={reload}
-          keyboardShouldPersistTaps="handled"
-          onRefresh={fetchNotifications}
-
         />
       </SafeAreaView>
       <View style={{ flex: 1 }}>
@@ -203,9 +198,7 @@ const Notifications = () => {
         <FlatList
           data={listFriendStatus.flat()}
           renderItem={renderItemFriend}
-          refreshing={reload}
-          keyboardShouldPersistTaps="handled"
-          onRefresh={fetchNotifications}
+          keyExtractor={(item, index) => index.toString()}
         />
       </View>
     </LinearGradient>
@@ -219,10 +212,10 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   title: {
-    fontSize: 25,
+    fontSize: 20,
     fontWeight: "bold",
     marginBottom: 10,
-    color:"white",
+    
   },
   notificationItem: {
     flexDirection: "row",
