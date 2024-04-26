@@ -11,19 +11,19 @@ import {
 import { LinearGradient } from "expo-linear-gradient";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import AxiosInstance from "../../helper/Axiostance";
-import * as ImagePicker from 'expo-image-picker';
+import * as ImagePicker from "expo-image-picker";
 import axios from "axios";
 
-const EditProfile = ({navigation}) => {
+const EditProfile = ({ navigation }) => {
   const [name, setName] = useState("");
   const [text, setText] = useState("");
   const [imageUri, setImageUri] = useState(null);
-  
+
   const selectImage = async () => {
     try {
       const pickerResult = await ImagePicker.launchImageLibraryAsync();
       console.log("Kết quả chọn ảnh:", pickerResult.assets[0].uri);
-  
+
       if (!pickerResult.canceled) {
         // Nếu người dùng chọn ảnh thành công, set imageUri
         setImageUri(pickerResult.assets[0].uri);
@@ -50,17 +50,17 @@ const EditProfile = ({navigation}) => {
         uri: imageUri,
       });
       data.append("upload_preset", "ml_default");
-  
+
       const response = await axios.post(
-        'https://api.cloudinary.com/v1_1/dffuzgy5h/image/upload',
+        "https://api.cloudinary.com/v1_1/dffuzgy5h/image/upload",
         data,
         {
           headers: {
             "Content-Type": "multipart/form-data",
           },
         }
-      );        
-  
+      );
+
       // Trích xuất thông tin URL từ kết quả trả về của Cloudinary
       const publicId = response.data.public_id;
       const version = response.data.version;
@@ -79,13 +79,12 @@ const EditProfile = ({navigation}) => {
   // Hàm lưu thông tin hồ sơ đã chỉnh sửa
   const handleSaveProfile = async () => {
     try {
-
       const token = await AsyncStorage.getItem("token");
       if (!token) {
         console.log("Token (userid) not found in AsyncStorage");
         return;
       }
-  
+
       const imageUrl = await uploadImage();
       const instance = await AxiosInstance();
 
@@ -93,16 +92,15 @@ const EditProfile = ({navigation}) => {
         userid: parseInt(token),
         name: name,
         avatar: imageUrl,
-        text: text
+        text: text,
       };
       const response = await instance.post("/edit-profile.php", body);
       console.log(imageUrl);
-      Alert.alert("Thông Báo", "Cập nhật hồ sơ thành công")
+      Alert.alert("Thông Báo", "Cập nhật hồ sơ thành công");
       setName("");
       setText("");
       resetImageUri(); // Reset imageUri after saving profile
-      navigation.navigate('BottomTab');
-
+      navigation.navigate("BottomTab");
     } catch (error) {
       console.error("Lỗi khi lưu hồ sơ:", error);
     }
@@ -115,39 +113,43 @@ const EditProfile = ({navigation}) => {
         colors={["#3B21B7", "#8B64DA", "#D195EE", "#CECBD3"]}
         style={styles.linearGradient}
       >
+        <TouchableOpacity onPress={() => navigation.goBack()}>
+          <Image
+            source={require("../../Image/arrow-left.png")}
+            style={{ top: 60 }}
+          />
+        </TouchableOpacity>
         <View style={styles.div}>
           <Text style={styles.text1}>Edit Profile</Text>
         </View>
         <View style={styles.div}>
           <TouchableOpacity onPress={selectImage}>
             {imageUri ? (
-              <Image
-                style={styles.avatar}
-                source={{ uri: imageUri }}
-              />
+              <Image style={styles.avatar} source={{ uri: imageUri }} />
             ) : (
               <Image
                 style={styles.avatar}
-                source={require('../../Image/iconadd.png')}
+                source={require("../../Image/add.jpg")}
               />
             )}
           </TouchableOpacity>
           <TextInput
             style={styles.textInput}
-            placeholder="Name"
+            placeholder="Edit your name"
             value={name}
+            placeholderTextColor={"white"}
+            color={"white"}
             onChangeText={setName}
           />
           <TextInput
             style={styles.textInput}
-            placeholder="introduce yourself"
+            placeholder="Edit your status"
             value={text}
+            placeholderTextColor={"white"}
+            color={"white"}
             onChangeText={setText}
           />
-          <TouchableOpacity
-            style={styles.button}
-            onPress={handleSaveProfile}
-          >
+          <TouchableOpacity style={styles.button} onPress={handleSaveProfile}>
             <Text style={styles.buttonText}>SEND</Text>
           </TouchableOpacity>
         </View>
@@ -172,15 +174,15 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   avatar: {
-    width: 200,
-    height: 200,
+    width: 180,
+    height: 180,
     borderRadius: 100,
-    borderWidth: 2,
     marginBottom: 10,
     marginTop: 10,
+    backgroundColor: "white",
   },
   div: {
-    top: 80,
+    top: 60,
     alignItems: "center",
   },
   text1: {
@@ -192,12 +194,9 @@ const styles = StyleSheet.create({
   button: {
     width: "80%",
     height: 60,
-    flexDirection: "column",
     alignItems: "center",
     backgroundColor: "#ffffff",
     borderRadius: 20,
-    borderWidth: 2,
-    marginBottom: 10,
     marginTop: 10,
   },
   buttonText: {
