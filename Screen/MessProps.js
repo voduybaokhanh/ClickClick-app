@@ -103,7 +103,7 @@ function Mess({route}) {
                 backgroundColor: isReceiver ? "#635A8F" : "#3E8A85",
                 borderRadius: 15,
                 marginHorizontal: 10,
-                marginVertical: 5,
+marginVertical: 5,
                 paddingHorizontal: 15,
                 paddingVertical: 10,
                 maxWidth: '70%',

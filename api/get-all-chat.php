@@ -32,18 +32,18 @@ try {
 
     // Duyệt qua từng cuộc trò chuyện để lấy hình ảnh từ bài đăng (nếu có)
     foreach ($chats as &$chat) {
-        $postid = $chat['postid']; // Lấy postid từ cuộc trò chuyện
-        if ($postid) {
+        $POSTID = $chat['POSTID']; // Lấy POSTID từ cuộc trò chuyện
+        if ($POSTID) {
             // Truy vấn để lấy hình ảnh từ bài đăng
-            $getPostImageQuery = "SELECT image FROM posts WHERE ID = :postid";
+            $getPostImageQuery = "SELECT image FROM posts WHERE ID = :POSTID";
             $getPostImageStmt = $dbConn->prepare($getPostImageQuery);
-            $getPostImageStmt->bindParam(':postid', $postid, PDO::PARAM_INT);
+            $getPostImageStmt->bindParam(':POSTID', $POSTID, PDO::PARAM_INT);
             $getPostImageStmt->execute();
             $postImage = $getPostImageStmt->fetch(PDO::FETCH_ASSOC);
 
             // Nếu có hình ảnh, thêm vào dữ liệu cuộc trò chuyện
             if ($postImage) {
-                $chat['postid'] = $postImage['image'];
+                $chat['POSTID'] = $postImage['image'];
             }
         }
     }
@@ -52,4 +52,3 @@ try {
 } catch (Exception $e) {
     echo json_encode(array('status' => false, 'message' => $e->getMessage()));
 }
-
