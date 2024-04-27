@@ -9,17 +9,20 @@ header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers
 include_once './connection.php';
 
 try {
-    // Query to get users with reported posts, their names, avatars, and count of reported posts
+    // Query to get users with reported posts and count of reported posts
     $query = "
         SELECT 
-            USERID, 
+            p.USERID, 
+            u.Available,
             COUNT(*) AS reported_count
         FROM 
-            POSTS
+            POSTS p
+        LEFT JOIN
+            USERS u ON p.USERID = u.ID
         WHERE 
-            AVAILABLE = 0
+            p.AVAILABLE = 0
         GROUP BY 
-            USERID
+            p.USERID
         ORDER BY 
             reported_count DESC
     ";
@@ -45,3 +48,4 @@ try {
         "msg" => "Unable to fetch reported users: " . $e->getMessage()
     ));
 }
+?>
