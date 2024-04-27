@@ -71,7 +71,6 @@ const Block = ({ saveUser }) => {
         <div>
             <h1>Danh sách người dùng bị báo cáo</h1>
             <button className="btn btn-primary" onClick={() => { saveUser(null); fetchData(); }}>Đăng xuất và cập nhật</button>
-            <a href="/block" className="btn btn-warning">Chuyển đến block1</a>
             <table className="table">
                 <thead>
                     <tr>

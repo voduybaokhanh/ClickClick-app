@@ -36,12 +36,12 @@ const Login = ({navigation}) => {
 
         // Token đã được lưu trữ thành công, thực hiện các thao tác tiếp theo nếu cần
       } else {
-        alert("đăng nhập thất bại");
+        alert("đăng nhập thất bại" + result.message);
       }
       console.log('id: ' + result.user.id);
       console.log('token: '+token);
     } catch (error) {
-      console.error("Lỗi khi thực hiện đăng nhập: ", error);
+      console.error("Lỗi khi thực hiện đăng nhập: ", result);
     }
   }
 
