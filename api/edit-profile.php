@@ -19,45 +19,32 @@ try {
     }
 
     // Kiểm tra xem dữ liệu có tồn tại hay không
-    if (!$data || !isset($data->avatar) || !isset($data->name)) {
+    if (!$data || !isset($data->avatar) || !isset($data->name) || !isset($data->text)) {
         echo json_encode(array('error' => 'Dữ liệu không hợp lệ'));
         exit;
     }
 
     // Lấy dữ liệu từ yêu cầu
+    $userid = $data->userid;
     $name = $data->name;
     $avatar = $data->avatar;
-    $userid = $data->userid;
-
+    $text = $data->text;
+    
     // Cập nhật hồ sơ người dùng
-    $sqlUpdateUser = "UPDATE users SET name = :name, avatar = :avatar";
-    if (isset($data->text)) {
-        $sqlUpdateUser .= ", text = :text";
-        $text = $data->text;
-    }
-    $sqlUpdateUser .= " WHERE id = :userid";
+    $sqlUpdateUser = "UPDATE users SET name = :name, avatar = :avatar, text = :text WHERE id = :userid";
     $stmtUser = $dbConn->prepare($sqlUpdateUser);
     $stmtUser->bindParam(':userid', $userid, PDO::PARAM_INT);
     $stmtUser->bindParam(':name', $name, PDO::PARAM_STR);
     $stmtUser->bindParam(':avatar', $avatar, PDO::PARAM_STR);
-    if (isset($text)) {
-        $stmtUser->bindParam(':text', $text, PDO::PARAM_STR);
-    }
+    $stmtUser->bindParam(':text', $text, PDO::PARAM_STR);
     $stmtUser->execute();
 
     // Cập nhật các bài viết của người dùng sau khi cập nhật hồ sơ
-    $sqlUpdatePosts = "UPDATE posts SET name = :name, avatar = :avatar";
-    if (isset($text)) {
-        $sqlUpdatePosts .= ", text = :text";
-    }
-    $sqlUpdatePosts .= " WHERE userid = :userid";
+    $sqlUpdatePosts = "UPDATE posts SET name = :name, avatar = :avatar WHERE userid = :userid";
     $stmtPosts = $dbConn->prepare($sqlUpdatePosts);
     $stmtPosts->bindParam(':userid', $userid, PDO::PARAM_INT);
     $stmtPosts->bindParam(':name', $name, PDO::PARAM_STR);
-    $insertStmt->bindParam(':avatar', $avatar, PDO::PARAM_STR);
-    if (isset($text)) {
-        $stmtPosts->bindParam(':text', $text, PDO::PARAM_STR);
-    }
+    $stmtPosts->bindParam(':avatar', $avatar, PDO::PARAM_STR);
     $stmtPosts->execute();
 
     echo json_encode(
