@@ -1,6 +1,6 @@
 <?php
 header("Content-Type: application/json; charset=UTF-8");
-header("Access-Control-Allow-Methods: GET");
+header("Access-Control-Allow-Methods: POST");
 header("Access-Control-Allow-Origin: *");
 header("Access-Control-Max-Age: 3600");
 header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
@@ -19,7 +19,7 @@ $keyword = $data->keyword;
 // tìm bạn theo email, tên , sdt
 try {
     // Đọc dữ liệu từ cơ sở dữ liệu
-    $sqlQuery = "SELECT ID,Email,NAME,SDT FROM users WHERE EMAIL LIKE '%$keyword%' or NAME LIKE '%$keyword%' or SDT LIKE '%$keyword%'";
+    $sqlQuery = "SELECT ID,Email,NAME,AVATAR FROM users WHERE EMAIL LIKE '%$keyword%'";
     $sqlQuery = $dbConn->prepare($sqlQuery);
     $sqlQuery->execute();
     $user = $sqlQuery->fetch(PDO::FETCH_ASSOC);

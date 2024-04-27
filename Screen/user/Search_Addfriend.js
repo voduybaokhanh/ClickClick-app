@@ -14,11 +14,31 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
 
 const Search_Addfriend = () => {
+  const [keyword, setKeyword] = useState(""); // State to store the search keyword
+  const [searchResult, setSearchResult] = useState(null);
   const navigation = useNavigation();
   const handleReport = () => {
     // Xử lý khi icon được ấn
     console.log("Bao cao nguoi dung");
     // Thêm mã xử lý bạn muốn thực hiện khi icon được ấn
+  };
+  const handleSearch = async () => {
+    const instance = await AxiosInstance();
+
+    const response = await instance
+      .post("/find-friend-keyword.php", { keyword: keyword })
+      .then((response) => {
+        if (response.status) {
+          setSearchResult(response.user);
+          console.log(searchResult);
+        } else {
+          Alert.alert("Error", response.data.message);
+        }
+      })
+      .catch((error) => {
+        console.error("Error fetching data: ", error);
+        Alert.alert("Error", "An error occurred while searching.");
+      });
   };
   return (
     <View style={styles.container}>
@@ -43,83 +63,70 @@ const Search_Addfriend = () => {
           <TextInput
             style={styles.mes}
             placeholder="Search your contacts"
-            placeholderTextColor={"#A99EDD"}
-            // Cập nhật nội dung bài viết khi người dùng nhập
+            placeholderTextColor="#A99EDD"
+            value={keyword}
+            onChangeText={(text) => setKeyword(text)}
+            onSubmitEditing={handleSearch}
           />
         </View>
         <View style={styles.searchResult}>
-          <View
-            style={{flexDirection: "row", alignItems: "center" }}
-          >
-            <Image
-              source={require("../../Image/image 16.png")}
-            />
-            <Text style={styles.text2}>Result</Text>
+          <View style={{ flexDirection: "row", alignItems: "center" }}>
+            <Image source={require("../../Image/image 16.png")} />
+            <Text style={styles.text2}>result</Text>
           </View>
-          <View style={styles.result}>
-          <View style={styles.list}>
-            <View style={{flexDirection:"row", alignItems:"center"}}>
-          <Image
-              source={require("../../Image/avatar.png")}
-            />
-             <Text style={styles.name}>David</Text>
-          </View>
-          <View style={{flexDirection:"row",  alignItems:"center"}}>
-            <TouchableOpacity style={styles.btn}>
-            <Text style={styles.btntext}>+ Add </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-                  style={{ marginLeft: "auto" }}
-                  onPress={handleReport}
-                >
-                  <Image
-                    style={styles.iconmore}
-                    source={require("../../Image/more_icon.png")}
-                  />
-                </TouchableOpacity>
+          {searchResult && (
+            <View style={styles.result}>
+              <View style={styles.list}>
+                <View style={{ flexDirection: "row", alignItems: "center" }}>
+                  <Image style={styles.image1} source={{ uri: searchResult.AVATAR }} />
+                  <Text style={styles.name}>{searchResult.NAME}</Text>
+                </View>
+                <View style={{ flexDirection: "row", alignItems: "center" }}>
+                  <TouchableOpacity style={styles.btn}>
+                    <Text style={styles.btntext}>+ Add </Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={{ marginLeft: "auto" }}
+                    onPress={handleReport}
+                  >
+                    <Image
+                      style={styles.iconmore}
+                      source={require("../../Image/more_icon.png")}
+                    />
+                  </TouchableOpacity>
+                </View>
+              </View>
             </View>
-          </View>
-          </View>
-
+          )}
         </View>
 
         <View style={styles.listfriend}>
-          <View
-            style={{flexDirection: "row", alignItems: "center" }}
-          >
-            <Image
-              source={require("../../Image/icons.png")}
-            />
+          <View style={{ flexDirection: "row", alignItems: "center" }}>
+            <Image source={require("../../Image/icons.png")} />
             <Text style={styles.text2}>List Friend</Text>
           </View>
 
-          
           <View style={styles.list}>
-            <View style={{flexDirection:"row", alignItems:"center"}}>
-          <Image
-              source={require("../../Image/avatar.png")}
-            />
-             <Text style={styles.name}>David</Text>
-          </View>
-          <View style={{flexDirection:"row",  alignItems:"center"}}>
-            <TouchableOpacity style={styles.btn}>
-            <Text style={styles.btntext}>- Unf </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-                  style={{ marginLeft: "auto" }}
-                  onPress={handleReport}
-                >
-                  <Image
-                    style={styles.iconmore}
-                    source={require("../../Image/more_icon.png")}
-                  />
-                </TouchableOpacity>
+            <View style={{ flexDirection: "row", alignItems: "center" }}>
+              <Image source={require("../../Image/avatar.png")} />
+              <Text style={styles.name}>David</Text>
+            </View>
+            <View style={{ flexDirection: "row", alignItems: "center" }}>
+              <TouchableOpacity style={styles.btn}>
+                <Text style={styles.btntext}>- Unf </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={{ marginLeft: "auto" }}
+                onPress={handleReport}
+              >
+                <Image
+                  style={styles.iconmore}
+                  source={require("../../Image/more_icon.png")}
+                />
+              </TouchableOpacity>
             </View>
           </View>
-
-          </View>
-
-
+        </View>
       </LinearGradient>
     </View>
   );
@@ -128,34 +135,41 @@ const Search_Addfriend = () => {
 export default Search_Addfriend;
 
 const styles = StyleSheet.create({
+  image1: {
+    height: 50,
+    width: 50,
+    borderRadius: 75,
+    //overflow: "hidden",
+    backgroundColor:"white",
+    paddingTop: 2,
+  },
   iconmore: {
     marginLeft: "auto",
   },
-  btntext:{
+  btntext: {
     fontSize: 18,
     color: "white",
     fontWeight: "bold",
-    
   },
-  btn:{
-  borderRadius:20,
-  backgroundColor:"#574C8D",
-  height:45, 
-  padding:10,
-  marginLeft: "auto",
-  marginRight:10
+  btn: {
+    borderRadius: 20,
+    backgroundColor: "#574C8D",
+    height: 45,
+    padding: 10,
+    marginLeft: "auto",
+    marginRight: 10,
   },
-  name:{
+  name: {
     fontSize: 22,
     color: "white",
     fontWeight: "bold",
     marginLeft: 10,
   },
-  list:{
-flexDirection:"row",
-top: 15,
-alignItems:"center",
-justifyContent:"space-between"
+  list: {
+    flexDirection: "row",
+    top: 15,
+    alignItems: "center",
+    justifyContent: "space-between",
   },
   mes: {
     backgroundColor: "#E5D7F7",
@@ -195,9 +209,9 @@ justifyContent:"space-between"
     width: "100%",
     height: "100%",
   },
-  searchResult:{
-    width: '100%',
+  searchResult: {
+    width: "100%",
     height: 120,
-    marginVertical: 10
-  }
+    marginVertical: 10,
+  },
 });
