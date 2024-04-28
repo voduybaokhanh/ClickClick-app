@@ -13,7 +13,7 @@ try {
     // Kiểm tra xem có userid và postid được gửi hay không
     if (!isset($data->userid) || !isset($data->postid) || !isset($data->reason)) {
         http_response_code(400);
-        echo json_encode(array('status' => false, 'message' => 'Thiếu tham số userid hoặc postid'));
+        echo json_encode(array('status' => false, 'message' => 'Thiếu tham số userid hoặc postid và reason'));
         exit;
     }
 
