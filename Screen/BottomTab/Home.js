@@ -13,7 +13,7 @@ import AxiosInstance from "../../helper/Axiostance";
 import { LinearGradient } from "expo-linear-gradient";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Dropdown } from "react-native-element-dropdown";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation,useFocusEffect } from "@react-navigation/native";
 
 const Home = () => {
   const [posts, setPosts] = useState([]);
@@ -64,7 +64,11 @@ const Home = () => {
     restoreLikedPosts();
     // Lấy và lưu trữ ID người dùng hiện tại khi trang được load
   }, [reload, selectedFriend]);
-
+  useFocusEffect(
+    React.useCallback(() => {
+      fetchPosts();
+    }, [])
+  );
   useEffect(() => {
     restoreLikedPosts();
   }, []);

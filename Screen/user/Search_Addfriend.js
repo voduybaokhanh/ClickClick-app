@@ -64,6 +64,7 @@ const Search_Addfriend = () => {
       const response = await instance.post("/delete-friend.php", body);
       fetchFriendList();
       // Handle success response
+      Alert.alert("Friend deleted successfully");
       console.log("Friend deleted successfully");
     } catch (error) {
       console.error("Error deleting friend:", error);
@@ -87,6 +88,9 @@ const Search_Addfriend = () => {
 
       // Handle success response
       fetchFriendList();
+      setSearchResult();
+      setKeyword(null);
+      Alert.alert("Add friend successfully");
       console.log("Add friend successfully");
     } catch (error) {
       console.error("Error deleting friend:", error);
