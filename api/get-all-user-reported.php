@@ -12,17 +12,17 @@ try {
     // Query to get users with reported posts and count of reported posts
     $query = "
         SELECT 
-            p.USERID, 
-            u.Available,
+            POSTS.USERID, 
+            USERS.AVAILABLE,
             COUNT(*) AS reported_count
         FROM 
-            POSTS p
+             POSTS
         LEFT JOIN
-            USERS u ON p.USERID = u.ID
+             USERS ON POSTS.USERID = USERS.ID
         WHERE 
-            p.AVAILABLE = 0
+            POSTS.AVAILABLE = 0
         GROUP BY 
-            p.USERID
+            POSTS.USERID
         ORDER BY 
             reported_count DESC
     ";
