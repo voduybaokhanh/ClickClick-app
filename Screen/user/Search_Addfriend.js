@@ -7,21 +7,99 @@ import {
   Image,
   TextInput,
   TouchableOpacity,
+  Alert
 } from "react-native";
 import AxiosInstance from "../../helper/Axiostance";
 import { LinearGradient } from "expo-linear-gradient";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useFocusEffect } from "@react-navigation/native";
 
 const Search_Addfriend = () => {
   const [keyword, setKeyword] = useState(""); // State to store the search keyword
   const [searchResult, setSearchResult] = useState(null);
   const navigation = useNavigation();
+  const [friendList, setFriendList] = useState([]);
+
+  const [reload, setReload] = useState(false);
+
+  useEffect(() => {
+    fetchFriendList();
+  }, []);
+  useFocusEffect(
+    React.useCallback(() => {
+      fetchFriendList();
+    }, [])
+  );
+
+  const fetchFriendList = async () => {
+    try {
+      const token = await AsyncStorage.getItem("token");
+      if (!token) {
+        console.log("Token (userid) not found in AsyncStorage");
+        return;
+      }
+
+      const instance = await AxiosInstance();
+      const body = { userid: parseInt(token) };
+      const response = await instance.post("/get-all-friend.php", body);
+      // Lưu trạng thái action vào state friendList
+      setFriendList(response.friendName);
+    } catch (error) {
+      console.error("Error fetching friend list:", error);
+    }
+  };
+  const handledDleteFriend = async (friendshipid) => {
+    try {
+      const token = await AsyncStorage.getItem("token");
+      if (!token) {
+        console.log("Token (userid) not found in AsyncStorage");
+        return;
+      }
+
+      const instance = await AxiosInstance();
+      const body = {
+        userid: parseInt(token),
+        friendshipid: friendshipid,
+      };
+      const response = await instance.post("/delete-friend.php", body);
+      fetchFriendList();
+      // Handle success response
+      console.log("Friend deleted successfully");
+    } catch (error) {
+      console.error("Error deleting friend:", error);
+      // Handle error (e.g., show error message to the user)
+    }
+  };
+  const handledAddFriend = async (friendshipid) => {
+    try {
+      const token = await AsyncStorage.getItem("token");
+      if (!token) {
+        console.log("Token (userid) not found in AsyncStorage");
+        return;
+      }
+
+      const instance = await AxiosInstance();
+      const body = {
+        userid: parseInt(token),
+        friendshipid: friendshipid,
+      };
+      const response = await instance.post("/add-friend.php", body);
+
+      // Handle success response
+      fetchFriendList();
+      console.log("Add friend successfully");
+    } catch (error) {
+      console.error("Error deleting friend:", error);
+      // Handle error (e.g., show error message to the user)
+    }
+  };
+
   const handleReport = () => {
     // Xử lý khi icon được ấn
     console.log("Bao cao nguoi dung");
     // Thêm mã xử lý bạn muốn thực hiện khi icon được ấn
   };
+  
   const handleSearch = async () => {
     const instance = await AxiosInstance();
 
@@ -29,7 +107,7 @@ const Search_Addfriend = () => {
       .post("/find-friend-keyword.php", { keyword: keyword })
       .then((response) => {
         if (response.status) {
-          setSearchResult(response.user);
+          setSearchResult(response);
           console.log(searchResult);
         } else {
           Alert.alert("Error", response.data.message);
@@ -78,13 +156,28 @@ const Search_Addfriend = () => {
             <View style={styles.result}>
               <View style={styles.list}>
                 <View style={{ flexDirection: "row", alignItems: "center" }}>
-                  <Image style={styles.image1} source={{ uri: searchResult.AVATAR }} />
-                  <Text style={styles.name}>{searchResult.NAME}</Text>
+                  <Image
+                    style={styles.image1}
+                    source={{ uri: searchResult.user.AVATAR }}
+                  />
+                  <Text style={styles.name}>{searchResult.user.NAME}</Text>
                 </View>
                 <View style={{ flexDirection: "row", alignItems: "center" }}>
-                  <TouchableOpacity style={styles.btn}>
-                    <Text style={styles.btntext}>+ Add </Text>
-                  </TouchableOpacity>
+                  {searchResult.friendship === "friend" ? ( // Kiểm tra mối quan hệ kết bạn
+                    <TouchableOpacity
+                      onPress={() => handledDleteFriend(searchResult.user.ID)}
+                      style={styles.btn}
+                    >
+                      <Text style={styles.btntext}>- Unf </Text>
+                    </TouchableOpacity>
+                  ) : (
+                    <TouchableOpacity
+                      onPress={()=>handledAddFriend(searchResult.user.ID)}
+                      style={styles.btn}
+                    >
+                      <Text style={styles.btntext}>+ Add </Text>
+                    </TouchableOpacity>
+                  )}
                   <TouchableOpacity
                     style={{ marginLeft: "auto" }}
                     onPress={handleReport}
@@ -105,27 +198,43 @@ const Search_Addfriend = () => {
             <Image source={require("../../Image/icons.png")} />
             <Text style={styles.text2}>List Friend</Text>
           </View>
-
-          <View style={styles.list}>
-            <View style={{ flexDirection: "row", alignItems: "center" }}>
-              <Image source={require("../../Image/avatar.png")} />
-              <Text style={styles.name}>David</Text>
-            </View>
-            <View style={{ flexDirection: "row", alignItems: "center" }}>
-              <TouchableOpacity style={styles.btn}>
-                <Text style={styles.btntext}>- Unf </Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={{ marginLeft: "auto" }}
-                onPress={handleReport}
-              >
-                <Image
-                  style={styles.iconmore}
-                  source={require("../../Image/more_icon.png")}
-                />
-              </TouchableOpacity>
-            </View>
-          </View>
+          <FlatList
+            data={friendList}
+            keyExtractor={(item, index) => index.toString()}
+            refreshing={reload}
+            keyboardShouldPersistTaps="handled"
+            onRefresh={fetchFriendList}
+            renderItem={({ item }) => {
+              return (
+                <View style={styles.list}>
+                  <View style={{ flexDirection: "row", alignItems: "center" }}>
+                    <Image
+                      style={styles.image1}
+                      source={{ uri: item.avatar }}
+                    />
+                    <Text style={styles.name}>{item.name}</Text>
+                  </View>
+                  <View style={{ flexDirection: "row", alignItems: "center" }}>
+                    <TouchableOpacity
+                      onPress={()=>handledDleteFriend(item.friendshipid)}
+                      style={styles.btn}
+                    >
+                      <Text style={styles.btntext}>- Unf </Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      style={{ marginLeft: "auto" }}
+                      onPress={handleReport}
+                    >
+                      <Image
+                        style={styles.iconmore}
+                        source={require("../../Image/more_icon.png")}
+                      />
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              );
+            }}
+          />
         </View>
       </LinearGradient>
     </View>
@@ -135,12 +244,16 @@ const Search_Addfriend = () => {
 export default Search_Addfriend;
 
 const styles = StyleSheet.create({
+  listfriend: {
+    width: "100%",
+    height: "100%",
+  },
   image1: {
     height: 50,
     width: 50,
     borderRadius: 75,
     //overflow: "hidden",
-    backgroundColor:"white",
+    backgroundColor: "white",
     paddingTop: 2,
   },
   iconmore: {
@@ -170,6 +283,7 @@ const styles = StyleSheet.create({
     top: 15,
     alignItems: "center",
     justifyContent: "space-between",
+    padding: 10,
   },
   mes: {
     backgroundColor: "#E5D7F7",
