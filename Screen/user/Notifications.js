@@ -88,13 +88,9 @@ const Notifications = () => {
           }}
         >
           <Image
-            style={{
-              width: 50,
-              height: 50,
-              borderRadius: 50,
-              backgroundColor: "white",
-            }}
-            source={{uri: 'https://i.pinimg.com/originals/bc/43/98/bc439871417621836a0eeea768d60944.jpg'}}
+            
+            style={styles.avatar}
+         source={{ uri: item.AVATAR }}
           />
           {item.STATUS == "pending" && (
             <View>
