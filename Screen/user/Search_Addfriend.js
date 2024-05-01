@@ -7,7 +7,7 @@ import {
   Image,
   TextInput,
   TouchableOpacity,
-  Alert
+  Alert,
 } from "react-native";
 import AxiosInstance from "../../helper/Axiostance";
 import { LinearGradient } from "expo-linear-gradient";
@@ -30,6 +30,12 @@ const Search_Addfriend = () => {
       fetchFriendList();
     }, [])
   );
+
+  const validateEmail = (email) => {
+    // Regular expression để kiểm tra định dạng email
+    const pattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return pattern.test(email);
+  };
 
   const fetchFriendList = async () => {
     try {
@@ -78,33 +84,36 @@ const Search_Addfriend = () => {
         console.log("Token (userid) not found in AsyncStorage");
         return;
       }
-
+    
       const instance = await AxiosInstance();
       const body = {
         userid: parseInt(token),
         friendshipid: friendshipid,
       };
       const response = await instance.post("/add-friend.php", body);
-
+      if (response.status) {
+        fetchFriendList();
+        setSearchResult();
+        setKeyword(null);
+        Alert.alert("Add friend successfully");
+        console.log("Add friend successfully");
+      }else{
+        Alert.alert(response.message);
+      }
       // Handle success response
-      fetchFriendList();
-      setSearchResult();
-      setKeyword(null);
-      Alert.alert("Add friend successfully");
-      console.log("Add friend successfully");
+     
     } catch (error) {
       console.error("Error deleting friend:", error);
       // Handle error (e.g., show error message to the user)
     }
   };
 
-  const handleReport = () => {
-    // Xử lý khi icon được ấn
-    console.log("Bao cao nguoi dung");
-    // Thêm mã xử lý bạn muốn thực hiện khi icon được ấn
-  };
-  
+
   const handleSearch = async () => {
+    if (!validateEmail(keyword)) {
+      Alert.alert("Error", "Please enter a valid email address.");
+      return;
+    }
     const instance = await AxiosInstance();
 
     const response = await instance
@@ -144,7 +153,7 @@ const Search_Addfriend = () => {
         <View style={{ alignItems: "center", marginTop: 15 }}>
           <TextInput
             style={styles.mes}
-            placeholder="Search your contacts"
+            placeholder="Search your email contacts"
             placeholderTextColor="#A99EDD"
             value={keyword}
             onChangeText={(text) => setKeyword(text)}
@@ -176,7 +185,7 @@ const Search_Addfriend = () => {
                     </TouchableOpacity>
                   ) : (
                     <TouchableOpacity
-                      onPress={()=>handledAddFriend(searchResult.user.ID)}
+                      onPress={() => handledAddFriend(searchResult.user.ID)}
                       style={styles.btn}
                     >
                       <Text style={styles.btntext}>+ Add </Text>
@@ -184,7 +193,6 @@ const Search_Addfriend = () => {
                   )}
                   <TouchableOpacity
                     style={{ marginLeft: "auto" }}
-                    onPress={handleReport}
                   >
                     <Image
                       style={styles.iconmore}
@@ -220,14 +228,13 @@ const Search_Addfriend = () => {
                   </View>
                   <View style={{ flexDirection: "row", alignItems: "center" }}>
                     <TouchableOpacity
-                      onPress={()=>handledDleteFriend(item.friendshipid)}
+                      onPress={() => handledDleteFriend(item.friendshipid)}
                       style={styles.btn}
                     >
                       <Text style={styles.btntext}>- Unf </Text>
                     </TouchableOpacity>
                     <TouchableOpacity
                       style={{ marginLeft: "auto" }}
-                      onPress={handleReport}
                     >
                       <Image
                         style={styles.iconmore}

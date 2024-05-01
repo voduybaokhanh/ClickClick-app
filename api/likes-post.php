@@ -126,9 +126,9 @@ try {
             $likesCount = $getLikesCountStmt->fetch(PDO::FETCH_ASSOC)['likes'];
 
 
-            echo json_encode(array('status' => true, 'message' => $userName . ' đã like bài đăng của bạn.', 'action' => 1, 'LIKES' => $likesCount));
+            echo json_encode(array('status' => true, 'message' => $userName . ' liked your post.', 'action' => 1, 'LIKES' => $likesCount));
         } else {
-            echo json_encode(array('status' => true, 'message' => 'Người dùng đã thích bài đăng thành công.'));
+            echo json_encode(array('status' => true, 'message' => 'user liked your post'));
         }
         exit; // Kết thúc xử lý khi thêm "like" mới
     }

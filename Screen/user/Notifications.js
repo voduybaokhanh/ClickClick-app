@@ -105,7 +105,7 @@ const Notifications = () => {
           {item.STATUS == "pending" && (
             <View>
               <Text style={[styles.textNoti, { marginLeft: 10 }]}>
-                {item.NAME} da gui loi moi ket ban
+                {item.NAME} sent a friend request
               </Text>
               <Text style={[styles.textNoti, { marginLeft: 10 }]}>
                 {item.TIME.substring(

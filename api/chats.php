@@ -103,7 +103,7 @@ try {
         $addNotificationStmt->bindParam(':RECEIVERID', $RECEIVERID, PDO::PARAM_INT); // Thông báo gửi cho người nhận
         $addNotificationStmt->execute();
 
-        echo json_encode(array('status' => true, 'message' => $userName . ' đã gửi tin nhắn cho bạn.', 'post' => $post));
+        echo json_encode(array('status' => true, 'message' => $userName . ' sent you a message. ', 'post' => $post));
     } else {
         // Xử lý khi không tìm thấy thông tin người dùng
         echo json_encode(array('status' => false, 'message' => 'Lỗi'));

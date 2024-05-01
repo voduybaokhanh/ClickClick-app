@@ -55,7 +55,7 @@ try {
     }
 
     // Kiểm tra xem người dùng đã có 20 người bạn chưa
-    $countFriendsQuery = "SELECT COUNT(*) as friendCount FROM friendships WHERE (userid = :userid OR friendshipid = :userid) AND status='friend'";
+    $countFriendsQuery = "SELECT COUNT(*) as friendCount FROM friendships WHERE userid = :userid  AND status='friend'";
     $countFriendsStmt = $dbConn->prepare($countFriendsQuery);
     $countFriendsStmt->bindParam(':userid', $userid, PDO::PARAM_INT);
     $countFriendsStmt->execute();
@@ -97,7 +97,7 @@ try {
 
     if ($userName) {
         // Thêm thông báo vào cơ sở dữ liệu
-        $notificationContent = "$userName đã gửi lời mời kết bạn.";
+        $notificationContent = "$userName sent a friend request.";
         $addNotificationQuery = "INSERT INTO notifications (userid, content, time,RECEIVERID) VALUES (:userid, :content, now(),:RECEIVERID)";
         $addNotificationStmt = $dbConn->prepare($addNotificationQuery);
         $addNotificationStmt->bindParam(':userid', $userid, PDO::PARAM_INT); // Sử dụng $userid thay vì $getUserNameStmt
@@ -105,7 +105,7 @@ try {
         $addNotificationStmt->bindParam(':RECEIVERID', $friendshipid, PDO::PARAM_INT); // Thông báo gửi cho người nhận
         $addNotificationStmt->execute();
 
-        echo json_encode(array('status' => true, 'message' => $userName . ' đã gửi lời mời kết bạn.'));
+        echo json_encode(array('status' => true, 'message' => $userName . ' sent a friend request.'));
     } else {
         // Xử lý khi không tìm thấy thông tin người dùng
         echo json_encode(array('status' => false, 'message' => 'Lỗi'));
