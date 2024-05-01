@@ -14,6 +14,7 @@ const List = ({ saveUser }) => {
             const axiosInstance = await AxiosInstance();
             const response = await axiosInstance.get('/get-all-report.php');
             if (response.status) {
+               
                 const sortedPosts = response.posts.sort((a, b) => new Date(b.TIME) - new Date(a.TIME));
                 setPosts(sortedPosts);
             } else {
@@ -24,7 +25,7 @@ const List = ({ saveUser }) => {
             swal("Oops!", "Something went wrong while fetching data.", "error");
         }
     };
-
+    
     const handleDelete = async (postId) => {
         swal({
             title: "Confirm Deletion?",
@@ -74,6 +75,7 @@ const List = ({ saveUser }) => {
                 backgroundColor: "purple",
                 background: "linear-gradient(to bottom, #3B21B7, #8B64DA, #D195EE, #CECBD3)",
                 height: "100vh",
+                width:"100%",
                 display: "flex",
                 justifyContent: "center",
                 alignItems: "center",
