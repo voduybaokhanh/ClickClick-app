@@ -114,10 +114,15 @@ const Search_Addfriend = () => {
       Alert.alert("Error", "Please enter a valid email address.");
       return;
     }
+    const token = await AsyncStorage.getItem("token");
+      if (!token) {
+        console.log("Token (userid) not found in AsyncStorage");
+        return;
+      }
     const instance = await AxiosInstance();
 
     const response = await instance
-      .post("/find-friend-keyword.php", { keyword: keyword })
+      .post("/find-friend-keyword.php", { userid: token, keyword: keyword })
       .then((response) => {
         if (response.status) {
           setSearchResult(response);

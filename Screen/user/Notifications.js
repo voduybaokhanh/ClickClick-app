@@ -7,6 +7,7 @@ import {
   Image,
   Pressable,
   Dimensions,
+  Alert,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import AxiosInstance from "../../helper/Axiostance";
@@ -157,6 +158,9 @@ const Notifications = () => {
           },
           ...val,
         ]);
+      }else{
+        Alert.alert(res.message);
+        fetchNotifications();
       }
     };
 
