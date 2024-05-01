@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import AxiosInstance from "../../../web-admin/src/helper/Axiostance"; // Đảm bảo rằng đường dẫn và tên file đúng
+import React, { useEffect, useState } from "react";
+import AxiosInstance from "../../../web-admin/src/helper/Axiostance";
 import swal from 'sweetalert';
 
 const List = ({ saveUser }) => {
@@ -14,22 +14,21 @@ const List = ({ saveUser }) => {
             const axiosInstance = await AxiosInstance();
             const response = await axiosInstance.get('/get-all-report.php');
             if (response.status) {
-                // sắp xếp theo thời gian mới nhất
                 const sortedPosts = response.posts.sort((a, b) => new Date(b.TIME) - new Date(a.TIME));
                 setPosts(sortedPosts);
             } else {
                 throw new Error(response.message);
             }
         } catch (error) {
-            console.error('Error fetching data:', error);
-            swal("Oops!", "Something went wrong while fetching data", "error");
+            console.error("Error fetching data:", error);
+            swal("Oops!", "Something went wrong while fetching data.", "error");
         }
-    }
+    };
 
-    const handleDelete = async (ID) => { // Thay đổi tham số từ ID thành postid
+    const handleDelete = async (postId) => {
         swal({
-            title: "Xác nhận xóa?",
-            text: "Xóa dữ liệu khỏi hệ thống!",
+            title: "Confirm Deletion?",
+            text: "This action will permanently delete this post!",
             icon: "warning",
             buttons: true,
             dangerMode: true,
@@ -37,81 +36,107 @@ const List = ({ saveUser }) => {
             if (willDelete) {
                 try {
                     const axiosInstance = await AxiosInstance();
-                    const response = await axiosInstance.delete(`/delete-post-admin.php?postid=${ID}`); // Sử dụng postid thay vì ID
-                    console.log(response);
+                    const response = await axiosInstance.delete(`/delete-post-admin.php?postid=${postId}`);
                     if (response.status) {
-                        swal('Xóa thành công');
-                        // Update the state after successful deletion
-                        setPosts(posts.filter(post => post.ID !== ID)); // Sử dụng postid thay vì ID
+                        swal("Deletion Successful");
+                        setPosts(posts.filter(post => post.ID !== postId));
                     } else {
-                        swal('Xóa thất bại');
+                        swal("Deletion Failed");
                     }
                 } catch (error) {
-                    console.error('Error deleting post:', error);
-                    swal('Lỗi khi xóa dữ liệu');
+                    console.error("Error deleting post:", error);
+                    swal("Error deleting data");
                 }
             }
         });
-    }
+    };
 
-    const handleCancelReport = async (ID) => {
+    const handleCancelReport = async (postId) => {
         try {
             const axiosInstance = await AxiosInstance();
-            const response = await axiosInstance.get(`/cancel.php?postid=${ID}`); // Thay đổi phương thức từ post sang get và truyền postid qua URL
-            console.log(response);
+            const response = await axiosInstance.get(`/cancel.php?postid=${postId}`);
             if (response.status) {
-                swal('Hủy báo cáo thành công');
-                // Refresh list after successful cancellation
-                const updatedPosts = posts.filter(post => post.ID !== ID);
-                setPosts(updatedPosts);
+                swal("Report Cancellation Successful");
+                setPosts(posts.filter(post => post.ID !== postId));
             } else {
-                swal('Hủy báo cáo thất bại');
+                swal("Report Cancellation Failed");
             }
         } catch (error) {
-            console.error('Error canceling report:', error);
+            console.error("Error canceling report:", error);
+            swal("Error canceling report");
         }
-    }
+    };
 
     return (
-        <div>
-            <h1>Danh sách bài viết bị báo cáo</h1>
-            <button className="btn btn-primary" onClick={() => saveUser(null)}>Đăng xuất</button>
-            <a href="/block2" className="btn btn-warning">Chuyển đến trang quản lý người dùng</a>
-            <table className="table">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Tên</th>
-                        <th>Nội dung bài viết</th>
-                        <th>Ảnh</th>
-                        <th>Thời gian</th>
-                        <th>Lý do tố cáo</th>
-                        <th>Thao tác</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {posts.map((item, index) => (
-                        <tr key={item.ID}>
-                            <td>{item.ID}</td>
-                            <td>{item.NAME}</td>
-                            <td>{item.CONTENT}</td>
-                            <td style={{ maxWidth: "15px", maxHeight: "15px" }}>
-                                <img src={item.IMAGE} style={{ maxWidth: "100%", height: "auto" }} /> {/* Điều chỉnh kích thước hình ảnh */}
-                            </td>
-                            <td>{item.TIME}</td>
-                            <td>{item.REASON}</td>
-                            <td>
-                                <button className="btn btn-primary" onClick={() => handleCancelReport(item.ID)}>Hủy</button>
-                                <button className="btn btn-danger" onClick={() => handleDelete(item.ID)}>Xóa</button>
-                            </td>
+        <div
+            className="container"
+            style={{
+                backgroundColor: "purple",
+                background: "linear-gradient(to bottom, #3B21B7, #8B64DA, #D195EE, #CECBD3)",
+                height: "100vh",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                padding: "20px",
+                flexDirection: "column",
+            }}
+        >
+            <h1 style={{ color: "white", fontSize: "3rem", fontWeight: "bold", textAlign: "center" }}>Reported Posts List</h1>
+            <div
+                style={{
+                    maxWidth: "100%",
+                    overflowX: "auto",
+                    background: "white",
+                    padding: "20px",
+                    borderRadius: "30px", // Rounder edges for a softer look
+                    boxShadow: "0 4px 8px 0 rgba(0,0,0,0.2)", // Subtle shadow for visual depth
+                }}
+            >
+                <div
+                    style={{
+                        display: "flex",
+                        justifyContent: "center",   
+                        gap: "10px",
+                        marginBottom: "20px",
+                    }}
+                >
+                    <a href="/block2" className="btn btn-warning">Go to User Management</a>
+                    <button className="btn btn-link" onClick={() => saveUser(null)}>Logout</button>
+                </div>
+                <table className="table" style={{ borderSpacing: "0 10px" }}> {/* Adds spacing between rows */}
+                    <thead>
+                        <tr>
+                            <th style={{ padding: "30px" }}>ID</th>
+                            <th style={{ padding: "30px" }}>Name</th>
+                            <th style={{ padding: "30px" }}>Post Content</th>
+                            <th style={{ padding: "30px" }}>Image</th>
+                            <th style={{ padding: "30px" }}>Time</th>
+                            <th style={{ padding: "30px" }}>Reason</th>
+                            <th style={{ padding: "30px" }}>Actions</th>
                         </tr>
-                    ))}
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        {posts.map((item) => (
+                            <tr key={item.ID} style={{ padding: "30px" }}>
+                                <td style={{ padding: "30px" }}>{item.ID}</td>
+                                <td style={{ padding: "30px" }}>{item.NAME}</td>
+                                <td style={{ padding: "30px" }}>{item.CONTENT}</td>
+                                <td style={{ padding: "30px" }}>
+                                    <img src={item.IMAGE} alt="Post" className="img-thumbnail" style={{ width:"100%", height:150 }} />
+                                </td>
+                                <td style={{ padding: "30px" }}>{item.TIME}</td>
+                                <td style={{ padding: "30px" }}>{item.REASON}</td>
+                                <td style={{ padding: "30px" }}>
+                                    <button className="btn btn-primary" onClick={() => handleCancelReport(item.ID)}>Cancel Report</button>
+                                    <button className="btn btn-danger" onClick={() => handleDelete(item.ID)}>Delete</button>
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
         </div>
     );
-}
-
+};
 
 export default List;
-

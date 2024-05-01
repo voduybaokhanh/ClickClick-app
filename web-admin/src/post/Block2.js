@@ -22,18 +22,17 @@ const Block = ({ saveUser }) => {
             console.error('Error fetching data:', error);
             swal("Oops!", "Something went wrong while fetching data", "error");
         }
-    }
+    };
 
     const toggleBlockStatus = async (userid, currentStatus) => {
-        const action = currentStatus ? 'Mở khóa' : 'Khóa';
         const url = currentStatus ? '/unblock.php' : '/block.php';
-
-        const confirmationMessage = currentStatus ? 'Xác nhận mở khóa tài khoản?' : 'Xác nhận khóa tài khoản?';
-        const successMessage = currentStatus ? 'Mở khóa tài khoản thành công' : 'Khóa tài khoản thành công';
+        const actionText = currentStatus ? 'Unblock' : 'Block';
+        const confirmationMessage = currentStatus ? 'Confirm Unblock?' : 'Confirm Block?';
+        const successMessage = currentStatus ? 'Unblock Successful' : 'Block Successful';
 
         swal({
             title: confirmationMessage,
-            text: currentStatus ? "Mở khóa tài khoản!" : "Khóa tài khoản trong hệ thống!",
+            text: currentStatus ? "Unblock user!" : "Block user in the system!",
             icon: "warning",
             buttons: true,
             dangerMode: true,
@@ -44,64 +43,109 @@ const Block = ({ saveUser }) => {
                     const response = await axiosInstance.post(url, { userid });
                     if (response.status) {
                         swal(successMessage);
-                        // Cập nhật trạng thái của người dùng trong mảng `posts`
-                        setPosts(prevPosts => {
-                            return prevPosts.map(item => {
+                        // Update the status of the user in `posts`
+                        setPosts((prevPosts) => {
+                            return prevPosts.map((item) => {
                                 if (item.USERID === userid) {
                                     return { ...item, Available: currentStatus ? 1 : 0 };
                                 }
                                 return item;
-                            }).sort((a, b) => {
-                                // Sắp xếp người dùng khóa lên đầu
-                                return a.Available - b.Available || a.USERID - b.USERID;
-                            });
+                            }).sort((a, b) => a.Available - b.Available || a.USERID - b.USERID);
                         });
                     } else {
-                        swal(`Thất bại khi ${action} tài khoản`);
+                        swal(`Failed to ${actionText} the user`);
                     }
                 } catch (error) {
-                    console.error(`Error ${action}ing user:`, error);
-                    swal(`Có lỗi trong quá trình ${action} tài khoản`);
+                    console.error(`Error ${actionText}ing user:`, error);
+                    swal(`Error during ${actionText}`);
                 }
             }
         });
-    }
+    };
 
     return (
-        <div>
-            <h1>Danh sách người dùng bị báo cáo</h1>
-<button className="btn btn-primary" onClick={() => { saveUser(null); fetchData(); }}>Đăng xuất</button>
-            <a href="/" className="btn btn-warning">Chuyển đến trang quản lý bài viết</a>
-            <table className="table">
-                <thead>
-                    <tr>
-                        <th>Userid</th>
-                        <th>Số lượng bài viết bị báo cáo</th>
-                        <th>Thao tác</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {posts.map((item, index) => (
-                        <tr key={index}>
-                            <td>{item.USERID}</td>
-                            <td>{item.reported_count}</td>
-                            <td>
-                                {item.Available === 0 ? (
-                                    <button className="btn btn-primary" onClick={() => toggleBlockStatus(item.USERID, true)}>
-                                        Mở khóa
-                                    </button>
-                                ) : (
-                                    <button className="btn btn-danger" onClick={() => toggleBlockStatus(item.USERID, false)}>
-                                        Khóa
-                                    </button>
-                                )}
-                            </td>
+        <div
+            className="container"
+            style={{
+                backgroundColor: "purple",
+                background: "linear-gradient(to bottom, #3B21B7, #8B64DA, #D195EE, #CECBD3)",
+                height: "100vh",
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "center",
+                alignItems: "center",
+                padding: "20px",
+            }}
+        >
+            <h1 style={{ color: "white", fontSize: "3rem", fontWeight: "bold", textAlign: "center" }}>Reported Users List</h1>
+            <div
+                style={{
+                    display: "flex",
+                    justifyContent: "center",
+                    gap: "10px",
+                    marginBottom: "20px",
+                }}
+            >
+
+            </div>
+            <div
+                style={{
+                    maxWidth: "100%",
+                    overflowX: "auto",
+                    background: "white",
+                    padding: "20px",
+                    borderRadius: "30px",
+                    boxShadow: "0 4px 8px 0 rgba(0,0,0,0.2)",
+                }}
+            >
+                <div
+                    style={{
+                        display: "flex",
+                        justifyContent: "center",
+                        gap: "10px",
+                        marginBottom: "20px",
+                    }}
+                >
+                    <a href="/" className="btn btn-warning">Go to Post Management</a>
+                    <button className="btn btn-link" onClick={() => saveUser(null)}>Logout</button>
+                </div>
+                <table className="table" style={{ borderSpacing: "0 10px" }}>
+                    <thead>
+                        <tr>
+                            <th style={{ padding: "30px" }}>User ID</th>
+                            <th style={{ padding: "30px" }}>Reported Post Count</th>
+                            <th style={{ padding: "30px" }}>Actions</th>
                         </tr>
-                    ))}
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        {posts.map((item, index) => (
+                            <tr key={index} style={{ padding: "30px" }}>
+                                <td style={{ padding: "30px" }}>{item.USERID}</td>
+                                <td style={{ padding: "30px" }}>{item.reported_count}</td>
+                                <td style={{ padding: "30px" }}>
+                                    {item.Available === 0 ? (
+                                        <button
+                                            className="btn btn-primary"
+                                            onClick={() => toggleBlockStatus(item.USERID, true)}
+                                        >
+                                            Unblock
+                                        </button>
+                                    ) : (
+                                        <button
+                                            className="btn btn-danger"
+                                            onClick={() => toggleBlockStatus(item.USERID, false)}
+                                        >
+                                            Block
+                                        </button>
+                                    )}
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
         </div>
     );
-}
+};
 
 export default Block;
