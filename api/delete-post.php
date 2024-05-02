@@ -22,28 +22,57 @@ try {
     // Lấy id từ dữ liệu đầu vào
     $postid = $data->postid;
 
-    // Chuẩn bị và thực thi truy vấn SQL để xóa các bản ghi từ bảng like liên quan đến bài viết
-    $likeQuery = "DELETE FROM likes WHERE id = :postid";
-    $likeStmt = $dbConn->prepare($likeQuery);
-    $likeStmt->bindParam(':postid', $postid, PDO::PARAM_INT);
-    $likeStmt->execute();
+   // Kiểm tra bài viết trong bảng chats
+   $sqlCheckChats = "SELECT * FROM chats WHERE postid = :postid";
+   $stmtCheckChats = $dbConn->prepare($sqlCheckChats);
+   $stmtCheckChats->bindParam(':postid', $postid, PDO::PARAM_INT);
+   $stmtCheckChats->execute();
 
-    // Chuẩn bị và thực thi truy vấn SQL để xóa các bản ghi từ bảng chat liên quan đến bài viết
-    $chatQuery = "DELETE FROM chats WHERE id = :postid";
-    $chatStmt = $dbConn->prepare($chatQuery);
-    $chatStmt->bindParam(':postid', $postid, PDO::PARAM_INT);
-    $chatStmt->execute();
+   // Nếu có tin nhắn liên quan trong bảng chats, xóa chúng
+   if ($stmtCheckChats->rowCount() > 0) {
+       $sqlDeleteChats = "DELETE FROM chats WHERE postid = :postid";
+       $stmtDeleteChats = $dbConn->prepare($sqlDeleteChats);
+       $stmtDeleteChats->bindParam(':postid', $postid, PDO::PARAM_INT);
+       $stmtDeleteChats->execute();
+   }
 
-    // Chuẩn bị và thực thi truy vấn SQL để xóa bài viết chính
-    $postQuery = "DELETE FROM posts WHERE id = :postid";
-    $postStmt = $dbConn->prepare($postQuery);
-    $postStmt->bindParam(':postid', $postid, PDO::PARAM_INT);
-    $postStmt->execute();
+   // Kiểm tra bài viết trong bảng likes
+   $sqlCheckLikes = "SELECT * FROM likes WHERE postid = :postid";
+   $stmtCheckLikes = $dbConn->prepare($sqlCheckLikes);
+   $stmtCheckLikes->bindParam(':postid', $postid, PDO::PARAM_INT);
+   $stmtCheckLikes->execute();
 
-    // Trả về kết quả thành công
-    echo json_encode(array("status" => true, "message" => "Post deleted successfully!"));
-}catch (Exception $e) {
-    // Log or return the actual error message for debugging
-    echo json_encode(array("status" => false, "message" => "Failed to delete post! Error: " . $e->getMessage()));
+   // Nếu có likes liên quan trong bảng likes, xóa chúng
+   if ($stmtCheckLikes->rowCount() > 0) {
+       $sqlDeleteLikes = "DELETE FROM likes WHERE postid = :postid";
+       $stmtDeleteLikes = $dbConn->prepare($sqlDeleteLikes);
+       $stmtDeleteLikes->bindParam(':postid', $postid, PDO::PARAM_INT);
+       $stmtDeleteLikes->execute();
+   }
+
+   // Tiến hành xóa bài viết từ bảng posts
+   $sqlDeletePost = "DELETE FROM posts WHERE ID = :postid";
+   $stmtDeletePost = $dbConn->prepare($sqlDeletePost);
+   $stmtDeletePost->bindParam(':postid', $postid, PDO::PARAM_INT);
+   $stmtDeletePost->execute();
+
+   if ($stmtDeletePost) {
+       echo json_encode(array(
+           "status" => true,
+           "message" => "Post has been successfully deleted!."
+       ));
+   } else {
+       echo json_encode(array(
+           "status" => false,
+           "message" => "Post not found or already deleted!."
+       ));
+   }
+} catch (PDOException $e) {
+   // Xử lý lỗi nếu có
+   http_response_code(500);
+   echo json_encode(array(
+       "status" => false,
+       "message" => "Unable to delete post: " . $e->getMessage()
+   ));
 }
 ?>
