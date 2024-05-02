@@ -110,7 +110,7 @@ try {
 
         if ($userName) {
             // Thêm thông báo vào cơ sở dữ liệu
-            $notificationContent = "$userName đã thích bài đăng của bạn.";
+            $notificationContent = "$userName liked your post.";
             $addNotificationQuery = "INSERT INTO notifications (userid, content, time, RECEIVERID) VALUES (:userid, :content, now(), :RECEIVERID)";
             $addNotificationStmt = $dbConn->prepare($addNotificationQuery);
             $addNotificationStmt->bindParam(':userid', $userid, PDO::PARAM_INT);

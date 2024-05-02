@@ -44,7 +44,7 @@ try {
     $notificationStmt->execute();
 
     // Xóa các bản ghi từ bảng chats liên quan đến người dùng
-    $chatQuery = "DELETE FROM chats WHERE SENDERID = :userid OR RECEIVERID = :userid";
+    $chatQuery = "DELETE FROM chats WHERE SENDERID = :userid AND RECEIVERID = :userid";
     $chatStmt = $dbConn->prepare($chatQuery);
     $chatStmt->bindParam(':userid', $userid, PDO::PARAM_INT);
     $chatStmt->execute();

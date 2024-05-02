@@ -38,7 +38,7 @@ try {
 
     // Kiểm tra xem người bạn có phải là chính người dùng hiện tại hay không
     if ($RECEIVERID == $SENDERID) {
-        throw new Exception('Không thể nhắn tin với chính bản thân.');
+        throw new Exception('Can not message yourself');
     }
 
     if (!$friend) {
@@ -95,7 +95,7 @@ try {
 
     if ($userName) {
         // Thêm thông báo vào cơ sở dữ liệu
-        $notificationContent = "$userName đã gửi tin nhắn cho bạn.";
+        $notificationContent = "$userName sent you a message.";
         $addNotificationQuery = "INSERT INTO notifications (userid, content, time,RECEIVERID) VALUES (:userid, :content, now(),:RECEIVERID)";
         $addNotificationStmt = $dbConn->prepare($addNotificationQuery);
         $addNotificationStmt->bindParam(':userid', $SENDERID, PDO::PARAM_INT); // Thông báo gửi cho người nhận

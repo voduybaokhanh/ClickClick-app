@@ -8,6 +8,7 @@ import {
   Pressable,
   Dimensions,
   Alert,
+  TouchableOpacity
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import AxiosInstance from "../../helper/Axiostance";
@@ -189,10 +190,16 @@ const Notifications = () => {
       colors={["#3B21B7", "#8B64DA", "#D195EE", "#CECBD3"]}
       style={[styles.linearGradient, styles.container]}
     >
+      <TouchableOpacity onPress={() => navigation.goBack()} style={{marginLeft:10}} >
+          <Image style={styles.image}
+              source={require("../../Image/arrow-left.png")}
+             />
+        </TouchableOpacity>
       <SafeAreaView style={{ flex: 1 }}>
         <Text style={styles.title}>Notifications</Text>
         {/* Sử dụng FlatList để hiển thị danh sách thông báo */}
         <FlatList
+          showsVerticalScrollIndicator={false}
           data={notifications}
           renderItem={renderItem}
           keyExtractor={(item, index) => index.toString()} // Sử dụng trường ID làm key
@@ -205,6 +212,7 @@ const Notifications = () => {
       <View style={{ flex: 1 }}>
         <Text style={styles.title}>Add friend</Text>
         <FlatList
+          showsVerticalScrollIndicator={false}
           data={listFriendStatus.flat()}
           renderItem={renderItemFriend}
           refreshing={reload}

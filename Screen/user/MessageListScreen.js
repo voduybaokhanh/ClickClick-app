@@ -12,6 +12,7 @@ import {
   StyleSheet,
   Text,
   View,
+  TouchableOpacity
 } from "react-native";
 import { useState, useEffect } from "react";
 
@@ -53,6 +54,11 @@ const MessageListScreen = () => {
       colors={["#3B21B7", "#8B64DA", "#D195EE", "#CECBD3"]}
       style={styles.linearGradient}
     >
+       <TouchableOpacity onPress={() => navigation.goBack()} style={{top:50,marginLeft:10}} >
+          <Image style={styles.image}
+              source={require("../../Image/arrow-left.png")}
+             />
+        </TouchableOpacity>
       <SafeAreaView>
         <View
           style={{
@@ -61,10 +67,12 @@ const MessageListScreen = () => {
           }}
         >
           <Text style={styles.textMessage}>Message</Text>
-          <Image
-            style={styles.iconSetting}
-            source={require("../../Image/setting_icon.png")}
-          />
+          <TouchableOpacity onPress={() => navigation.navigate("Setting")}>
+              <Image
+                style={styles.iconsetting}
+                source={require("../../Image/setting_icon.png")}
+              />
+            </TouchableOpacity>
         </View>
         <FlatList
           data={friendList}

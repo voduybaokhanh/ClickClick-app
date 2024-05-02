@@ -23,7 +23,7 @@ const Home = () => {
   const [friendID, setfriendID] = useState("");
   const navigation = useNavigation();
   const [datafriend, setdatafriend] = useState([
-    { label: "Mọi người", value: "1" },
+    { label: "ALL", value: "1" },
   ]);
 
   // Thêm state để lưu trạng thái của người dùng (tất cả hoặc bạn bè)
@@ -95,11 +95,11 @@ const Home = () => {
       );
 
       // Thêm người dùng hiện tại vào mảng datafriend
-      const currentUser = { label: "Tôi", value: token };
+      const currentUser = { label: "Myself", value: token };
       const updatedDataFriend = [currentUser, ...formattedData];
 
       // Thêm mục "Mọi người" vào đầu danh sách bạn bè
-      updatedDataFriend.unshift({ label: "Mọi người", value: "all" });
+      updatedDataFriend.unshift({ label: "ALL", value: "all" });
 
       // Gán giá trị cho datafriend
       setdatafriend(updatedDataFriend);
@@ -117,7 +117,7 @@ const Home = () => {
       }
       // Kiểm tra nếu SENDERID và RECEIVERID giống nhau
       if (parseInt(token) === USERID) {
-        alert("Không thể nhắn tin cho chính bạn!");
+        alert("Can not message yourself!");
         return; // Kết thúc hàm nếu người dùng cố gắng gửi tin nhắn cho chính họ
       }
       const instance = await AxiosInstance();
@@ -131,7 +131,7 @@ const Home = () => {
       const response = await instance.post("/chats.php", body);
       if (response.status) {
         // Tin nhắn gửi thành công, có thể cập nhật giao diện hoặc thực hiện các hành động khác
-        alert("Tin nhắn đã được gửi");
+        alert("Sent message");
         setContent(""); // Xóa nội dung tin nhắn sau khi gửi
       }
     } catch (error) {
@@ -196,15 +196,15 @@ const Home = () => {
     if (parseInt(token) === userId) {
       // Người dùng đang xem bài viết của mình
       Alert.alert(
-        "Xác nhận xóa bài viết",
-        "Bạn có chắc chắn muốn xóa bài viết này?",
+        "Confirm deletion of post?",
+        "Are you sure to delete the post?",
         [
           {
-            text: "Hủy",
+            text: "Cancel",
             style: "cancel",
           },
           {
-            text: "Xóa",
+            text: "Delete",
             onPress: () => handleDelete(postid), // Gọi hàm xóa bài viết khi người dùng xác nhận
           },
         ]
@@ -212,21 +212,21 @@ const Home = () => {
     } else {
       // Người dùng đang xem bài viết của người khác
       Alert.prompt(
-        "Xác nhận báo cáo bài viết",
-        "Nhập lý do của bạn:",
+        "Confirm report of post",
+        "Enter your reason:",
         [
           {
-            text: "Hủy",
+            text: "Cancel",
             style: "cancel",
           },
           {
-            text: "Báo cáo",
+            text: "Report",
             onPress: (reason) => {
               // Kiểm tra lý do nhập và gọi hàm xử lý báo cáo bài viết
               if (reason && reason.trim() !== "") {
                 handleBaocao(postid, reason);
               } else {
-                Alert.alert("Lỗi", "Vui lòng nhập lý do báo cáo bài viết");
+                Alert.alert("Failed", "Please enter a reason for reporting the post");
               }
             },
           },
@@ -250,9 +250,9 @@ const Home = () => {
 
       const response = await instance.post("/delete-post.php", body);
       if (response.status) {
-        alert("xóa bài viết thành công");
+        alert("Delete post successfully");
       } else {
-        alert("xóa bài viết không thành công: ");
+        alert("Delete post failed: ");
       }
     } catch (error) {
       console.error("Error reporting post:", error);
@@ -276,9 +276,9 @@ const Home = () => {
 
       const response = await instance.post("/report.php", body);
       if (response.status) {
-        alert("Báo cáo bài viết thành công");
+        alert("Report the post successfully");
       } else {
-        alert("Báo cáo bài viết không thành công: " + response.data.message);
+        alert("Report the post failed: " + response.data.message);
       }
     } catch (error) {
       console.error("Error reporting post:", error);
@@ -350,7 +350,7 @@ const Home = () => {
           <View>
             <Dropdown
               style={styles.search}
-              placeholder="Mọi người"
+              placeholder="ALL"
               placeholderStyle={styles.placeholderStyle}
               iconstyle={styles.iconStyle}
               selectedTextStyle={styles.placeholderStyle}
@@ -410,7 +410,7 @@ const Home = () => {
                 </View>
                 <View style={{ width: "90%", marginBottom: 20 }}>
                   <Image
-                    style={{ width: 300, height: 300 }}
+                    style={{ width: 'auto', height: 300 }}
                     source={{ uri: item.IMAGE }}
                   />
                   <View style={{ width: "90%", alignSelf: "center" }}>

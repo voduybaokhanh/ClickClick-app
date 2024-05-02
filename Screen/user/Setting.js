@@ -72,24 +72,28 @@ const Setting = ({navigation}) => {
       colors={["#3B21B7", "#8B64DA", "#D195EE", "#CECBD3"]}
       style={styles.linearGradient}
     >
-      
+           <TouchableOpacity onPress={() => navigation.goBack()} style={{top:50,marginLeft:10}} >
+          <Image style={styles.image}
+              source={require("../../Image/arrow-left.png")}
+             />
+        </TouchableOpacity>
         <View style={styles.DIV}>
          <Text  style={styles.text1}>Setting</Text>
         </View> 
-        <View style={{top:100}}>
-            <TouchableOpacity onPress={handledEditProfile} style={{ width: "100%", height: 60, flexDirection: 'row', alignItems: 'center',backgroundColor:'#ffffff',borderRadius:20,borderWidth:2,marginBottom:20}}>
+        <View style={{top:80}}>
+            <TouchableOpacity onPress={handledEditProfile} style={{ width: "100%", height: 60, flexDirection: 'row', alignItems: 'center',backgroundColor:'#ffffff',borderRadius:20,marginBottom:20}}>
                 <Image style={{marginRight:20,marginLeft:10}} source={require('../../Image/logoEdit.png')}/>
                 <Text style={{color:'#635A8F',fontSize:20,fontWeight:'bold'}}>Edit profile</Text>
             </TouchableOpacity>
-            <TouchableOpacity onPress={handledChange} style={{ width: "100%", height: 60, flexDirection: 'row', alignItems: 'center',backgroundColor:'#ffffff',borderRadius:20,borderWidth:2,marginBottom:20}}>
+            <TouchableOpacity onPress={handledChange} style={{ width: "100%", height: 60, flexDirection: 'row', alignItems: 'center',backgroundColor:'#ffffff',borderRadius:20,marginBottom:20}}>
                 <Image style={{marginRight:20,marginLeft:10}} source={require('../../Image/logoChange.png')}/>
                 <Text style={{color:'#635A8F',fontSize:20,fontWeight:'bold'}}>Change password</Text>
             </TouchableOpacity>
-            <TouchableOpacity onPress={handleDelete} style={{ width: "100%", height: 60, flexDirection: 'row', alignItems: 'center',backgroundColor:'#ffffff',borderRadius:20,borderWidth:2,marginBottom:280}}>
+            <TouchableOpacity onPress={handleDelete} style={{ width: "100%", height: 60, flexDirection: 'row', alignItems: 'center',backgroundColor:'#ffffff',borderRadius:20,marginBottom:280}}>
                 <Image style={{marginRight:20,marginLeft:10}} source={require('../../Image/logoDelete.png')}/>
                 <Text style={{color:'#635A8F',fontSize:20,fontWeight:'bold'}}>Delete account</Text>
             </TouchableOpacity>
-            <TouchableOpacity onPress={handedLogout} style={{ width: "100%", height: 60, flexDirection: 'column', alignItems: 'center',backgroundColor:'#635A8F',borderRadius:20,borderWidth:2,marginBottom:20}}>
+            <TouchableOpacity onPress={handedLogout} style={{ width: "100%", height: 60, flexDirection: 'column', alignItems: 'center',backgroundColor:'#635A8F',borderRadius:20,marginBottom:20}}>
                 <Text style={{color:'#ffffff',fontSize:30,fontWeight:'bold',lineHeight:50}}>Log out</Text>
             </TouchableOpacity>
         </View>
@@ -121,7 +125,7 @@ const styles = StyleSheet.create({
       
     },
     DIV:{
-        top:80,
+        top:40,
         alignItems:'center'
     },
     text1: {
