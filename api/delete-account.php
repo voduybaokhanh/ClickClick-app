@@ -26,10 +26,10 @@ try {
     $dbConn->beginTransaction();
 
     // Xóa các bản ghi từ bảng likes liên quan đến người dùng
-    $likeQuery = "DELETE FROM likes WHERE userid = :userid";
-    $likeStmt = $dbConn->prepare($likeQuery);
-    $likeStmt->bindParam(':userid', $userid, PDO::PARAM_INT);
-    $likeStmt->execute();
+    $deleteLikesQuery = "DELETE FROM likes WHERE POSTID IN (SELECT ID FROM posts WHERE userid = :userid)";
+    $deleteLikesStmt = $dbConn->prepare($deleteLikesQuery);
+    $deleteLikesStmt->bindParam(':userid', $userid, PDO::PARAM_INT);
+    $deleteLikesStmt->execute();
 
     // Xóa các bản ghi từ bảng friendships liên quan đến người dùng
     $friendshipQuery = "DELETE FROM friendships WHERE userid = :userid OR friendshipid = :userid";
@@ -71,4 +71,3 @@ try {
     $dbConn->rollBack();
     echo json_encode(array("status" => false, "message" => "Xóa người dùng và dữ liệu liên quan thất bại! Error: " . $e->getMessage()));
 }
-?>

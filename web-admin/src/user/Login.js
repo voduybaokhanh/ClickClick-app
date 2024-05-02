@@ -12,7 +12,7 @@ const Login = (props) => {
       const instance = await AxiosInstance();
       const result = await instance.post("/login_admin.php", body);
       if (result.status) {
-        saveUser(result.user); // Assuming user data is returned from the API as `result.user`
+        saveUser(result.user);
         alert("Login successful");
       } else {
         alert("Login failed");
