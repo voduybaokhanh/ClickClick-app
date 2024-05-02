@@ -29,7 +29,7 @@ try {
     $likeStmt->execute();
 
     // Chuẩn bị và thực thi truy vấn SQL để xóa các bản ghi từ bảng chat liên quan đến bài viết
-    $chatQuery = "DELETE FROM chat WHERE id = :postid";
+    $chatQuery = "DELETE FROM chats WHERE id = :postid";
     $chatStmt = $dbConn->prepare($chatQuery);
     $chatStmt->bindParam(':postid', $postid, PDO::PARAM_INT);
     $chatStmt->execute();

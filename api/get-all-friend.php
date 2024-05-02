@@ -31,32 +31,44 @@ try {
     $friendNames = array();
     foreach ($friendships as $friendship) {
         $friendshipid = $friendship["FRIENDSHIPID"]; // Sửa tên cột thành friendshipid
-
+    
         // Truy vấn để lấy tin nhắn gần nhất dựa trên userid và FRIENDSHIPID
-        $getLastMessageQuery = "SELECT CONTENT FROM chats WHERE (senderid = :userid AND receiverid = :FRIENDSHIPID) OR (senderid = :FRIENDSHIPID AND receiverid = :userid) ORDER BY TIME DESC LIMIT 1";
+        $getLastMessageQuery = "SELECT TIME, CONTENT FROM chats WHERE (senderid = :userid AND receiverid = :FRIENDSHIPID) OR (senderid = :FRIENDSHIPID AND receiverid = :userid) ORDER BY TIME DESC LIMIT 1";
         $getLastMessageStmt = $dbConn->prepare($getLastMessageQuery);
         $getLastMessageStmt->bindParam(':userid', $userid, PDO::PARAM_INT);
         $getLastMessageStmt->bindParam(':FRIENDSHIPID', $friendshipid, PDO::PARAM_INT);
         $getLastMessageStmt->execute();
         $lastMessage = $getLastMessageStmt->fetch(PDO::FETCH_ASSOC);
-
+    
         // Truy vấn để lấy tên của người bạn dựa trên friendshipid
         $getFriendNameQuery = "SELECT id,name, AVATAR FROM users WHERE id = :FRIENDSHIPID"; // Sửa tên cột thành userid
         $getFriendNameStmt = $dbConn->prepare($getFriendNameQuery);
         $getFriendNameStmt->bindParam(':FRIENDSHIPID', $friendshipid, PDO::PARAM_INT);
         $getFriendNameStmt->execute();
         $friendName = $getFriendNameStmt->fetch(PDO::FETCH_ASSOC);
-
+    
         // Thêm tên của người bạn vào mảng
         if ($friendName) {
+            // Kiểm tra nếu có tin nhắn gần đây
+            $messageContent = isset($lastMessage['CONTENT']) ? $lastMessage['CONTENT'] : '';
+            $messageTime = isset($lastMessage['TIME']) ? $lastMessage['TIME'] : '';
+            
             $friendNames[] = array(
                 "name" => $friendName["name"],
                 "avatar" => $friendName["AVATAR"],
-                "lastMessage" => $lastMessage,
+                "lastMessage" => array(
+                    "TIME" => $messageTime,
+                    "CONTENT" => $messageContent
+                ),
                 "friendshipid" => $friendshipid
             );
         }
     }
+
+    // Sắp xếp mảng $friendNames theo thời gian của tin nhắn mới nhất
+    usort($friendNames, function($a, $b) {
+        return strtotime($b['lastMessage']['TIME']) - strtotime($a['lastMessage']['TIME']);
+    });
 
     // Trả về friendNames theo index
     echo json_encode(array('status' => true, 'friendships' => $friendships, 'friendName' => array_values($friendNames)));
