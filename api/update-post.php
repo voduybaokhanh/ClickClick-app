@@ -16,7 +16,7 @@ try {
     $stmt->bindParam("id" , $id);
     $stmt->execute();
     // trả về dữ liệu dạng json
-    echo json_encode(array("status" => true, "message" => "cập nhật bài viết thành công!"));
+    echo json_encode(array("status" => true, "message" => "Post updated successfully!"));
 } catch (Exception $e) {
-    echo json_encode(array("status" => false, "message" => "cập nhật bài viết thất bại!"+ $e->getMessage()));
+    echo json_encode(array("status" => false, "message" => "Failed to update post! " . $e->getMessage()));
 }

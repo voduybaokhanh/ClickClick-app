@@ -23,11 +23,11 @@ import {
         const result = await instance.post("/get-otp.php", body);
         console.log(result);
         if (result.status) {
-          alert("Đã gửi mã otp");
+          alert("OTP sent successfully");
           navigation.navigate('register', {email})
           // Token đã được lưu trữ thành công, thực hiện các thao tác tiếp theo nếu cần
         } else {
-          alert("gửi mã otp thất bại");
+          alert("Failed to send OTP");
         }
       } catch (error) {
         console.error("Lỗi khi thực hiện đăng nhập: ", error);

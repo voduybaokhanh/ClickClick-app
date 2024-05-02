@@ -15,7 +15,7 @@ try {
 
     // Kiểm tra xem dữ liệu `id` đã được truyền hay chưa
     if (!isset($data->postid)) {
-        echo json_encode(array('status' => false, 'message' => 'Thiếu tham số id'));
+        echo json_encode(array('status' => false, 'message' => 'Missing parameter: postid'));
         exit;
     }
 
@@ -41,9 +41,9 @@ try {
     $postStmt->execute();
 
     // Trả về kết quả thành công
-    echo json_encode(array("status" => true, "message" => "Xóa bài viết thành công!"));
+    echo json_encode(array("status" => true, "message" => "Post deleted successfully!"));
 }catch (Exception $e) {
     // Log or return the actual error message for debugging
-    echo json_encode(array("status" => false, "message" => "Xóa bài viết thất bại! Error: " . $e->getMessage()));
+    echo json_encode(array("status" => false, "message" => "Failed to delete post! Error: " . $e->getMessage()));
 }
 ?>

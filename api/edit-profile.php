@@ -14,13 +14,13 @@ try {
 
     // Kiểm tra xem người dùng có tồn tại hay không
     if (!isset($data->userid)) {
-        echo json_encode(array('error' => 'Người dùng không tồn tại'));
+        echo json_encode(array('error' => 'User does not exist'));
         exit;
     }
 
     // Kiểm tra xem dữ liệu có tồn tại hay không
     if (!$data || !isset($data->avatar) || !isset($data->name) || !isset($data->text)) {
-        echo json_encode(array('error' => 'Dữ liệu không hợp lệ'));
+        echo json_encode(array('error' => 'Invalid data'));
         exit;
     }
 
@@ -50,7 +50,7 @@ try {
     echo json_encode(
         array(
             "status" => true,
-            "message" => "Hồ sơ đã được cập nhật thành công"
+            "message" => "Profile updated successfully"
         )
     );
 

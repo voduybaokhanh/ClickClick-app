@@ -54,13 +54,13 @@ const Resetpassword = ({navigation}) => {
       const result = await instance.post("/reset-password.php", body);
       console.log(body);
       if (result.status) {
-        alert("Đổi mật khẩu thành công");
+        alert("Password changed successfully");
         navigation.navigate("Login");
         
 
         // Token đã được lưu trữ thành công, thực hiện các thao tác tiếp theo nếu cần
       } else {
-        alert("Đổi mật khẩu thất bại");
+        alert("Failed to change password");
       }
     } catch (error) {
       console.error("Lỗi khi thực hiện: ", error);

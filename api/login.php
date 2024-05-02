@@ -23,7 +23,7 @@ try {
 
     //Kiểm tra người dùng có bị khóa tài khoản không
     if ($user["AVAILABLE"] == 0) {
-        echo json_encode(array("status" => false, "message" => "Tài khoản đã bị khóa, vui lòng liên hệ quản trị viên.SĐT: 0774749399"));
+        echo json_encode(array("status" => false, "message" => "Account is locked, please contact the administrator. Phone: 0774749399"));
         exit;
     }
 
@@ -43,7 +43,7 @@ try {
             array(
                 "status" => false,
 
-                "message" => "sai rồi kiểm tra lại"
+                "message" => "Login unsuccessful. Please check your login credentials."
             )
         );
     }
@@ -51,7 +51,7 @@ try {
     echo json_encode(
         array(
             "status" => false,
-            "error" => "Authentication failed. Please try again."
+            "message" => "Login unsuccessful. Please try again."
         )
     );
 }

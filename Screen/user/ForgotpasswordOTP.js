@@ -20,11 +20,11 @@ const Forgetpassword = ({ navigation }) => {
       const instance = await AxiosInstance();
       const result = await instance.post("/get-otp.php", body);
       if (result.status) {
-        alert("Đã gửi mã otp");
+        alert("OTP sent successfully");
         navigation.navigate("resetPass");
         // Token đã được lưu trữ thành công, thực hiện các thao tác tiếp theo nếu cần
       } else {
-        alert("gửi mã otp thất bại");
+        alert("Failed to send OTP");
       }
     } catch (error) {
       console.error("Lỗi khi thực hiện: ", error);

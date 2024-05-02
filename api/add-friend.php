@@ -17,7 +17,7 @@ try {
     // Kiểm tra xem có friendshipid và userid được gửi hay không
     if (!isset($data->friendshipid) || !isset($data->userid)) {
         http_response_code(400);
-        echo json_encode(array('status' => false, 'message' => 'Thiếu tham số friendshipid hoặc userid'));
+        echo json_encode(array('status' => false, 'message' => 'Missing parameters friendshipid or userid'));
         exit;
     }
 
@@ -33,11 +33,11 @@ try {
 
     // Kiểm tra xem người bạn có phải là chính người dùng hiện tại hay không
     if ($friendshipid == $userid) {
-        throw new Exception('Không thể kết bạn với chính bản thân.');
+        throw new Exception("Can't friend yourself.");
     }
 
     if (!$friend) {
-        echo json_encode(array('status' => false, 'message' => 'Người bạn không tồn tại.'));
+        echo json_encode(array('status' => false, 'message' => 'Friend does not exist.'));
         exit;
     }
 
@@ -50,7 +50,7 @@ try {
     $existingRelation = $checkRelationStmt->fetch(PDO::FETCH_ASSOC);
 
     if ($existingRelation) {
-        echo json_encode(array('status' => false, 'message' => 'Mối quan hệ bạn bè đã tồn tại.'));
+        echo json_encode(array('status' => false, 'message' => 'Friend relationship already exists.'));
         exit;
     }
 
@@ -63,7 +63,7 @@ try {
 
     if ($friendCountResult && $friendCountResult['friendCount'] >= 20) {
         // Người dùng đã có 20 người bạn trở lên, không thể gửi thêm lời mời
-        echo json_encode(array('status' => false, 'message' => 'Bạn đã đạt đến giới hạn 20 người bạn.'));
+        echo json_encode(array('status' => false, 'message' => 'You have reached the limit of 20 friends.'));
         exit;
     }
 
@@ -76,7 +76,7 @@ try {
 
     if ($friendCountResult && $friendCountResult['friendCount'] >= 20) {
         // Đối phương đã có 20 người bạn trở lên, không thể gửi lời mời
-        echo json_encode(array('status' => false, 'message' => 'Đối phương đã đạt đến giới hạn 20 người bạn.'));
+        echo json_encode(array('status' => false, 'message' => 'Friend has reached the limit of 20 friends.'));
         exit;
     }
 
@@ -108,7 +108,7 @@ try {
         echo json_encode(array('status' => true, 'message' => $userName . ' sent a friend request.'));
     } else {
         // Xử lý khi không tìm thấy thông tin người dùng
-        echo json_encode(array('status' => false, 'message' => 'Lỗi'));
+        echo json_encode(array('status' => false, 'message' => 'Error'));
     }
 } catch (Exception $e) {
     echo json_encode(array('status' => false, 'message' => $e->getMessage()));

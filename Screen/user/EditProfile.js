@@ -96,7 +96,7 @@ const EditProfile = ({ navigation }) => {
       };
       const response = await instance.post("/edit-profile.php", body);
       console.log(imageUrl);
-      Alert.alert("Thông Báo", "Cập nhật hồ sơ thành công");
+      Alert.alert("Notification", "Profile updated successfully");
       setName("");
       setText("");
       resetImageUri(); // Reset imageUri after saving profile
@@ -150,7 +150,7 @@ const EditProfile = ({ navigation }) => {
             onChangeText={setText}
           />
           <TouchableOpacity style={styles.button} onPress={handleSaveProfile}>
-            <Text style={styles.buttonText}>SEND</Text>
+            <Text style={styles.buttonText}>Save</Text>
           </TouchableOpacity>
         </View>
       </LinearGradient>
@@ -204,7 +204,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: "bold",
     textAlign: "center",
-    lineHeight: 50,
+    lineHeight: 55,
   },
   container: {
     flex: 1,

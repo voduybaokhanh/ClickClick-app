@@ -29,19 +29,19 @@ const Login = ({navigation}) => {
       const token = await AsyncStorage.getItem("token");
       if (result.status) {
         await AsyncStorage.setItem("token", result.user.id.toString());
-        alert("Đăng nhập thành công");
+        alert("Login successful");
         setEmail("");
         setPassword("");
         navigation.navigate('BottomTab')
 
         // Token đã được lưu trữ thành công, thực hiện các thao tác tiếp theo nếu cần
       } else {
-        alert("đăng nhập thất bại, " + result.message);
+        alert("Login failed, " + result.message);
       }
       console.log('id: ' + result.user.id);
       console.log('token: '+token);
     } catch (error) {
-      console.error("Lỗi khi thực hiện đăng nhập: ", result);
+      console.error("Error while logging in: ", error);
     }
   }
 

@@ -42,7 +42,7 @@ try {
         echo json_encode(
             array(
                 "status" => true,
-                "message" => "Cập nhật mật khẩu thành công"
+                "message" => "Password updated successfully"
             )
         );
     } else {
@@ -50,7 +50,7 @@ try {
         echo json_encode(
             array(
                 "status" => false,
-                "message" => "Mã OTP chưa được xác nhận"
+                "message" => "OTP not yet confirmed"
             )
         );
     }

@@ -17,7 +17,7 @@ try {
             // || !isset($data->name)
             array(
                 "status" => false,
-                "message" => "Dữ liệu JSON không hợp lệ"
+                "message" => "Invalid JSON data"
             )
         );
         exit;
@@ -33,7 +33,7 @@ try {
         echo json_encode(
             array(
                 "status" => false,
-                "message" => "Tên đăng nhập đã tồn tại"
+                "message" => "Username already exists"
             )
         );
         return;
@@ -51,7 +51,7 @@ try {
         echo json_encode(
             array(
                 "status" => false,
-                "message" => "Mật khẩu không khớp"
+                "message" => "Passwords do not match"
             )
         );
         return;
@@ -80,7 +80,7 @@ try {
         echo json_encode(
             array(
                 "status" => true,
-                "message" => "Đăng ký thành công"
+                "message" => "Registration successful"
             )
         );
     } else {
@@ -88,7 +88,7 @@ try {
         echo json_encode(
             array(
                 "status" => false,
-                "message" => "Mã OTP chưa được xác nhận"
+                "message" => "OTP not confirmed"
             )
         );
     }

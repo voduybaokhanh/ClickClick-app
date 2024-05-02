@@ -36,5 +36,5 @@ if (isset($_POST['image'])) {
     echo json_encode(array("success" => true, "file_path" => $filePath));
 } else {
     // Không có dữ liệu ảnh được gửi
-    echo json_encode(array("success" => false, "message" => "Không có dữ liệu ảnh được gửi."));
+    echo json_encode(array("success" => false, "message" => "No image data sent."));
 }

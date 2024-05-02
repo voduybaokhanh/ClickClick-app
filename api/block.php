@@ -15,7 +15,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') { // Xử lý yêu cầu OPTIONS
 
 if (!isset($data->userid)) {
     http_response_code(400);
-    echo json_encode(array('status' => false, 'message' => 'Thiếu tham số userid'));
+    echo json_encode(array('status' => false, 'message' => 'Missing userid parameter'));
     exit;
 }
 
@@ -29,7 +29,7 @@ $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
 if ($user && $user['role'] === 'admin') {
     http_response_code(403);
-    echo json_encode(array("status" => false, "message" => "Không thể khóa tài khoản quản trị viên"));
+    echo json_encode(array("status" => false, "message" => "Cannot lock admin account"));
     exit;
 }
 
@@ -40,9 +40,9 @@ try {
     $userStmt->execute();
 
     if ($userStmt->rowCount() > 0) {
-        echo json_encode(array("status" => true, "message" => "Khóa tài khoản người dùng thành công"));
+        echo json_encode(array("status" => true, "message" => "User account locked successfully"));
     } else {
-        echo json_encode(array("status" => false, "message" => "Không tìm thấy người dùng hoặc không có gì thay đổi"));
+        echo json_encode(array("status" => false, "message" => "User not found or nothing changed"));
     }
 } catch (PDOException $e) {
     http_response_code(404);

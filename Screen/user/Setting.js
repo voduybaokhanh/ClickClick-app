@@ -26,16 +26,16 @@ const Setting = ({navigation}) => {
     const handleDelete = () => {
       // Hiển thị cảnh báo xác nhận trước khi xóa tài khoản
       Alert.alert(
-        "Xác nhận xóa tài khoản",
-        "Bạn có chắc chắn muốn xóa tài khoản không?",
+        "Confirm Account Deletion",
+        "Are you sure you want to delete your account?",
         [
           {
-            text: "Hủy",
+            text: "Cancel",
             style: "cancel",
             
           },
           {
-            text: "Xác nhận",
+            text: "Confirm",
             onPress: confirmDelete,
           },
         ]

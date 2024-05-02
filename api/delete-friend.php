@@ -17,7 +17,7 @@ try {
     // Kiểm tra xem có friendshipid và userid được gửi hay không
     if (!isset($data->friendshipid, $data->userid)) {
         http_response_code(400);
-        echo json_encode(array('status' => false, 'message' => 'Thiếu tham số friendshipid , userid'));
+        echo json_encode(array('status' => false, 'message' => 'Missing parameters: friendshipid, userid'));
         exit;
     }
 
@@ -31,7 +31,7 @@ try {
     $deleteFriendshipStmt->bindParam(':friendshipid', $friendshipid, PDO::PARAM_INT);
     $deleteFriendshipStmt->execute();
 
-    echo json_encode(array('status' => true, 'message' => 'Đã xóa mối quan hệ bạn bè.'));
+    echo json_encode(array('status' => true, 'message' => 'Friendship relationship deleted.'));
 } catch (Exception $e) {
     echo json_encode(array('status' => false, 'message' => $e->getMessage()));
 }

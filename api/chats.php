@@ -14,14 +14,14 @@ try {
 
     // Kiểm tra đăng nhập
     if (!isset($data->SENDERID)) {
-        echo json_encode(array('status' => false, 'message' => 'Vui lòng đăng nhập.'));
+        echo json_encode(array('status' => false, 'message' => 'Please login.'));
         exit;
     }
 
     // Kiểm tra xem có RECEIVERID và content được gửi hay không
     if (!isset($data->RECEIVERID) || !isset($data->content)) {
         http_response_code(400);
-        echo json_encode(array('status' => false, 'message' => 'Thiếu tham số RECEIVERID hoặc content'));
+        echo json_encode(array('status' => false, 'message' => 'Missing RECEIVERID or content parameter'));
         exit;
     }
 
@@ -42,7 +42,7 @@ try {
     }
 
     if (!$friend) {
-        echo json_encode(array('status' => false, 'message' => 'Người bạn không tồn tại.'));
+        echo json_encode(array('status' => false, 'message' => 'Friend does not exist.'));
         exit;
     }
 
@@ -58,7 +58,7 @@ try {
         $existingPost = $checkPostStmt->fetch(PDO::FETCH_ASSOC);
 
         if (!$existingPost) {
-            echo json_encode(array('status' => false, 'message' => 'Bài đăng không tồn tại.'));
+            echo json_encode(array('status' => false, 'message' => 'Post does not exist.'));
             exit;
         }
     } else {
@@ -106,7 +106,7 @@ try {
         echo json_encode(array('status' => true, 'message' => $userName . ' sent you a message. ', 'post' => $post));
     } else {
         // Xử lý khi không tìm thấy thông tin người dùng
-        echo json_encode(array('status' => false, 'message' => 'Lỗi'));
+        echo json_encode(array('status' => false, 'message' => 'Error'));
     }
 
 } catch (Exception $e) {

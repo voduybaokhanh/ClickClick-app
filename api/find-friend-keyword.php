@@ -13,7 +13,7 @@ $data = json_decode(file_get_contents("php://input"));
 // Kiểm tra xem có từ khóa được gửi hay không
 if (!isset($data->keyword) || !isset($data->userid)) {
     http_response_code(400);
-    echo json_encode(array('status' => false, 'message' => 'Thiếu tham số keyword hoặc userid'));
+    echo json_encode(array('status' => false, 'message' => 'Missing keyword or userid parameter'));
     exit;
 }
 

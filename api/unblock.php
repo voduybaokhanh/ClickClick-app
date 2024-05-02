@@ -19,7 +19,7 @@ $data = json_decode(file_get_contents("php://input"));
 // Kiểm tra xem tham số 'userid' có tồn tại không
 if (!isset($data->userid)) {
     http_response_code(400);
-    echo json_encode(array('status' => false, 'message' => 'Thiếu tham số userid'));
+    echo json_encode(array('status' => false, 'message' => 'Missing userid parameter'));
     exit;
 }
 
@@ -36,7 +36,7 @@ $userStatus = $userStatusStmt->fetch(PDO::FETCH_ASSOC);
 // Kiểm tra nếu tài khoản không tồn tại hoặc đã có sẵn và không bị khóa
 if (!$userStatus || $userStatus['AVAILABLE'] == 1) {
     http_response_code(403);
-    echo json_encode(array("status" => false, "message" => "Tài khoản không bị khóa hoặc không tồn tại"));
+    echo json_encode(array("status" => false, "message" => "Account is not locked or does not exist"));
     exit;
 }
 
@@ -49,12 +49,12 @@ try {
 
     // Kiểm tra nếu có bất kỳ dòng nào được ảnh hưởng bởi câu lệnh SQL
     if ($userStmt->rowCount() > 0) {
-        echo json_encode(array("status" => true, "message" => "Mở khóa tài khoản người dùng thành công"));
+        echo json_encode(array("status" => true, "message" => "User account unlocked successfully"));
     } else {
-        echo json_encode(array("status" => false, "message" => "Không tìm thấy người dùng hoặc không có gì thay đổi"));
+        echo json_encode(array("status" => false, "message" => "User not found or no changes made"));
     }
 } catch (PDOException $e) {
     http_response_code(404);
-    echo json_encode(array("status" => false, "message" => "Không tìm thấy người dùng: " . $e->getMessage()));
+    echo json_encode(array("status" => false, "message" => "User not found: " . $e->getMessage()));
 }
 ?>

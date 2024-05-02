@@ -15,13 +15,13 @@ try {
 
     // Kiểm tra xem người dùng có tồn tại hay không
     if (!isset($data->userid)) {
-        echo json_encode(array('error' => 'Người dùng không tồn tại'));
+        echo json_encode(array('error' => 'User does not exist'));
         exit;
     }
 
     // Kiểm tra xem dữ liệu có tồn tại hay không
     if (!$data || !isset($data->content) || !isset($data->image)) {
-        echo json_encode(array('error' => 'Dữ liệu không hợp lệ'));
+        echo json_encode(array('error' => 'Invalid data'));
         exit;
     }
 
@@ -38,7 +38,7 @@ try {
     $user = $checkUserStmt->fetch(PDO::FETCH_ASSOC);
 
     if (!$user) {
-        echo json_encode(array('error' => 'Người dùng không tồn tại'));
+        echo json_encode(array('error' => 'User does not exist'));
         exit;
     }
 

@@ -13,7 +13,7 @@ try {
     // Kiểm tra xem có userid và postid được gửi hay không
     if (!isset($data->userid) || !isset($data->postid) || !isset($data->reason)) {
         http_response_code(400);
-        echo json_encode(array('status' => false, 'message' => 'Thiếu tham số userid hoặc postid'));
+        echo json_encode(array('status' => false, 'message' => 'Missing userid or postid parameter'));
         exit;
     }
 
@@ -30,7 +30,7 @@ try {
 
     if (!$post) {
         http_response_code(404);
-        echo json_encode(array('status' => false, 'message' => 'Bài viết không tồn tại'));
+        echo json_encode(array('status' => false, 'message' => 'Post does not exist'));
         exit;
     }
     
@@ -41,7 +41,7 @@ try {
     $updatePostStmt->bindParam(':reason', $reason, PDO::PARAM_STR);
     $updatePostStmt->execute();
 
-    echo json_encode(array('status' => true, 'message' => 'Báo cáo thành công'));
+    echo json_encode(array('status' => true, 'message' => 'Reported successfully'));
 } catch (Exception $e) {
     echo json_encode(array('status' => false, 'message' => $e->getMessage()));
 }

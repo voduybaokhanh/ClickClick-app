@@ -168,7 +168,7 @@ const Search_Addfriend = () => {
         <View style={styles.searchResult}>
           <View style={{ flexDirection: "row", alignItems: "center" }}>
             <Image source={require("../../Image/image 16.png")} />
-            <Text style={styles.text2}>result</Text>
+            <Text style={styles.text2}>Result</Text>
           </View>
           {searchResult && (
             <View style={styles.result}>
