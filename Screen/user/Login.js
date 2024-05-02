@@ -87,19 +87,14 @@ const Login = ({navigation}) => {
               />
             </View>
             <View style={styles.Remember}>
-              <Image source={require("../../Image/boxRemember.png")} />
-              <Text style={styles.Text1}>Remember Me?</Text>
+             
               <Text onPress={actionforgotsPassword} style={styles.Text2}>Forgot Password</Text>
             </View>
             <TouchableOpacity onPress={actionLogin} style={styles.buttonSignin}>
               <Text style={styles.Text3}>Sign in</Text>
             </TouchableOpacity>
             <View style={styles.Sngg}>
-              <Text style={styles.Text4}>Or sign in with</Text>
-              <Image
-                style={styles.imgGG}
-                source={require("../../Image/google.png")}
-              />
+              
             </View>
             <View style={styles.Sngg}>
               <Text style={styles.Text4}>Don’t have an account?</Text>
