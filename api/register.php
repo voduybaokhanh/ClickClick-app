@@ -12,36 +12,36 @@ try {
     $decodedData = stripslashes(file_get_contents("php://input"));
     $data = json_decode($decodedData);
 
-    if ($data === null  || !isset($data->email) || !isset($data->password) || !isset($data->password_confirm)) {
+    if ($data === null  || !isset($data->name) || !isset($data->password) || !isset($data->password_confirm)) {
         echo json_encode(
-            // || !isset($data->email)
+            // || !isset($data->name)
             array(
                 "status" => false,
-                "message" => "Dữ liệu JSON không hợp lệ"
+                "message" => "Invalid JSON data"
             )
         );
         exit;
     }
 
-    // kiểm tra email đã tồn tại chưa
-    $sqlQuery = "SELECT * FROM users WHERE email = :email";
+    // kiểm tra name đã tồn tại chưa
+    $sqlQuery = "SELECT * FROM users WHERE name = :name";
     $stmt = $dbConn->prepare($sqlQuery);
-    $stmt->bindParam(':email', $email, PDO::PARAM_STR);
+    $stmt->bindParam(':name', $name, PDO::PARAM_STR);
     $stmt->execute();
     $user = $stmt->fetch(PDO::FETCH_ASSOC);
     if ($user) {
         echo json_encode(
             array(
                 "status" => false,
-                "message" => "Tên đăng nhập đã tồn tại"
+                "message" => "Username already exists"
             )
         );
         return;
     }
 
     // thêm dữ liệu vào db
-    // $email = $data->email;
-    $email = $data->email;
+    // $name = $data->name;
+    $name = $data->name;
     $password = $data->password;
     $password_confirm = $data->password_confirm;
     $otp = $data->otp;
@@ -51,36 +51,36 @@ try {
         echo json_encode(
             array(
                 "status" => false,
-                "message" => "Mật khẩu không khớp"
+                "message" => "Passwords do not match"
             )
         );
         return;
     }
 
-    // kiểm tra OTP và email nếu trùng tiếp tục đăng ký
+    // kiểm tra OTP và name nếu trùng tiếp tục đăng ký
     $sqlQuery = "SELECT * FROM users WHERE otp = :otp";
-    // email = :email AND
+    // name = :name AND
     $stmt = $dbConn->prepare($sqlQuery);
-    // $stmt->bindParam(':email', $data->email, PDO::PARAM_STR);
+    // $stmt->bindParam(':name', $data->name, PDO::PARAM_STR);
     $stmt->bindParam(':otp', $data->otp, PDO::PARAM_STR);
     $stmt->execute();
     $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
     if ($user) {
         // Nếu đã xác nhận, tiếp tục với cập nhật thông tin
-        $sqlUpdate = "UPDATE users SET password = :password, email = :email WHERE otp = :otp";
-        // email = :email AND 
+        $sqlUpdate = "UPDATE users SET password = :password, name = :name WHERE otp = :otp";
+        // name = :name AND 
         $stmtUpdate = $dbConn->prepare($sqlUpdate);
         $stmtUpdate->bindParam(':password', $data->password, PDO::PARAM_STR);
-        $stmtUpdate->bindParam(':email', $data->email, PDO::PARAM_STR);
-        // $stmtUpdate->bindParam(':email', $data->email, PDO::PARAM_STR);
+        $stmtUpdate->bindParam(':name', $data->name, PDO::PARAM_STR);
+        // $stmtUpdate->bindParam(':name', $data->name, PDO::PARAM_STR);
         $stmtUpdate->bindParam(':otp', $data->otp, PDO::PARAM_STR);
         $stmtUpdate->execute();
 
         echo json_encode(
             array(
                 "status" => true,
-                "message" => "Đăng ký thành công"
+                "message" => "Registration successful"
             )
         );
     } else {
@@ -88,10 +88,11 @@ try {
         echo json_encode(
             array(
                 "status" => false,
-                "message" => "Mã OTP chưa được xác nhận"
+                "message" => "OTP not confirmed"
             )
         );
     }
+
 } catch (Exception $e) {
     echo json_encode(
         array(
@@ -100,3 +101,4 @@ try {
         )
     );
 }
+?>

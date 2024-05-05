@@ -11,14 +11,15 @@ try {
     $data = json_decode(file_get_contents("php://input"));
 
     // Kiểm tra xem có userid và postid được gửi hay không
-    if (!isset($data->userid) || !isset($data->postid)) {
+    if (!isset($data->userid) || !isset($data->postid) || !isset($data->reason)) {
         http_response_code(400);
-        echo json_encode(array('status' => false, 'message' => 'Thiếu tham số userid hoặc postid'));
+        echo json_encode(array('status' => false, 'message' => 'Missing userid or postid parameter'));
         exit;
     }
 
     $userid = $data->userid;
     $postid = $data->postid;
+    $reason = $data->reason;
 
     // Kiểm tra xem bài viết có tồn tại không
     $checkPostQuery = "SELECT * FROM posts WHERE id = :postid";
@@ -29,16 +30,18 @@ try {
 
     if (!$post) {
         http_response_code(404);
-        echo json_encode(array('status' => false, 'message' => 'Bài viết không tồn tại'));
+        echo json_encode(array('status' => false, 'message' => 'Post does not exist'));
         exit;
     }
-    // Cập nhật cột AVAILABLE trong bảng POSTS
-    $updateAvailableQuery = "UPDATE posts SET available = 0 WHERE id = :postid";
-    $updateAvailableStmt = $dbConn->prepare($updateAvailableQuery);
-    $updateAvailableStmt->bindParam(':postid', $postid, PDO::PARAM_INT);
-    $updateAvailableStmt->execute();
+    
+    // Cập nhật cột AVAILABLE và REASON trong bảng POSTS
+    $updatePostQuery = "UPDATE posts SET available = 0, reason = :reason WHERE id = :postid";
+    $updatePostStmt = $dbConn->prepare($updatePostQuery);
+    $updatePostStmt->bindParam(':postid', $postid, PDO::PARAM_INT);
+    $updatePostStmt->bindParam(':reason', $reason, PDO::PARAM_STR);
+    $updatePostStmt->execute();
 
-    echo json_encode(array('status' => true, 'message' => 'Báo cáo thành công'));
+    echo json_encode(array('status' => true, 'message' => 'Reported successfully'));
 } catch (Exception $e) {
     echo json_encode(array('status' => false, 'message' => $e->getMessage()));
 }

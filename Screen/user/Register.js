@@ -60,13 +60,13 @@ const handleOtpChange = (newOtp) => {
       console.log(body);
      // console.log(JSON.stringify(result));
       if (result.status) {
-        alert("Đăng ký thành công");
+        alert("Registration successful");
         navigation.navigate("Login");
         
 
         // Token đã được lưu trữ thành công, thực hiện các thao tác tiếp theo nếu cần
       } else {
-        alert("đăng ký thất bại");
+        alert("Registration failed");
       }
     } catch (error) {
       console.error("Lỗi khi thực hiện đăng ký: ", error);

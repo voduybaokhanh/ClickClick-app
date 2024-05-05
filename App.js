@@ -16,6 +16,9 @@ import MessProps from './Screen/MessProps';
 import Notifications from './Screen/user/Notifications';
 import Profile  from './Screen/BottomTab/Profile';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+import Setting from './Screen/user/Setting';
+import EditProfile from './Screen/user/EditProfile';
+import Search_Addfriend from './Screen/user/Search_Addfriend';
 const Stack = createNativeStackNavigator();
 
 export default function App(navigation) {
@@ -36,6 +39,9 @@ export default function App(navigation) {
         <Stack.Screen name="messlistscreen" component={MessageListScreen} />
         <Stack.Screen name="Notifications" component={Notifications} />  
         <Stack.Screen name="MessProps" component={MessProps} /> 
+        <Stack.Screen name="Setting" component={Setting} /> 
+        <Stack.Screen name="EditProfile" component={EditProfile} /> 
+        <Stack.Screen name="addfriend" component={Search_Addfriend} /> 
       </Stack.Navigator>   
     </NavigationContainer>
     </SafeAreaProvider>

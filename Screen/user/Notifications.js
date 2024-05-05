@@ -7,6 +7,8 @@ import {
   Image,
   Pressable,
   Dimensions,
+  Alert,
+  TouchableOpacity
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import AxiosInstance from "../../helper/Axiostance";
@@ -16,6 +18,7 @@ import { LinearGradient } from "expo-linear-gradient";
 const Notifications = () => {
   const [notifications, setNotifications] = useState([]);
   const [listFriendStatus, setlistFriendStatus] = useState([]);
+  const [reload, setReload] = useState(false);
 
   useEffect(() => {
     fetchNotifications();
@@ -36,16 +39,16 @@ const Notifications = () => {
         "/get-all-friendships.php",
         { userid: idUser }
       );
-      if (responseFriendStatus?.status) {
+      if (responseFriendStatus.status) {
         console.log(responseFriendStatus.invitations);
         setlistFriendStatus([...responseFriendStatus.invitations]);
       }
       // Thay thế 'URL_API' và 'ID_NGUOI_DUNG' bằng URL và ID người dùng thực tế
-      if (responseNoti?.status) {
+      if (responseNoti.status) {
         // Nếu lấy dữ liệu thành công
-        setNotifications(responseNoti?.notifications); // Cập nhật state với danh sách thông báo từ API
+        setNotifications(responseNoti.notifications); // Cập nhật state với danh sách thông báo từ API
       } else {
-        console.error("Error fetching notifications:", responseNoti.message);
+        console.error("Error fetching notifications:", responseNoti);
       }
     } catch (error) {
       console.error("Error fetching notifications:", error);
@@ -63,7 +66,7 @@ const Notifications = () => {
               borderRadius: 50,
               backgroundColor: "white",
             }}
-            source={{uri: 'https://i.pinimg.com/originals/bc/43/98/bc439871417621836a0eeea768d60944.jpg'}}
+            source={{uri: item.AVATAR}}
           />
         <View style={{ flexDirection: "column" }}>
           <Text
@@ -99,12 +102,12 @@ const Notifications = () => {
               borderRadius: 50,
               backgroundColor: "white",
             }}
-            source={{uri: 'https://i.pinimg.com/originals/bc/43/98/bc439871417621836a0eeea768d60944.jpg'}}
+            source={{uri: item.AVATAR}}
           />
           {item.STATUS == "pending" && (
             <View>
               <Text style={[styles.textNoti, { marginLeft: 10 }]}>
-                {item.NAME} da gui loi moi ket ban
+                {item.NAME} sent a friend request
               </Text>
               <Text style={[styles.textNoti, { marginLeft: 10 }]}>
                 {item.TIME.substring(
@@ -156,6 +159,9 @@ const Notifications = () => {
           },
           ...val,
         ]);
+      }else{
+        Alert.alert(res.message);
+        fetchNotifications();
       }
     };
 
@@ -184,21 +190,34 @@ const Notifications = () => {
       colors={["#3B21B7", "#8B64DA", "#D195EE", "#CECBD3"]}
       style={[styles.linearGradient, styles.container]}
     >
+      <TouchableOpacity onPress={() => navigation.goBack()} style={{marginLeft:10}} >
+          <Image style={styles.image}
+              source={require("../../Image/arrow-left.png")}
+             />
+        </TouchableOpacity>
       <SafeAreaView style={{ flex: 1 }}>
         <Text style={styles.title}>Notifications</Text>
         {/* Sử dụng FlatList để hiển thị danh sách thông báo */}
         <FlatList
+          showsVerticalScrollIndicator={false}
           data={notifications}
           renderItem={renderItem}
           keyExtractor={(item, index) => index.toString()} // Sử dụng trường ID làm key
+          refreshing={reload}
+          keyboardShouldPersistTaps="handled"
+          onRefresh={fetchNotifications}
+
         />
       </SafeAreaView>
       <View style={{ flex: 1 }}>
         <Text style={styles.title}>Add friend</Text>
         <FlatList
+          showsVerticalScrollIndicator={false}
           data={listFriendStatus.flat()}
           renderItem={renderItemFriend}
-          keyExtractor={(item, index) => index.toString()}
+          refreshing={reload}
+          keyboardShouldPersistTaps="handled"
+          onRefresh={fetchNotifications}
         />
       </View>
     </LinearGradient>
@@ -212,9 +231,10 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   title: {
-    fontSize: 20,
+    fontSize: 25,
     fontWeight: "bold",
     marginBottom: 10,
+    color:"white",
   },
   notificationItem: {
     flexDirection: "row",

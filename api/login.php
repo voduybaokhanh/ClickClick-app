@@ -15,29 +15,35 @@ try {
     $password = $data->password;
 
     // Use a question mark as a placeholder instead of emaild placeholders
-    $sqlQuery = "SELECT ID, email, password FROM users WHERE email = ?";
+    $sqlQuery = "SELECT ID, email, password, AVAILABLE FROM users WHERE email = ?";
     $stmt = $dbConn->prepare($sqlQuery);
     $stmt->bindParam(1, $email, PDO::PARAM_STR);
     $stmt->execute();
     $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
+    //Kiểm tra người dùng có bị khóa tài khoản không
+    if ($user["AVAILABLE"] == 0) {
+        echo json_encode(array("status" => false, "message" => "Account is locked, please contact the administrator. Phone: 0774749399"));
+        exit;
+    }
+
 
     if ($email === $user["email"] && $password === $user["password"]) {
         echo json_encode(
-            array(      
-                    "status" => true,
-                    "user" => array(
-                        "id" => $user["ID"],
-                        "email"=> $user["email"],
-                    )
+            array(
+                "status" => true,
+                "user" => array(
+                    "id" => $user["ID"],
+                    "email" => $user["email"],
                 )
-                    );
+            )
+        );
     } else {
         echo json_encode(
             array(
                 "status" => false,
 
-                "message" => "sai rồi kiểm tra lại"
+                "message" => "Login unsuccessful. Please check your login credentials."
             )
         );
     }
@@ -45,8 +51,7 @@ try {
     echo json_encode(
         array(
             "status" => false,
-            "error" => "Authentication failed. Please try again."
+            "message" => "Login unsuccessful. Please try again."
         )
     );
 }
-?>

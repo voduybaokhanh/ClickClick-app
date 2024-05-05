@@ -7,23 +7,23 @@ import {
   Image,
   TextInput,
   TouchableOpacity,
+  Alert,
 } from "react-native";
 import AxiosInstance from "../../helper/Axiostance";
 import { LinearGradient } from "expo-linear-gradient";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Dropdown } from "react-native-element-dropdown";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation,useFocusEffect } from "@react-navigation/native";
 
 const Home = () => {
   const [posts, setPosts] = useState([]);
   const [reload, setReload] = useState(false);
   const [isLikedMap, setIsLikedMap] = useState({});
-  const [isReportedMap, setIsReportedMap] = useState({});
   const [content, setContent] = useState("");
   const [friendID, setfriendID] = useState("");
   const navigation = useNavigation();
   const [datafriend, setdatafriend] = useState([
-    { label: "Mọi người", value: "1" },
+    { label: "ALL", value: "1" },
   ]);
 
   // Thêm state để lưu trạng thái của người dùng (tất cả hoặc bạn bè)
@@ -64,7 +64,11 @@ const Home = () => {
     restoreLikedPosts();
     // Lấy và lưu trữ ID người dùng hiện tại khi trang được load
   }, [reload, selectedFriend]);
-
+  useFocusEffect(
+    React.useCallback(() => {
+      fetchPosts();
+    }, [])
+  );
   useEffect(() => {
     restoreLikedPosts();
   }, []);
@@ -89,12 +93,13 @@ const Home = () => {
           value: friendship.FRIENDSHIPID.toString(),
         })
       );
+
       // Thêm người dùng hiện tại vào mảng datafriend
-      const currentUser = { label: "Tôi", value: token };
+      const currentUser = { label: "Myself", value: token };
       const updatedDataFriend = [currentUser, ...formattedData];
 
       // Thêm mục "Mọi người" vào đầu danh sách bạn bè
-      updatedDataFriend.unshift({ label: "Mọi người", value: "all" });
+      updatedDataFriend.unshift({ label: "ALL", value: "all" });
 
       // Gán giá trị cho datafriend
       setdatafriend(updatedDataFriend);
@@ -112,7 +117,7 @@ const Home = () => {
       }
       // Kiểm tra nếu SENDERID và RECEIVERID giống nhau
       if (parseInt(token) === USERID) {
-        alert("Không thể nhắn tin cho chính bạn!");
+        alert("Can not message yourself!");
         return; // Kết thúc hàm nếu người dùng cố gắng gửi tin nhắn cho chính họ
       }
       const instance = await AxiosInstance();
@@ -126,7 +131,7 @@ const Home = () => {
       const response = await instance.post("/chats.php", body);
       if (response.status) {
         // Tin nhắn gửi thành công, có thể cập nhật giao diện hoặc thực hiện các hành động khác
-        alert("Tin nhắn đã được gửi");
+        alert("Sent message");
         setContent(""); // Xóa nội dung tin nhắn sau khi gửi
       }
     } catch (error) {
@@ -182,45 +187,56 @@ const Home = () => {
     }
   };
 
-  const handleBaocao = async (postid, userId) => {
-    try {
-      const token = await AsyncStorage.getItem("token");
-      if (!token) {
-        console.log("Token (userid) not found in AsyncStorage");
-        return;
-      }
-      const instance = await AxiosInstance();
-      const available = 0; // Action khi người báo cáo bài viết
-      const body = {
-        userid: parseInt(token),
-        available: available,
-        postid: postid,
-      };
-      const response = await instance.post("/report.php", body);
-      // Cập nhật trạng thái isReported
-      const newReportMap = { ...isReportedMap };
-      newReportMap[postid] = response.available === 0;
-      setIsReportedMap(newReportMap);
-      // Cập nhật trạng thái dữ liệu của bài viết trong post
-      const updatedPosts = posts.map((post) => {
-        if (post.postid === postid) {
-          return {
-            ...post,
-            isLiked: response.available === 0,
-            REPORT: response.REPORT, // Cập nhật báo cáo
-          };
-        }
-        return post;
-      });
-      setPosts(updatedPosts);
-      // Hiển thị thông báo báo cáo thành công
-      Alert.alert("Success", "Báo cáo thành công");
-    } catch (error) {
-      console.log("Lỗi ở đâu rồi đó");
+  const handleMore = async (postid, userId) => {
+    const token = await AsyncStorage.getItem("token");
+    if (!token) {
+      console.log("Token (userid) not found in AsyncStorage");
+      return;
+    }
+    if (parseInt(token) === userId) {
+      // Người dùng đang xem bài viết của mình
+      Alert.alert(
+        "Confirm deletion of post?",
+        "Are you sure to delete the post?",
+        [
+          {
+            text: "Cancel",
+            style: "cancel",
+          },
+          {
+            text: "Delete",
+            onPress: () => handleDelete(postid), // Gọi hàm xóa bài viết khi người dùng xác nhận
+          },
+        ]
+      );
+    } else {
+      // Người dùng đang xem bài viết của người khác
+      Alert.prompt(
+        "Confirm report of post",
+        "Enter your reason:",
+        [
+          {
+            text: "Cancel",
+            style: "cancel",
+          },
+          {
+            text: "Report",
+            onPress: (reason) => {
+              // Kiểm tra lý do nhập và gọi hàm xử lý báo cáo bài viết
+              if (reason && reason.trim() !== "") {
+                handleBaocao(postid, reason);
+              } else {
+                Alert.alert("Failed", "Please enter a reason for reporting the post");
+              }
+            },
+          },
+        ],
+        "plain-text"
+      );
     }
   };
 
-  const handleDeletePost = async (postid) => {
+  const handleDelete = async (postid) => {
     try {
       const token = await AsyncStorage.getItem("token");
       if (!token) {
@@ -229,25 +245,45 @@ const Home = () => {
       }
       const instance = await AxiosInstance();
       const body = {
-        userid: parseInt(token),
         postid: postid,
       };
+
       const response = await instance.post("/delete-post.php", body);
       if (response.status) {
-        // Xóa bài viết khỏi danh sách hiện tại
-        const updatedPosts = posts.filter(post => post.postid !== postid);
-        setPosts(updatedPosts);
-        // Hiển thị thông báo xóa bài viết thành công
-        Alert.alert("Success", "Bài viết đã được xóa thành công");
+        alert("Delete post successfully");
       } else {
-        // Hiển thị thông báo nếu xóa bài viết không thành công
-        Alert.alert("Error", "Đã có lỗi xảy ra. Vui lòng thử lại sau");
+        alert("Delete post failed: ");
       }
     } catch (error) {
-      console.error("Error deleting post:", error);
+      console.error("Error reporting post:", error);
     }
   };
 
+  const handleBaocao = async (postid, reason) => {
+    try {
+      const token = await AsyncStorage.getItem("token");
+      if (!token) {
+        console.log("Token (userid) not found in AsyncStorage");
+        return;
+      }
+
+      const instance = await AxiosInstance();
+      const body = {
+        userid: parseInt(token),
+        postid: postid,
+        reason: reason, // Thay bằng lý do thực tế từ người dùng
+      };
+
+      const response = await instance.post("/report.php", body);
+      if (response.status) {
+        alert("Report the post successfully");
+      } else {
+        alert("Report the post failed: " + response.data.message);
+      }
+    } catch (error) {
+      console.error("Error reporting post:", error);
+    }
+  };
   // Trong phần xử lý phản hồi từ API:
   const handleThatim = async (postid, userId) => {
     try {
@@ -265,7 +301,6 @@ const Home = () => {
       };
 
       const response = await instance.post("/likes-post.php", body);
-      console.log(response);
       // Cập nhật trạng thái isLikedMap
       const newIsLikedMap = { ...isLikedMap };
       newIsLikedMap[postid] = response.action === 1;
@@ -312,10 +347,10 @@ const Home = () => {
             style={styles.iconsetting}
             source={require("../../Image/chu_click.png")}
           />
-          <View >
+          <View>
             <Dropdown
               style={styles.search}
-              placeholder="Mọi người"
+              placeholder="ALL"
               placeholderStyle={styles.placeholderStyle}
               iconstyle={styles.iconStyle}
               selectedTextStyle={styles.placeholderStyle}
@@ -333,24 +368,30 @@ const Home = () => {
             />
           </View>
           <View style={styles.viewSetting}>
-            <Image
-              style={styles.iconsetting}
-              source={require("../../Image/setting_icon.png")}
-            />
+            <TouchableOpacity onPress={() => navigation.navigate("Setting")}>
+              <Image
+                style={styles.iconsetting}
+                source={require("../../Image/setting_icon.png")}
+              />
+            </TouchableOpacity>
           </View>
-
         </View>
         <FlatList
           style={styles.FlatList}
           data={posts}
           refreshing={reload}
           onRefresh={fetchPosts}
-          keyboardShouldPersistTaps='handled'
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
           // Trong FlatList renderItem:
           renderItem={({ item, index }) => {
             return (
-              <View style={[styles.itempost,
-              index + 1 === posts.length ? { marginBottom: 90 } : {}]}>
+              <View
+                style={[
+                  styles.itempost,
+                  index + 1 === posts.length ? { marginBottom: 90 } : {},
+                ]}
+              >
                 <View style={styles.namepost}>
                   <Image source={{ uri: item.AVATAR }} style={styles.avt} />
                   <View style={{ flexDirection: "column", marginLeft: 10 }}>
@@ -359,19 +400,17 @@ const Home = () => {
                   </View>
                   <TouchableOpacity
                     style={{ marginLeft: "auto" }}
-                    onPress={() => handleBaocao(item.postid, item.USERID)}
+                    onPress={() => handleMore(item.postid, item.userid)}
                   >
+                    <Image
+                      style={styles.iconmore}
+                      source={require("../../Image/more_icon.png")}
+                    />
                   </TouchableOpacity>
-                  <Button style={styles.iconmore}
-                    source={require("../../Image/more_icon.png")}>
-
-                  </Button>
                 </View>
-
-
                 <View style={{ width: "90%", marginBottom: 20 }}>
                   <Image
-                    style={{ width: 300, height: 300 }}
+                    style={{ width: 'auto', height: 300 }}
                     source={{ uri: item.IMAGE }}
                   />
                   <View style={{ width: "90%", alignSelf: "center" }}>
@@ -379,12 +418,12 @@ const Home = () => {
                   </View>
                   <View style={styles.tim_mes}>
                     <TouchableOpacity
-                      onPress={() => handleThatim(item.postid, item.USERID)}
+                      onPress={() => handleThatim(item.postid, item.userid)}
                     >
                       <Image
                         style={{
                           width: 38,
-                          height: 42
+                          height: 42,
                         }}
                         source={
                           isLikedMap[item.postid]
@@ -401,7 +440,9 @@ const Home = () => {
                       value={content.toString()}
                       onChangeText={(e) => setContent(e)}
                     />
-                    <TouchableOpacity onPress={() => sendMessage(item.userid, item.ID)}>
+                    <TouchableOpacity
+                      onPress={() => sendMessage(item.userid, item.ID)}
+                    >
                       <Image
                         style={{ height: 40, width: 40, top: 5, left: 5 }}
                         source={require("../../Image/sent.png")}
@@ -410,9 +451,8 @@ const Home = () => {
                   </View>
                 </View>
               </View>
-            )
-          }
-          }
+            );
+          }}
           keyExtractor={(item, index) => index.toString()}
         />
       </LinearGradient>
@@ -541,12 +581,12 @@ const styles = StyleSheet.create({
   },
   viewSetting: {
     width: 70,
-    alignItems: 'flex-end'
+    alignItems: "flex-end",
   },
   dropdown: {
     marginTop: 5,
-    borderRadius: 24
-  }
+    borderRadius: 24,
+  },
 });
 
 export default Home;

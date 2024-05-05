@@ -13,7 +13,7 @@ try {
     // Nhận dữ liệu từ JSON
     if (!isset($_GET['postid'])) {
         http_response_code(400);
-        echo json_encode(array('status' => false, 'message' => 'Thiếu tham số postid'));
+        echo json_encode(array('status' => false, 'message' => 'Missing parameter: postid'));
         exit;
     }
 
@@ -56,12 +56,12 @@ try {
     if ($stmtDeletePost) {
         echo json_encode(array(
             "status" => true,
-            "message" => "Bài viết đã được xóa thành công."
+            "message" => "Post has been successfully deleted!."
         ));
     } else {
         echo json_encode(array(
             "status" => false,
-            "message" => "Không tìm thấy bài viết hoặc bài viết đã bị xóa."
+            "message" => "Post not found or already deleted!."
         ));
     }
 } catch (PDOException $e) {
@@ -69,7 +69,7 @@ try {
     http_response_code(500);
     echo json_encode(array(
         "status" => false,
-        "message" => "Không thể xóa bài viết: " . $e->getMessage()
+        "message" => "Unable to delete post: " . $e->getMessage()
     ));
 }
 ?>

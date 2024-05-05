@@ -5,95 +5,52 @@ header("Access-Control-Allow-Origin: *");
 header("Access-Control-Max-Age: 3600");
 header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
 
+// Import connection.php và JWT
 include_once './connection.php';
+include_once './helpers/jwt.php';
 
 try {
-    $decodedData = stripslashes(file_get_contents("php://input"));
-    $data = json_decode($decodedData);
+    $data = json_decode(file_get_contents("php://input"));
 
-    $id = $data->id;
+    // Kiểm tra xem người dùng có tồn tại hay không
+    if (!isset($data->userid)) {
+        echo json_encode(array('error' => 'User does not exist'));
+        exit;
+    }
 
-        // Kiểm tra xem người dùng có tồn tại không
-        $sqlQuery = "SELECT * FROM users WHERE id = :id";
-        $stmt = $dbConn->prepare($sqlQuery);
-        $stmt->bindParam(':id', $id, PDO::PARAM_STR);
-        $stmt->execute();
-        $user = $stmt->fetch(PDO::FETCH_ASSOC);
+    // Kiểm tra xem dữ liệu có tồn tại hay không
+    if (!$data || !isset($data->avatar) || !isset($data->name) || !isset($data->text)) {
+        echo json_encode(array('error' => 'Invalid data'));
+        exit;
+    }
 
-        if (!$user) {
-            echo json_encode(
-                array(
-                    "status" => false,
-                    "message" => "Người dùng không tồn tại"
-                )
-            );
-            exit;
-        }
-
-    // Lưu trữ dữ liệu ban đầu
-    $originalName = isset($user['name']) ? $user['name'] : null;
-    $originalAvatar = isset($user['avatar']) ? $user['avatar'] : null;
-    $originalSdt = isset($user['sdt']) ? $user['sdt'] : null;
-    $originalText = isset($user['text']) ? $user['text'] : null;
-
+    // Lấy dữ liệu từ yêu cầu
+    $userid = $data->userid;
+    $name = $data->name;
+    $avatar = $data->avatar;
+    $text = $data->text;
+    
     // Cập nhật hồ sơ người dùng
-    $sqlUpdate = "UPDATE users SET ";
-    $updates = array();
+    $sqlUpdateUser = "UPDATE users SET name = :name, avatar = :avatar, text = :text WHERE id = :userid";
+    $stmtUser = $dbConn->prepare($sqlUpdateUser);
+    $stmtUser->bindParam(':userid', $userid, PDO::PARAM_INT);
+    $stmtUser->bindParam(':name', $name, PDO::PARAM_STR);
+    $stmtUser->bindParam(':avatar', $avatar, PDO::PARAM_STR);
+    $stmtUser->bindParam(':text', $text, PDO::PARAM_STR);
+    $stmtUser->execute();
 
-    if (isset($data->name)) {
-        $updates[] = "name = :name";
-        $name = $data->name;
-    } else {
-        $name = $originalName;
-    }
-
-    if (isset($data->avatar)) {
-        $updates[] = "avatar = :avatar";
-        $avatar = $data->avatar;
-    } else {
-        $avatar = $originalAvatar;
-    }
-
-    if (isset($data->sdt)) {
-        $updates[] = "sdt = :sdt";
-        $sdt = $data->sdt;
-    } else {
-        $sdt = $originalSdt;
-    }
-
-    if (isset($data->text)) {
-        $updates[] = "text = :text";
-        $text = $data->text;
-    } else {
-        $text = $originalText;
-    }
-
-    if (!empty($updates)) {
-        $sqlUpdate .= implode(', ', $updates);
-        $sqlUpdate .= " WHERE id = :id";
-
-        $stmt = $dbConn->prepare($sqlUpdate);
-        $stmt->bindParam(':id', $id, PDO::PARAM_STR);
-        if (isset($data->name)) {
-            $stmt->bindParam(':name', $name, PDO::PARAM_STR);
-        }
-        if (isset($data->avatar)) {
-            $stmt->bindParam(':avatar', $avatar, PDO::PARAM_STR);
-        }
-        if (isset($data->sdt)) {
-            $stmt->bindParam(':sdt', $sdt, PDO::PARAM_STR);
-        }
-        if (isset($data->text)) {
-            $stmt->bindParam(':text', $text, PDO::PARAM_STR);
-        }
-
-        $stmt->execute();
-    }
+    // Cập nhật các bài viết của người dùng sau khi cập nhật hồ sơ
+    $sqlUpdatePosts = "UPDATE posts SET name = :name, avatar = :avatar WHERE userid = :userid";
+    $stmtPosts = $dbConn->prepare($sqlUpdatePosts);
+    $stmtPosts->bindParam(':userid', $userid, PDO::PARAM_INT);
+    $stmtPosts->bindParam(':name', $name, PDO::PARAM_STR);
+    $stmtPosts->bindParam(':avatar', $avatar, PDO::PARAM_STR);
+    $stmtPosts->execute();
 
     echo json_encode(
         array(
             "status" => true,
-            "message" => "Hồ sơ đã được cập nhật thành công"
+            "message" => "Profile updated successfully"
         )
     );
 

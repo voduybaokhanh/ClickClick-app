@@ -7,24 +7,20 @@ import {
   ScrollView,
   TouchableOpacity,
   FlatList,
-  Dimensions
+  Dimensions,
 } from "react-native";
 import AxiosInstance from "../../helper/Axiostance";
 import { LinearGradient } from "expo-linear-gradient";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useNavigation } from "@react-navigation/native";
-import MasonryList from '@react-native-seoul/masonry-list';
+import { useNavigation, useFocusEffect } from "@react-navigation/native"; // Import useFocusEffect
+import MasonryList from "@react-native-seoul/masonry-list";
 
 const Profile = () => {
   const navigation = useNavigation();
   const [user, setUser] = useState(null); // State to hold user data
   const [posts, setposts] = useState([]);
   const [friends, setfriends] = useState([]);
-
-  useEffect(() => {
-    fetchProfile(); // Call fetchProfile when the component mounts
-  }, []);
 
   const fetchProfile = async () => {
     try {
@@ -36,11 +32,16 @@ const Profile = () => {
       setUser(result.user); // Set the fetched user data into state
       setposts(result.posts);
       setfriends(result.friends);
-      console.log(">>Pro5 : " + JSON.stringify(result));
     } catch (error) {
       console.error("Error fetching profile: ", error);
     }
   };
+
+  useFocusEffect(
+    React.useCallback(() => {
+      fetchProfile();
+    }, [])
+  );
 
   return (
     <LinearGradient
@@ -53,77 +54,86 @@ const Profile = () => {
           <TouchableOpacity onPress={() => navigation.goBack()}>
             <Image source={require("../../Image/Vector.png")} />
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => navigation.goBack()}>
-            <Image source={require("../../Image/edit.png")} />
-          </TouchableOpacity>
+          <View
+            style={{ flexDirection: "column", justifyContent: "space-between" }}
+          >
+            <TouchableOpacity onPress={() => navigation.navigate("EditProfile")}>
+              <Image style={{width:40,height:40}} source={require("../../Image/edit.png")} />
+            </TouchableOpacity>
+            <TouchableOpacity  onPress={() => navigation.navigate("addfriend")}>
+              <Image style={{width:40,height:40}} source={require("../../Image/add.png")} />
+            </TouchableOpacity>
+          </View>
         </View>
-          {user && (
-            <View style={{ alignSelf: "center" }}>
-              <View style={styles.profileImage}>
-                <Image source={{ uri: user.AVATAR }} style={styles.image1} />
+        {user && (
+          <View style={{ alignSelf: "center" }}>
+            <View style={styles.profileImage}>
+              <Image source={{ uri: user.AVATAR }} style={styles.image1} />
+            </View>
+
+            <View style={styles.infoContainer}>
+              <Text style={[styles.name, { fontWeight: "500", fontSize: 21 }]}>
+                {user.NAME}
+              </Text>
+              <Text style={[styles.text10, { color: "#4F39B4", fontSize: 20 }]}>
+                {user.EMAIL}
+              </Text>
+            </View>
+
+            <View style={styles.statsContainer}>
+              <View style={styles.statsBox}>
+                <Text style={[styles.text, styles.subText]}>
+                  {posts.length}
+                </Text>
+                <Text style={[styles.text, styles.subText]}>Posts</Text>
               </View>
 
-              <View style={styles.infoContainer}>
-                <Text
-                  style={[styles.name, { fontWeight: "500", fontSize: 21 }]}
-                >
-                  {user.NAME}
-                </Text>
-                <Text
-                  style={[styles.text10, { color: "#4F39B4", fontSize: 20 }]}
-                >
-                  {user.EMAIL}
-                </Text>
-              </View>
-
-              <View style={styles.statsContainer}>
+              <View
+                style={[
+                  styles.statsBox,
+                  {
+                    borderColor: "#FFFFFF",
+                    borderLeftWidth: 1,
+                  },
+                ]}
+              >
                 <View style={styles.statsBox}>
                   <Text style={[styles.text, styles.subText]}>
-                    {posts.length}
+                    {friends.length}
                   </Text>
-                  <Text style={[styles.text, styles.subText]}>Posts</Text>
-                </View>
-
-                <View
-                  style={[
-                    styles.statsBox,
-                    {
-                      borderColor: "#FFFFFF",
-                      borderLeftWidth: 1,
-                    },
-                  ]}
-                >
-                  <View style={styles.statsBox}>
-                    <Text style={[styles.text, styles.subText]}>
-                      {friends.length}
-                    </Text>
-                    <Text style={[styles.text, styles.subText]}>Friend</Text>
-                  </View>
+                  <Text style={[styles.text, styles.subText]}>Friend</Text>
                 </View>
               </View>
-
-              <Text style={styles.status}>
-                {user.TEXT || "No status available"}
-              </Text>
-
-              <MasonryList
-                style={styles.flatList}
-                data={posts}
-                numColumns={2}
-                renderItem={({ item, i }) => {
-                  return (
-                    <Image source={{ uri: item.IMAGE }} style={[styles.itemPost, i % 3 === 0 ? {height:240} : {}]} />
-                  );
-                }}
-                keyExtractor={(item, index) => index.toString()}
-              />
             </View>
-          )}
-          {!user && (
-            <View>
-              <Text>Loading...</Text>
-            </View>
-          )}
+
+            <Text style={styles.status}>
+              {user.TEXT || "No status available"}
+            </Text>
+
+            <MasonryList
+              style={styles.flatList}
+              data={posts}
+              numColumns={2}
+              renderItem={({ item, i }) => {
+                return (
+                  <Image
+                    source={{ uri: item.IMAGE }}
+                    style={[
+                      styles.itemPost,
+                      i % 3 === 0 ? { height: 240 } : {},
+                    ]}
+                  />
+                );
+              }}
+              keyExtractor={(item, index) => index.toString()}
+            />
+          </View>
+        )}
+        {!user && (
+          <View>
+            <Text>Loading...</Text>
+          </View>
+        )}
       </SafeAreaView>
     </LinearGradient>
   );
@@ -231,15 +241,15 @@ const styles = StyleSheet.create({
   flatList: {
     flex: 1,
     marginTop: 10,
-    marginBottom: 160
+    marginBottom: 160,
   },
-  itemPost:{
-    width: Dimensions.get('window').width/2 - 30,
+  itemPost: {
+    width: Dimensions.get("window").width / 2 - 30,
     height: 150,
-    resizeMode: 'cover',
+    resizeMode: "cover",
     margin: 5,
-    overflow: 'hidden',
-    position: 'relative',
-    borderRadius: 10
-  }
+    overflow: "hidden",
+    position: "relative",
+    borderRadius: 10,
+  },
 });

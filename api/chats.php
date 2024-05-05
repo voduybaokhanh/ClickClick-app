@@ -13,19 +13,19 @@ try {
     $data = json_decode(file_get_contents("php://input"));
 
     // Kiểm tra đăng nhập
-    if (!isset($data->userid)) {
-        echo json_encode(array('status' => false, 'message' => 'Vui lòng đăng nhập.'));
+    if (!isset($data->SENDERID)) {
+        echo json_encode(array('status' => false, 'message' => 'Please login.'));
         exit;
     }
 
     // Kiểm tra xem có RECEIVERID và content được gửi hay không
     if (!isset($data->RECEIVERID) || !isset($data->content)) {
         http_response_code(400);
-        echo json_encode(array('status' => false, 'message' => 'Thiếu tham số RECEIVERID hoặc content'));
+        echo json_encode(array('status' => false, 'message' => 'Missing RECEIVERID or content parameter'));
         exit;
     }
 
-    $SENDERID = $data->userid;
+    $SENDERID = $data->SENDERID;
     $RECEIVERID = $data->RECEIVERID;
     $content = $data->content;
 
@@ -38,11 +38,11 @@ try {
 
     // Kiểm tra xem người bạn có phải là chính người dùng hiện tại hay không
     if ($RECEIVERID == $SENDERID) {
-        throw new Exception('Không thể nhắn tin với chính bản thân.');
+        throw new Exception('Can not message yourself');
     }
 
     if (!$friend) {
-        echo json_encode(array('status' => false, 'message' => 'Người bạn không tồn tại.'));
+        echo json_encode(array('status' => false, 'message' => 'Friend does not exist.'));
         exit;
     }
 
@@ -58,7 +58,7 @@ try {
         $existingPost = $checkPostStmt->fetch(PDO::FETCH_ASSOC);
 
         if (!$existingPost) {
-            echo json_encode(array('status' => false, 'message' => 'Bài đăng không tồn tại.'));
+            echo json_encode(array('status' => false, 'message' => 'Post does not exist.'));
             exit;
         }
     } else {
@@ -95,7 +95,7 @@ try {
 
     if ($userName) {
         // Thêm thông báo vào cơ sở dữ liệu
-        $notificationContent = "$userName đã gửi tin nhắn cho bạn.";
+        $notificationContent = "$userName sent you a message.";
         $addNotificationQuery = "INSERT INTO notifications (userid, content, time,RECEIVERID) VALUES (:userid, :content, now(),:RECEIVERID)";
         $addNotificationStmt = $dbConn->prepare($addNotificationQuery);
         $addNotificationStmt->bindParam(':userid', $SENDERID, PDO::PARAM_INT); // Thông báo gửi cho người nhận
@@ -103,10 +103,10 @@ try {
         $addNotificationStmt->bindParam(':RECEIVERID', $RECEIVERID, PDO::PARAM_INT); // Thông báo gửi cho người nhận
         $addNotificationStmt->execute();
 
-        echo json_encode(array('status' => true, 'message' => $userName . ' đã gửi tin nhắn cho bạn.', 'post' => $post));
+        echo json_encode(array('status' => true, 'message' => $userName . ' sent you a message. ', 'post' => $post));
     } else {
         // Xử lý khi không tìm thấy thông tin người dùng
-        echo json_encode(array('status' => false, 'message' => 'Lỗi'));
+        echo json_encode(array('status' => false, 'message' => 'Error'));
     }
 
 } catch (Exception $e) {

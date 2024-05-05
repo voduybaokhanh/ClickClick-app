@@ -35,7 +35,7 @@ try {
         echo json_encode(
             array(
                 "status" => false,
-                "message" => "Đăng nhập không thành công. Vui lòng kiểm tra lại thông tin đăng nhập."
+                "message" => "Login unsuccessful. Please check your login credentials."
             )
         );
     }
@@ -43,7 +43,7 @@ try {
     echo json_encode(
         array(
             "status" => false,
-            "error" => "Đăng nhập không thành công. Vui lòng thử lại."
+            "error" => "Login unsuccessful. Please try again."
         )
     );
 }

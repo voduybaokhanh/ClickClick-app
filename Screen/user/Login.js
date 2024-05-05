@@ -8,7 +8,7 @@ import {
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import React, { useState } from "react";
-import AxiosInstance from "./../../helper/Axiostance";
+import AxiosInstance from "../../helper/Axiostance";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const Login = ({navigation}) => {
@@ -29,17 +29,19 @@ const Login = ({navigation}) => {
       const token = await AsyncStorage.getItem("token");
       if (result.status) {
         await AsyncStorage.setItem("token", result.user.id.toString());
-        alert("Đăng nhập thành công");
+        alert("Login successful");
+        setEmail("");
+        setPassword("");
         navigation.navigate('BottomTab')
 
         // Token đã được lưu trữ thành công, thực hiện các thao tác tiếp theo nếu cần
       } else {
-        alert("đăng nhập thất bại");
+        alert("Login failed, " + result.message);
       }
       console.log('id: ' + result.user.id);
       console.log('token: '+token);
     } catch (error) {
-      console.error("Lỗi khi thực hiện đăng nhập: ", error);
+      console.error("Error while logging in: ", error);
     }
   }
 
@@ -81,23 +83,18 @@ const Login = ({navigation}) => {
               />
               <Image
                 style={styles.eye}
-                source={require("../../Image/eye.png")}
+                // source={require("../../Image/eye.png")}
               />
             </View>
             <View style={styles.Remember}>
-              <Image source={require("../../Image/boxRemember.png")} />
-              <Text style={styles.Text1}>Remember Me?</Text>
+             
               <Text onPress={actionforgotsPassword} style={styles.Text2}>Forgot Password</Text>
             </View>
             <TouchableOpacity onPress={actionLogin} style={styles.buttonSignin}>
               <Text style={styles.Text3}>Sign in</Text>
             </TouchableOpacity>
             <View style={styles.Sngg}>
-              <Text style={styles.Text4}>Or sign in with</Text>
-              <Image
-                style={styles.imgGG}
-                source={require("../../Image/google.png")}
-              />
+              
             </View>
             <View style={styles.Sngg}>
               <Text style={styles.Text4}>Don’t have an account?</Text>

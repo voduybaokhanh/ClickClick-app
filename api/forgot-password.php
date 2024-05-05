@@ -65,10 +65,11 @@ try {
         // nếu không có email trong db thì trả về thông báo
         echo json_encode(array(
             "status" => false,
-            "message"=>"Email Không tồn tại."));
+            "message"=>"Email does not exist."
+        ));
     }
 }  catch (Exception $e) {
-    echo json_encode(array("message"=>"thêm mới danh mục thất bại."));
+    echo json_encode(array("message"=>"Failed to reset password."));
     echo json_encode(array(
         "status" => false,
         "message"=>$e->getMessage()

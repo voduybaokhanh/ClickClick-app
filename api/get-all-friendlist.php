@@ -15,7 +15,7 @@ try {
     // Kiểm tra xem có userid được gửi hay không
     if (!isset($data->userid)) {
         http_response_code(400);
-        echo json_encode(array('status' => false, 'message' => 'Thiếu tham số userid'));
+        echo json_encode(array('status' => false, 'message' => 'Please provide a userid.'));
         exit;
     }
 

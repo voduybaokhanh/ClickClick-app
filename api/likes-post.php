@@ -110,7 +110,7 @@ try {
 
         if ($userName) {
             // Thêm thông báo vào cơ sở dữ liệu
-            $notificationContent = "$userName đã thích bài đăng của bạn.";
+            $notificationContent = "$userName liked your post.";
             $addNotificationQuery = "INSERT INTO notifications (userid, content, time, RECEIVERID) VALUES (:userid, :content, now(), :RECEIVERID)";
             $addNotificationStmt = $dbConn->prepare($addNotificationQuery);
             $addNotificationStmt->bindParam(':userid', $userid, PDO::PARAM_INT);
@@ -126,9 +126,9 @@ try {
             $likesCount = $getLikesCountStmt->fetch(PDO::FETCH_ASSOC)['likes'];
 
 
-            echo json_encode(array('status' => true, 'message' => $userName . ' đã like bài đăng của bạn.', 'action' => 1, 'LIKES' => $likesCount));
+            echo json_encode(array('status' => true, 'message' => $userName . ' liked your post.', 'action' => 1, 'LIKES' => $likesCount));
         } else {
-            echo json_encode(array('status' => true, 'message' => 'Người dùng đã thích bài đăng thành công.'));
+            echo json_encode(array('status' => true, 'message' => 'user liked your post'));
         }
         exit; // Kết thúc xử lý khi thêm "like" mới
     }
